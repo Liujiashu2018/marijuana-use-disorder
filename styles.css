@@ -1,0 +1,50 @@
+body {
+  font-family: 'Times New Roman', Times, serif;
+}
+p.caption {
+  color: #777;
+  margin-top: 10px;
+  font-size: 8px;
+  font-family: 'Times New Roman', Times, serif;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+/* Change the font size and font family of section headings */
+h1 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 2em; /* Change this value to the desired font size for h1 */
+}
+
+h2 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.75em; /* Change this value to the desired font size for h2 */
+}
+
+h3 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.5em; /* Change this value to the desired font size for h3 */
+}
+
+/* Add more rules for h4, h5, h6 if needed */
+h4 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.25em; /* Change this value to the desired font size for h4 */
+}
+
+h5 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1em; /* Change this value to the desired font size for h5 */
+}
+
+h6 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.875em; /* Change this value to the desired font size for h6 */
+}

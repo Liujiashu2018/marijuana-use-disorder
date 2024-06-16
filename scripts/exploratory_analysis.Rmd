@@ -1,0 +1,196 @@
+---
+title: "exploratory analysis"
+author: "Jiashu Liu"
+date: "2024-06-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Load libraries
+library(tidyverse)
+library(psych)
+library(patchwork)
+library(plotly)
+library(dplyr)
+```
+```{r}
+# Load data
+library(readr)
+sud_2022 <- read_csv("/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/sud_2022.csv")
+```
+
+### Data Visualization
+
+**Age** 
+```{r}
+# age (1=Adolescent: 18-, 2=Young Adult: 18-30, 3=Middle Age: 30-50, 4=Elderly: 50+)
+table(sud_2022$age)
+
+p1.1 <- sud_2022 %>% 
+  ggplot(aes(x = factor(age, levels = 1:4, labels = c("Adolescent", "Young Adult", "Middle Age","Elderly")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "age", y = "Count") +
+  theme_minimal()
+p1.1
+```
+
+**Sex**
+```{r}
+# sex (0=Female, 1=Male)
+table(sud_2022$sex)
+
+p2 <- sud_2022 %>% 
+  ggplot(aes(x = factor(sex, levels = c(0, 1), labels = c("Female", "Male")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"), name = "SUD_MJ") +
+  labs(x = "Sex", y = "Count") +
+  theme_minimal()
+
+p2
+```
+
+**Race**
+```{r}
+# Create a summary table for race group
+sud_2022 <- sud_2022 %>%
+  mutate(race = factor(race, levels = 1:7, labels = c("NonHisp White", "NonHisp Black/Afr Am", "NonHisp Native Am/AK Native", "NonHisp Native HI/Other Pac Isl", "NonHisp Asian", "NonHisp more than one race", "Hispanic")))
+race_summary <- sud_2022 %>%
+  group_by(race, SUD_MJ) %>%
+  summarize(count = n()) %>%
+  ungroup()
+race_summary
+```
+
+**Health**
+```{r}
+# health (0=w/o health problem: excellent/very good/good, 1=with health problem: fair/poor)
+table(sud_2022$health)
+p3 <- sud_2022 %>% ggplot(
+  aes(x = factor(health, levels = 0:1, labels = c("w/o health problem", "with health problem")),
+      fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Health", y = "Count") +
+  theme_minimal()
+p3
+```
+
+**Marital**
+```{r}
+# marital (0=never been married/cannot married<=14, 1=married, 2=widowed/divorced/separated)
+table(sud_2022$marital)
+p4 <- sud_2022 %>% ggplot(
+  aes(x = factor(marital, levels = 0:2, labels = c("Never married", "Married", 
+                                                   "Widowed/Divorced")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Marital", y = "Count") +
+  theme_minimal()
+p4
+```
+
+**Education**
+```{r}
+# degree (1=w/o high school, 2=high school degree, 3=associate's degree/college graduate or higher)
+p5 <- sud_2022 %>% ggplot(
+  aes(x = factor(degree, levels = 1:3, labels = c("lower", "High school", 
+                                                   "Higher")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Degree", y = "Count") +
+  theme_minimal()
+p5
+
+#  Now going to school or not? (1/11 = now going to school,  0=No, other is NA)
+p5.1 <- sud_2022 %>%
+  ggplot(aes(x = factor(student, levels = c(0, 1), labels = c("No", "Yes")), fill = factor(student))) +
+  geom_bar(alpha = 0.7) +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") + 
+  labs(x = "Now Going to School", y = "Count", title = "Distribution of Students Going to School") +
+  theme_minimal()
+p5.1
+```
+```{r}
+sum(is.na(sud_2022$student))
+```
+
+**Employ**
+```{r} 
+# employ (1=employed full time, 2=employed part time, 3=unemployed, 4=Other(incl. not in labor force))
+table(sud_2022$employ)
+p6 <- sud_2022 %>% ggplot(
+  aes(x = factor(employ, levels = 1:4, labels = c("Full time", "Part time", 
+                                                   "Unemployed", "Other")), 
+      fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Employ", y = "Count") +
+  theme_minimal()
+p6
+```
+**Income**
+```{r}
+table(sud_2022$income)
+p9 <- sud_2022 %>% ggplot(
+  aes(x = factor(income, levels = 1:3, labels = c("Poverty", "Middle", "Wealth")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Family Income", y = "Count") +
+  theme_minimal()
+p9
+```
+**Health**
+```{r}
+# health_insur (0=w/o health insurance, 1=health insurance)
+p10 <- sud_2022 %>% ggplot(
+  aes(x = factor(health, levels = c(0, 1), labels = c("w/o health insurance", "health insurance")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Have Health Insurance", y = "Count") +
+  theme_minimal()
+p10
+```
+
+### Hypothesis Testing
+
+Perform Chi-squared Test for all categorical variables against SUD_MJ to test the independence. 
+```{r}
+sud_2022 <- sud_2022 %>%
+  mutate_all(as.factor)
+cate_var <- sud_2022 %>% select(-c(SUD_MJ))
+variables <- names(cate_var)
+
+# Perform Chi-squared Test
+chi_square_test <- function(data, var) {
+  tbl <- table(data[[var]], data[['SUD_MJ']])
+  test <- chisq.test(tbl)
+  p_value <- test$p.value
+  data.frame(
+    Variable = var,
+    P_Value = p_value,
+    Include_In_Model = ifelse(p_value < 0.05, "Yes", "No")
+  )
+}
+
+results <- lapply(variables, function(var) {
+  chi_square_test(sud_2022, var)
+})
+
+# Combine the results 
+results_df <- do.call(rbind, results)
+results_df
+```
+
+
+
+
+
+
+
+
+

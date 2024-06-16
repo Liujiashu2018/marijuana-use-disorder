@@ -1,0 +1,991 @@
+---
+title: "Predicting Marijuana Use Disorder: A Machine Learning Approach"
+author: "Jiashu Liu"
+date: "2024-06-16"
+output:
+  html_document:
+    keep_md: true
+    df_print: paged
+    code_download: true
+    theme: journal
+    code_folding: hide
+    css: styles.css
+font-family: Times New Roman
+---
+
+
+
+
+```r
+# Load libraries
+library(tidyverse)
+library(httr)
+library(jsonlite)
+library(foreach)
+library(psych)
+library(patchwork)
+library(plotly)
+library(dplyr)
+library(readr)
+library(gt) # for better table output
+```
+
+# Introduction 
+
+# Data
+
+```r
+# Load data -- NSDUH 2022
+load("/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/NSDUH_2022.RData")
+sud_2022 <- read_csv("/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/sud_2022.csv")
+```
+
+### Outcome Variables
+
+```r
+# If any of the "udmj" variables have a value of 1, we set SUD_MJ as 1, otherwise SUD_MJ is 0.
+NSDUH_2022_full <- NSDUH_2022 %>%
+  mutate(across(starts_with("udmj"), 
+                ~if_else(. %in% c(1, 2), 
+                         if_else(. == 1, 1, 0), 
+                         NA))) %>% 
+  select(-"udmjavwothr") %>% 
+  mutate(SUD_MJ = rowSums(select(., starts_with("udmj")), na.rm = TRUE)>=1, 
+         SUD_MJ = if_else(SUD_MJ, 1, 0))
+```
+
+### Predictors
+
+```r
+# Predictors -- Demographics
+# 1) age (1=Adolescent: 18-, 2=Young Adult: 18-30, 3=Middle Age: 30-50, 4=Elderly: 50+)
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(age = case_when(AGE3 %in% c(1:3) ~ 1,
+                         AGE3 %in% c(4:8) ~ 2,
+                         AGE3 %in% c(9:10) ~ 3,
+                         TRUE ~ 4))
+# 2) sex (0=Female, 1=Male)
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(sex = if_else(irsex == 2,0,1))
+
+# 3) race (1=NonHisp White, 2=NonHisp non-white, 3=Hispanic)
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(race = NEWRACE2)
+  #mutate(race = case_when(NEWRACE2 %in% c(2:6) ~ 2,
+                         # NEWRACE2 == 7 ~ 3,
+                          #TRUE ~ 1))
+
+# 4) health (0=w/o health problem: excellent/very good/good, 1=with health problem: fair/poor)
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(health = case_when(health %in% c(1:3) ~ 0,
+                            health %in% c(4:5) ~ 1,
+                            TRUE ~ NA))
+
+# 5) marital (0=never been married/cannot married<=14, 1=married, 2=widowed/divorced/separated)
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(marital = case_when(irmarit %in% c(4,99) ~ 0,
+                             irmarit %in% c(2:3) ~ 2,
+                             TRUE ~ 1))
+```
+
+
+```r
+# Predictors -- Education
+# 6) degree (1=w/o high school, 2=high school degree, 3=associate's degree/college graduate or higher)
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(degree = case_when(IREDUHIGHST2 %in% c(1:7) ~ 1,
+                            IREDUHIGHST2 %in% c(8:9) ~ 2,
+                            TRUE ~ 3))
+
+# 7) Now going to school or not? (1/11 = now going to school,  0=No, other is NA)
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(student = case_when(eduschlgo %in% c(1, 11) ~ 1,
+                             eduschlgo == 2 ~ 0,
+                             TRUE ~ NA))
+```
+
+
+```r
+# Predictors: Employment and Houshold Composition
+# 8) employ (1=employed full time, 2=employed part time, 3=unemployed, 4=Other(incl. not in labor force))
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(employ = case_when(WRKSTATWK2 %in% c(1,6) ~ 1,
+                            WRKSTATWK2 %in% c(2:3) ~ 2,
+                            WRKSTATWK2 %in% c(4,9) ~ 3,
+                            TRUE ~ 4))
+
+# 9) persons in Household (range 1-5, 6=6 or more people in household)
+NSDUH_2022_full <- NSDUH_2022_full %>% mutate(family = IRHHSIZ2)
+
+# 10) kids age<18 in Household
+# 0 = No children under 18 
+# 1 = One child under 18
+# 2 = Two children under 18 
+# 3 = Three or more children under 18.
+NSDUH_2022_full <- NSDUH_2022_full %>% mutate(kid = IRKI17_2 - 1)
+
+# 11) elderly age>65 in Household (range 0-1, 2=2 or more elders in household)
+# 0 = No people 65 or older in household
+# 1 = One person 65 or older in household
+# 2 = Two or more people 65 or older in household
+NSDUH_2022_full <- NSDUH_2022_full %>% mutate(elderly = IRHH65_2-1)
+```
+
+
+```r
+# Predictors: Health and Income 
+# 12) health_insur (0=w/o health insurance, 1=health insurance)
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(health_insur = case_when(
+    irmedicr == 1 | irmcdchp == 1 | irchmpus == 1 | irprvhlt == 1 ~ 1,
+    irothhlt == 1 ~ 1,
+    irothhlt == 2 ~ 0,
+    irothhlt == 99 ~ NA,
+    TRUE ~ 0
+  ))
+
+# 13) income: family income (1=poverty:20000-, 2=middle:74999-, 3=wealth:75000+)
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(income = case_when(IRFAMIN3 %in% c(1:2) ~ 1,
+                            IRFAMIN3 %in% c(3:6) ~ 2,
+                            TRUE ~ 3))
+
+# 14) mentalhealth: combined score of K6 questions (range = 0 - 24, na:Aged 12-17) 
+NSDUH_2022_full <- NSDUH_2022_full %>% 
+  mutate(k1 = case_when(IRDSTCHR30 == 1 ~ 4,
+                         IRDSTCHR30 == 2 ~ 3,
+                         IRDSTCHR30 == 3 ~ 2,
+                         IRDSTCHR30 == 4 ~ 1,
+                         IRDSTCHR30 == 5 ~ 0,
+                         TRUE ~ 99),
+         k2 = case_when(IRDSTEFF30 == 1 ~ 4,
+                         IRDSTEFF30 == 2 ~ 3,
+                         IRDSTEFF30 == 3 ~ 2,
+                         IRDSTEFF30 == 4 ~ 1,
+                         IRDSTEFF30 == 5 ~ 0,
+                         TRUE ~ 99),
+         k3 = case_when(IRDSTHOP30 == 1 ~ 4,
+                         IRDSTHOP30 == 2 ~ 3,
+                         IRDSTHOP30 == 3 ~ 2,
+                         IRDSTHOP30 == 4 ~ 1,
+                         IRDSTHOP30 == 5 ~ 0,
+                         TRUE ~ 99),
+         k4 = case_when(IRDSTNGD30 == 1 ~ 4,
+                         IRDSTNGD30 == 2 ~ 3,
+                         IRDSTNGD30 == 3 ~ 2,
+                         IRDSTNGD30 == 4 ~ 1,
+                         IRDSTNGD30 == 5 ~ 0,
+                         TRUE ~ 99),
+         k5 = case_when(IRDSTNRV30 == 1 ~ 4,
+                         IRDSTNRV30 == 2 ~ 3,
+                         IRDSTNRV30 == 3 ~ 2,
+                         IRDSTNRV30 == 4 ~ 1,
+                         IRDSTNRV30 == 5 ~ 0,
+                         TRUE ~ 99),
+         k6 = case_when(IRDSTRST30 == 1 ~ 4,
+                         IRDSTRST30 == 2 ~ 3,
+                         IRDSTRST30 == 3 ~ 2,
+                         IRDSTRST30 == 4 ~ 1,
+                         IRDSTRST30 == 5 ~ 0,
+                         TRUE ~ 99),
+         mentalhealth = case_when(k1 == 99 | k2 == 99 | k3 == 99 | k4 == 99 | 
+                                    k5 == 99 | k6 == 99 ~  NA,
+                                  TRUE ~ k1+k2+k3+k4+k5+k6))
+# For each of the six items listed above, responses of "all of the time" were coded 4, 
+#"most of the time" were coded 3, "some of the time" were coded 2, "a little of the time" 
+#were coded 1, and "none of the time" were coded 0. These assigned values were summed 
+#across the six items to calculate a total score for mentalhealth.
+```
+
+
+```r
+# Create new dataset and drop all the NA values
+data_cleaned <- NSDUH_2022_full %>%
+  select(age, sex, race, health, marital, degree, 
+         student, employ, family, kid, elderly, health_insur, 
+         income, mentalhealth, SUD_MJ) %>%
+  drop_na()
+# check NAs
+# anyNA(data_cleaned)
+# New csv file
+# write_csv(data_cleaned,"/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/sud_2022.csv")
+```
+
+# Exploratory Data Analysis
+
+### Data Visualization
+
+**Age** 
+
+```r
+# age (1=Adolescent: 18-, 2=Young Adult: 18-30, 3=Middle Age: 30-50, 4=Elderly: 50+)
+table(sud_2022$age)
+```
+
+```
+## 
+##     2     3     4 
+## 23060 17273  4998
+```
+
+```r
+p1.1 <- sud_2022 %>% 
+  ggplot(aes(x = factor(age, levels = 1:4, labels = c("Adolescent", "Young Adult", "Middle Age","Elderly")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "age", y = "Count") +
+  theme_minimal()
+p1.1
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
+**Sex**
+
+```r
+# sex (0=Female, 1=Male)
+table(sud_2022$sex)
+```
+
+```
+## 
+##     0     1 
+## 25278 20053
+```
+
+```r
+p2 <- sud_2022 %>% 
+  ggplot(aes(x = factor(sex, levels = c(0, 1), labels = c("Female", "Male")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"), name = "SUD_MJ") +
+  labs(x = "Sex", y = "Count") +
+  theme_minimal()
+
+p2
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
+**Race**
+
+```r
+# Create a summary table for race group
+sud_2022 <- sud_2022 %>%
+  mutate(race = factor(race, levels = 1:7, labels = c("NonHisp White", "NonHisp Black/Afr Am", "NonHisp Native Am/AK Native", "NonHisp Native HI/Other Pac Isl", "NonHisp Asian", "NonHisp more than one race", "Hispanic")))
+race_summary <- sud_2022 %>%
+  group_by(race, SUD_MJ) %>%
+  summarize(count = n()) %>%
+  ungroup()
+race_summary
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":["race"],"name":[1],"type":["fct"],"align":["left"]},{"label":["SUD_MJ"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["count"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"NonHisp White","2":"0","3":"23718"},{"1":"NonHisp White","2":"1","3":"3772"},{"1":"NonHisp Black/Afr Am","2":"0","3":"4252"},{"1":"NonHisp Black/Afr Am","2":"1","3":"927"},{"1":"NonHisp Native Am/AK Native","2":"0","3":"437"},{"1":"NonHisp Native Am/AK Native","2":"1","3":"164"},{"1":"NonHisp Native HI/Other Pac Isl","2":"0","3":"165"},{"1":"NonHisp Native HI/Other Pac Isl","2":"1","3":"30"},{"1":"NonHisp Asian","2":"0","3":"2301"},{"1":"NonHisp Asian","2":"1","3":"127"},{"1":"NonHisp more than one race","2":"0","3":"1297"},{"1":"NonHisp more than one race","2":"1","3":"390"},{"1":"Hispanic","2":"0","3":"6584"},{"1":"Hispanic","2":"1","3":"1167"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+**Health**
+
+```r
+# health (0=w/o health problem: excellent/very good/good, 1=with health problem: fair/poor)
+table(sud_2022$health)
+```
+
+```
+## 
+##     0     1 
+## 39768  5563
+```
+
+```r
+p3 <- sud_2022 %>% ggplot(
+  aes(x = factor(health, levels = 0:1, labels = c("w/o health problem", "with health problem")),
+      fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Health", y = "Count") +
+  theme_minimal()
+p3
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
+**Marital**
+
+```r
+# marital (0=never been married/cannot married<=14, 1=married, 2=widowed/divorced/separated)
+table(sud_2022$marital)
+```
+
+```
+## 
+##     0     1     2 
+## 20778 18810  5743
+```
+
+```r
+p4 <- sud_2022 %>% ggplot(
+  aes(x = factor(marital, levels = 0:2, labels = c("Never married", "Married", 
+                                                   "Widowed/Divorced")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Marital", y = "Count") +
+  theme_minimal()
+p4
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+
+**Education**
+
+```r
+# degree (1=w/o high school, 2=high school degree, 3=associate's degree/college graduate or higher)
+p5 <- sud_2022 %>% ggplot(
+  aes(x = factor(degree, levels = 1:3, labels = c("lower", "High school", 
+                                                   "Higher")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Degree", y = "Count") +
+  theme_minimal()
+p5
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
+```r
+#  Now going to school or not? (1/11 = now going to school,  0=No, other is NA)
+p5.1 <- sud_2022 %>%
+  ggplot(aes(x = factor(student, levels = c(0, 1), labels = c("No", "Yes")), fill = factor(student))) +
+  geom_bar(alpha = 0.7) +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") + 
+  labs(x = "Now Going to School", y = "Count", title = "Distribution of Students Going to School") +
+  theme_minimal()
+p5.1
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-10-2.png)<!-- -->
+
+**Employment**
+
+```r
+# employ (1=employed full time, 2=employed part time, 3=unemployed, 4=Other(incl. not in labor force))
+table(sud_2022$employ)
+```
+
+```
+## 
+##     1     2     3     4 
+## 23369  8253  5913  7796
+```
+
+```r
+p6 <- sud_2022 %>% ggplot(
+  aes(x = factor(employ, levels = 1:4, labels = c("Full time", "Part time", 
+                                                   "Unemployed", "Other")), 
+      fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Employ", y = "Count") +
+  theme_minimal()
+p6
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
+**Income**
+
+```r
+table(sud_2022$income)
+```
+
+```
+## 
+##     1     2     3 
+##  7749 18822 18760
+```
+
+```r
+p9 <- sud_2022 %>% ggplot(
+  aes(x = factor(income, levels = 1:3, labels = c("Poverty", "Middle", "Wealth")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Family Income", y = "Count") +
+  theme_minimal()
+p9
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+
+**Health**
+
+```r
+# health_insur (0=w/o health insurance, 1=health insurance)
+p10 <- sud_2022 %>% ggplot(
+  aes(x = factor(health, levels = c(0, 1), labels = c("w/o health insurance", "health insurance")), fill = factor(SUD_MJ))) +
+  geom_bar(alpha = 0.5, position = "dodge") +
+  scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
+  labs(x = "Have Health Insurance", y = "Count") +
+  theme_minimal()
+p10
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+
+### Hypothesis Testing
+
+Perform Chi-squared Test for all categorical variables against SUD_MJ to test the independence. 
+
+```r
+sud_2022 <- sud_2022 %>%
+  mutate_all(as.factor)
+cate_var <- sud_2022 %>% select(-c(SUD_MJ))
+variables <- names(cate_var)
+
+# Perform Chi-squared Test
+chi_square_test <- function(data, var) {
+  tbl <- table(data[[var]], data[['SUD_MJ']])
+  test <- chisq.test(tbl)
+  p_value <- test$p.value
+  data.frame(
+    Variable = var,
+    P_Value = p_value,
+    Include_In_Model = ifelse(p_value < 0.05, "Yes", "No")
+  )
+}
+
+results <- lapply(variables, function(var) {
+  chi_square_test(sud_2022, var)
+})
+
+# Combine the results 
+results_df <- do.call(rbind, results)
+#results_df
+results_df %>%
+  gt() %>%
+  tab_header(
+    title = md("**Hypothesis Test Results**")
+  ) %>%
+  tab_style(
+    style = cell_fill(color = "honeydew"),
+    locations = cells_body(
+      rows = results_df$Include_In_Model == "Yes"
+    )
+  ) %>%
+  tab_style(
+    style = cell_fill(color = "lightcyan3"),
+    locations = cells_body(
+      rows = results_df$Include_In_Model == "No"
+    )
+  ) %>%
+  tab_options(
+    table.font.size = px(13L)
+  )
+```
+
+```{=html}
+<div id="ottjpkxtxm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ottjpkxtxm table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ottjpkxtxm thead, #ottjpkxtxm tbody, #ottjpkxtxm tfoot, #ottjpkxtxm tr, #ottjpkxtxm td, #ottjpkxtxm th {
+  border-style: none;
+}
+
+#ottjpkxtxm p {
+  margin: 0;
+  padding: 0;
+}
+
+#ottjpkxtxm .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 13px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ottjpkxtxm .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ottjpkxtxm .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ottjpkxtxm .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ottjpkxtxm .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ottjpkxtxm .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ottjpkxtxm .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ottjpkxtxm .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ottjpkxtxm .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ottjpkxtxm .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ottjpkxtxm .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ottjpkxtxm .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ottjpkxtxm .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ottjpkxtxm .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ottjpkxtxm .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ottjpkxtxm .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ottjpkxtxm .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ottjpkxtxm .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ottjpkxtxm .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ottjpkxtxm .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ottjpkxtxm .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ottjpkxtxm .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ottjpkxtxm .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ottjpkxtxm .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ottjpkxtxm .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ottjpkxtxm .gt_left {
+  text-align: left;
+}
+
+#ottjpkxtxm .gt_center {
+  text-align: center;
+}
+
+#ottjpkxtxm .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ottjpkxtxm .gt_font_normal {
+  font-weight: normal;
+}
+
+#ottjpkxtxm .gt_font_bold {
+  font-weight: bold;
+}
+
+#ottjpkxtxm .gt_font_italic {
+  font-style: italic;
+}
+
+#ottjpkxtxm .gt_super {
+  font-size: 65%;
+}
+
+#ottjpkxtxm .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ottjpkxtxm .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ottjpkxtxm .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ottjpkxtxm .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ottjpkxtxm .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ottjpkxtxm .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ottjpkxtxm .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="3" class="gt_heading gt_title gt_font_normal gt_bottom_border" style><strong>Hypothesis Test Results</strong></td>
+    </tr>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Variable">Variable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="P_Value">P_Value</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Include_In_Model">Include_In_Model</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">age</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">0.000000e+00</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">sex</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">6.829754e-42</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">race</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">6.762415e-86</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">health</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">9.195597e-45</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">marital</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">0.000000e+00</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">degree</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">7.890639e-145</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">student</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">8.308763e-06</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">employ</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">2.458101e-78</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">family</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">9.327843e-03</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">kid</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">1.260493e-16</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">elderly</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">2.483698e-89</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">health_insur</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">1.075480e-24</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">income</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">3.768875e-128</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left" style="background-color: #F0FFF0;">mentalhealth</td>
+<td headers="P_Value" class="gt_row gt_right" style="background-color: #F0FFF0;">0.000000e+00</td>
+<td headers="Include_In_Model" class="gt_row gt_left" style="background-color: #F0FFF0;">Yes</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+```
+
+
+
+
