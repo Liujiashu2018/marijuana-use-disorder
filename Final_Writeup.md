@@ -19,16 +19,26 @@ font-family: Times New Roman
 ```r
 # Load libraries
 library(tidyverse)
+library(dplyr)
+library(readr)
+library(ggplot2)
 library(httr)
 library(jsonlite)
 library(foreach)
 library(psych)
 library(patchwork)
-library(plotly)
-library(dplyr)
-library(readr)
 library(gt) # for better table output
 library(gridExtra)
+library(ROCR)
+library(ranger)
+library(randomForest)
+#library(pak)
+#pak::pak("caret")
+library(caret)
+library(e1071)
+library(nnet)
+library(dummy)
+library(gbm)
 ```
 
 # Introduction 
@@ -95,23 +105,23 @@ codebook %>%
 ```
 
 ```{=html}
-<div id="inozltzlso" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#inozltzlso table {
+<div id="vgukgcjrjq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vgukgcjrjq table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#inozltzlso thead, #inozltzlso tbody, #inozltzlso tfoot, #inozltzlso tr, #inozltzlso td, #inozltzlso th {
+#vgukgcjrjq thead, #vgukgcjrjq tbody, #vgukgcjrjq tfoot, #vgukgcjrjq tr, #vgukgcjrjq td, #vgukgcjrjq th {
   border-style: none;
 }
 
-#inozltzlso p {
+#vgukgcjrjq p {
   margin: 0;
   padding: 0;
 }
 
-#inozltzlso .gt_table {
+#vgukgcjrjq .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -137,12 +147,12 @@ codebook %>%
   border-left-color: #D3D3D3;
 }
 
-#inozltzlso .gt_caption {
+#vgukgcjrjq .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#inozltzlso .gt_title {
+#vgukgcjrjq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -154,7 +164,7 @@ codebook %>%
   border-bottom-width: 0;
 }
 
-#inozltzlso .gt_subtitle {
+#vgukgcjrjq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -166,7 +176,7 @@ codebook %>%
   border-top-width: 0;
 }
 
-#inozltzlso .gt_heading {
+#vgukgcjrjq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -178,13 +188,13 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#inozltzlso .gt_bottom_border {
+#vgukgcjrjq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#inozltzlso .gt_col_headings {
+#vgukgcjrjq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -199,7 +209,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#inozltzlso .gt_col_heading {
+#vgukgcjrjq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -219,7 +229,7 @@ codebook %>%
   overflow-x: hidden;
 }
 
-#inozltzlso .gt_column_spanner_outer {
+#vgukgcjrjq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -231,15 +241,15 @@ codebook %>%
   padding-right: 4px;
 }
 
-#inozltzlso .gt_column_spanner_outer:first-child {
+#vgukgcjrjq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#inozltzlso .gt_column_spanner_outer:last-child {
+#vgukgcjrjq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#inozltzlso .gt_column_spanner {
+#vgukgcjrjq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -251,11 +261,11 @@ codebook %>%
   width: 100%;
 }
 
-#inozltzlso .gt_spanner_row {
+#vgukgcjrjq .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#inozltzlso .gt_group_heading {
+#vgukgcjrjq .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -281,7 +291,7 @@ codebook %>%
   text-align: left;
 }
 
-#inozltzlso .gt_empty_group_heading {
+#vgukgcjrjq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -296,15 +306,15 @@ codebook %>%
   vertical-align: middle;
 }
 
-#inozltzlso .gt_from_md > :first-child {
+#vgukgcjrjq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#inozltzlso .gt_from_md > :last-child {
+#vgukgcjrjq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#inozltzlso .gt_row {
+#vgukgcjrjq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -323,7 +333,7 @@ codebook %>%
   overflow-x: hidden;
 }
 
-#inozltzlso .gt_stub {
+#vgukgcjrjq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -336,7 +346,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#inozltzlso .gt_stub_row_group {
+#vgukgcjrjq .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -350,15 +360,15 @@ codebook %>%
   vertical-align: top;
 }
 
-#inozltzlso .gt_row_group_first td {
+#vgukgcjrjq .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#inozltzlso .gt_row_group_first th {
+#vgukgcjrjq .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#inozltzlso .gt_summary_row {
+#vgukgcjrjq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -368,16 +378,16 @@ codebook %>%
   padding-right: 5px;
 }
 
-#inozltzlso .gt_first_summary_row {
+#vgukgcjrjq .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#inozltzlso .gt_first_summary_row.thick {
+#vgukgcjrjq .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#inozltzlso .gt_last_summary_row {
+#vgukgcjrjq .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -387,7 +397,7 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#inozltzlso .gt_grand_summary_row {
+#vgukgcjrjq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -397,7 +407,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#inozltzlso .gt_first_grand_summary_row {
+#vgukgcjrjq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -407,7 +417,7 @@ codebook %>%
   border-top-color: #D3D3D3;
 }
 
-#inozltzlso .gt_last_grand_summary_row_top {
+#vgukgcjrjq .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -417,11 +427,11 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#inozltzlso .gt_striped {
+#vgukgcjrjq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#inozltzlso .gt_table_body {
+#vgukgcjrjq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -430,7 +440,7 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#inozltzlso .gt_footnotes {
+#vgukgcjrjq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -444,7 +454,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#inozltzlso .gt_footnote {
+#vgukgcjrjq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -453,7 +463,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#inozltzlso .gt_sourcenotes {
+#vgukgcjrjq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -467,7 +477,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#inozltzlso .gt_sourcenote {
+#vgukgcjrjq .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -475,63 +485,63 @@ codebook %>%
   padding-right: 5px;
 }
 
-#inozltzlso .gt_left {
+#vgukgcjrjq .gt_left {
   text-align: left;
 }
 
-#inozltzlso .gt_center {
+#vgukgcjrjq .gt_center {
   text-align: center;
 }
 
-#inozltzlso .gt_right {
+#vgukgcjrjq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#inozltzlso .gt_font_normal {
+#vgukgcjrjq .gt_font_normal {
   font-weight: normal;
 }
 
-#inozltzlso .gt_font_bold {
+#vgukgcjrjq .gt_font_bold {
   font-weight: bold;
 }
 
-#inozltzlso .gt_font_italic {
+#vgukgcjrjq .gt_font_italic {
   font-style: italic;
 }
 
-#inozltzlso .gt_super {
+#vgukgcjrjq .gt_super {
   font-size: 65%;
 }
 
-#inozltzlso .gt_footnote_marks {
+#vgukgcjrjq .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#inozltzlso .gt_asterisk {
+#vgukgcjrjq .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#inozltzlso .gt_indent_1 {
+#vgukgcjrjq .gt_indent_1 {
   text-indent: 5px;
 }
 
-#inozltzlso .gt_indent_2 {
+#vgukgcjrjq .gt_indent_2 {
   text-indent: 10px;
 }
 
-#inozltzlso .gt_indent_3 {
+#vgukgcjrjq .gt_indent_3 {
   text-indent: 15px;
 }
 
-#inozltzlso .gt_indent_4 {
+#vgukgcjrjq .gt_indent_4 {
   text-indent: 20px;
 }
 
-#inozltzlso .gt_indent_5 {
+#vgukgcjrjq .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -828,23 +838,23 @@ highlighted_table
 ```
 
 ```{=html}
-<div id="dlenympjkx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#dlenympjkx table {
+<div id="oqyoszcmnm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#oqyoszcmnm table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#dlenympjkx thead, #dlenympjkx tbody, #dlenympjkx tfoot, #dlenympjkx tr, #dlenympjkx td, #dlenympjkx th {
+#oqyoszcmnm thead, #oqyoszcmnm tbody, #oqyoszcmnm tfoot, #oqyoszcmnm tr, #oqyoszcmnm td, #oqyoszcmnm th {
   border-style: none;
 }
 
-#dlenympjkx p {
+#oqyoszcmnm p {
   margin: 0;
   padding: 0;
 }
 
-#dlenympjkx .gt_table {
+#oqyoszcmnm .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -870,12 +880,12 @@ highlighted_table
   border-left-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_caption {
+#oqyoszcmnm .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#dlenympjkx .gt_title {
+#oqyoszcmnm .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -887,7 +897,7 @@ highlighted_table
   border-bottom-width: 0;
 }
 
-#dlenympjkx .gt_subtitle {
+#oqyoszcmnm .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -899,7 +909,7 @@ highlighted_table
   border-top-width: 0;
 }
 
-#dlenympjkx .gt_heading {
+#oqyoszcmnm .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -911,13 +921,13 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_bottom_border {
+#oqyoszcmnm .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_col_headings {
+#oqyoszcmnm .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -932,7 +942,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_col_heading {
+#oqyoszcmnm .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -952,7 +962,7 @@ highlighted_table
   overflow-x: hidden;
 }
 
-#dlenympjkx .gt_column_spanner_outer {
+#oqyoszcmnm .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -964,15 +974,15 @@ highlighted_table
   padding-right: 4px;
 }
 
-#dlenympjkx .gt_column_spanner_outer:first-child {
+#oqyoszcmnm .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#dlenympjkx .gt_column_spanner_outer:last-child {
+#oqyoszcmnm .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#dlenympjkx .gt_column_spanner {
+#oqyoszcmnm .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -984,11 +994,11 @@ highlighted_table
   width: 100%;
 }
 
-#dlenympjkx .gt_spanner_row {
+#oqyoszcmnm .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#dlenympjkx .gt_group_heading {
+#oqyoszcmnm .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1014,7 +1024,7 @@ highlighted_table
   text-align: left;
 }
 
-#dlenympjkx .gt_empty_group_heading {
+#oqyoszcmnm .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1029,15 +1039,15 @@ highlighted_table
   vertical-align: middle;
 }
 
-#dlenympjkx .gt_from_md > :first-child {
+#oqyoszcmnm .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#dlenympjkx .gt_from_md > :last-child {
+#oqyoszcmnm .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#dlenympjkx .gt_row {
+#oqyoszcmnm .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1056,7 +1066,7 @@ highlighted_table
   overflow-x: hidden;
 }
 
-#dlenympjkx .gt_stub {
+#oqyoszcmnm .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1069,7 +1079,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#dlenympjkx .gt_stub_row_group {
+#oqyoszcmnm .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1083,15 +1093,15 @@ highlighted_table
   vertical-align: top;
 }
 
-#dlenympjkx .gt_row_group_first td {
+#oqyoszcmnm .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#dlenympjkx .gt_row_group_first th {
+#oqyoszcmnm .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#dlenympjkx .gt_summary_row {
+#oqyoszcmnm .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1101,16 +1111,16 @@ highlighted_table
   padding-right: 5px;
 }
 
-#dlenympjkx .gt_first_summary_row {
+#oqyoszcmnm .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_first_summary_row.thick {
+#oqyoszcmnm .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#dlenympjkx .gt_last_summary_row {
+#oqyoszcmnm .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1120,7 +1130,7 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_grand_summary_row {
+#oqyoszcmnm .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1130,7 +1140,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#dlenympjkx .gt_first_grand_summary_row {
+#oqyoszcmnm .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1140,7 +1150,7 @@ highlighted_table
   border-top-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_last_grand_summary_row_top {
+#oqyoszcmnm .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1150,11 +1160,11 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_striped {
+#oqyoszcmnm .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#dlenympjkx .gt_table_body {
+#oqyoszcmnm .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1163,7 +1173,7 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_footnotes {
+#oqyoszcmnm .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1177,7 +1187,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_footnote {
+#oqyoszcmnm .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1186,7 +1196,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#dlenympjkx .gt_sourcenotes {
+#oqyoszcmnm .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1200,7 +1210,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#dlenympjkx .gt_sourcenote {
+#oqyoszcmnm .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1208,63 +1218,63 @@ highlighted_table
   padding-right: 5px;
 }
 
-#dlenympjkx .gt_left {
+#oqyoszcmnm .gt_left {
   text-align: left;
 }
 
-#dlenympjkx .gt_center {
+#oqyoszcmnm .gt_center {
   text-align: center;
 }
 
-#dlenympjkx .gt_right {
+#oqyoszcmnm .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#dlenympjkx .gt_font_normal {
+#oqyoszcmnm .gt_font_normal {
   font-weight: normal;
 }
 
-#dlenympjkx .gt_font_bold {
+#oqyoszcmnm .gt_font_bold {
   font-weight: bold;
 }
 
-#dlenympjkx .gt_font_italic {
+#oqyoszcmnm .gt_font_italic {
   font-style: italic;
 }
 
-#dlenympjkx .gt_super {
+#oqyoszcmnm .gt_super {
   font-size: 65%;
 }
 
-#dlenympjkx .gt_footnote_marks {
+#oqyoszcmnm .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#dlenympjkx .gt_asterisk {
+#oqyoszcmnm .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#dlenympjkx .gt_indent_1 {
+#oqyoszcmnm .gt_indent_1 {
   text-indent: 5px;
 }
 
-#dlenympjkx .gt_indent_2 {
+#oqyoszcmnm .gt_indent_2 {
   text-indent: 10px;
 }
 
-#dlenympjkx .gt_indent_3 {
+#oqyoszcmnm .gt_indent_3 {
   text-indent: 15px;
 }
 
-#dlenympjkx .gt_indent_4 {
+#oqyoszcmnm .gt_indent_4 {
   text-indent: 20px;
 }
 
-#dlenympjkx .gt_indent_5 {
+#oqyoszcmnm .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1592,6 +1602,757 @@ results_df
   </script>
 </div>
 
+# Model Fitting
+### Splitting Training and Testing Set
+
+```r
+# Load in dataset
+NSDUH_2022 <- read.csv("/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/sud_2022.csv")
+# Convert all the variables into factors
+NSDUH_2022 <- NSDUH_2022 %>% 
+  mutate(across(where(is.numeric), as.factor))
+str(NSDUH_2022)
+```
+
+```
+## 'data.frame':	45331 obs. of  15 variables:
+##  $ age         : Factor w/ 3 levels "2","3","4": 1 2 1 1 2 2 2 1 1 2 ...
+##  $ sex         : Factor w/ 2 levels "0","1": 2 1 1 2 1 2 1 1 2 1 ...
+##  $ race        : Factor w/ 7 levels "1","2","3","4",..: 7 2 1 5 1 1 1 1 1 3 ...
+##  $ health      : Factor w/ 2 levels "0","1": 1 1 1 1 1 2 1 1 2 1 ...
+##  $ marital     : Factor w/ 3 levels "0","1","2": 2 1 2 2 3 3 2 1 1 2 ...
+##  $ degree      : Factor w/ 3 levels "1","2","3": 1 3 3 2 3 1 3 1 3 1 ...
+##  $ student     : Factor w/ 2 levels "0","1": 1 1 2 1 1 1 1 1 1 1 ...
+##  $ employ      : Factor w/ 4 levels "1","2","3","4": 3 1 1 1 1 3 1 3 3 4 ...
+##  $ family      : Factor w/ 6 levels "1","2","3","4",..: 3 3 2 6 3 4 6 2 2 2 ...
+##  $ kid         : Factor w/ 4 levels "0","1","2","3": 1 3 1 2 2 1 4 1 1 1 ...
+##  $ elderly     : Factor w/ 3 levels "0","1","2": 1 1 1 1 1 1 1 1 1 1 ...
+##  $ health_insur: Factor w/ 2 levels "0","1": 2 2 2 2 2 2 2 2 2 2 ...
+##  $ income      : Factor w/ 3 levels "1","2","3": 2 2 3 3 2 2 3 2 2 2 ...
+##  $ mentalhealth: Factor w/ 25 levels "0","1","2","3",..: 1 2 9 4 7 4 2 8 9 9 ...
+##  $ SUD_MJ      : Factor w/ 2 levels "0","1": 1 2 1 1 1 2 1 2 2 1 ...
+```
+
+```r
+# NSDUH_2022 is an imbalanced dataset
+table(NSDUH_2022$SUD_MJ)
+```
+
+```
+## 
+##     0     1 
+## 38754  6577
+```
+
+```r
+sud_mj_yes <- subset(NSDUH_2022, SUD_MJ == 1)
+sud_mj_no <- subset(NSDUH_2022, SUD_MJ == 0)
+ratio_yes <- nrow(sud_mj_yes) / nrow(NSDUH_2022)
+ratio_no <- nrow(sud_mj_no) / nrow(NSDUH_2022)
+
+# Display the ratios
+cat("Ratio of SUD_MJ = Yes:", round(ratio_yes, 2), "\n")
+```
+
+```
+## Ratio of SUD_MJ = Yes: 0.15
+```
+
+```r
+cat("Ratio of SUD_MJ = No:", round(ratio_no, 2), "\n")
+```
+
+```
+## Ratio of SUD_MJ = No: 0.85
+```
+
+```r
+# Split training and Testing
+set.seed(123)
+# find split_size to divide data in 67% train/ 33% test sets
+split_size <- sample(1:nrow(NSDUH_2022), floor(0.67 * nrow(NSDUH_2022)))
+
+# Extract the train and test sets
+train <- NSDUH_2022[split_size, ]
+test <- NSDUH_2022[-split_size, ]
+# Change the levels of SUD_MJ from 0 and 1 to 'No' and 'Yes'.
+# Otherwise this will lead to errors in trainControl
+levels(train$SUD_MJ) <- c("No", "Yes")
+levels(test$SUD_MJ) <- c("No", "Yes")
+levels(train$SUD_MJ)
+```
+
+```
+## [1] "No"  "Yes"
+```
+
+```r
+levels(test$SUD_MJ)
+```
+
+```
+## [1] "No"  "Yes"
+```
+
+```r
+# Stratified cross-validation
+trControl <- trainControl(method = "cv", 
+                          number = 10, 
+                          classProbs = TRUE, 
+                          summaryFunction = twoClassSummary)
+```
+
+### 1. Logistic Regression
+
+```r
+# Train logistic regression model on training set
+set.seed(123)
+logistic_cv <- caret::train(SUD_MJ ~ ., 
+                                  data = train, 
+                                  method = "glm", 
+                                  family = binomial, 
+                                  trControl = trControl, # using cv to avoid overfitting
+                                  metric = "ROC")
+print(logistic_cv)
+```
+
+```
+## Generalized Linear Model 
+## 
+## 30371 samples
+##    14 predictor
+##     2 classes: 'No', 'Yes' 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 27333, 27334, 27334, 27334, 27334, 27334, ... 
+## Resampling results:
+## 
+##   ROC        Sens       Spec      
+##   0.7568734  0.9914938  0.04145786
+```
+
+```r
+# Make predictions on the testing set
+test$predicted_prob_logistic <- predict(logistic_cv, newdata = test, type = "prob")[, "Yes"]
+test$predicted_class_logistic <- ifelse(test$predicted_prob_logistic > 0.5, "Yes", "No")
+test$predicted_class_logistic <- factor(test$predicted_class_logistic, levels = c("No", "Yes"))
+```
+
+#### Model Performance 
+
+```r
+confusion_matrix_logistic <- confusionMatrix(test$predicted_class_logistic, test$SUD_MJ)
+print(confusion_matrix_logistic)
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    No   Yes
+##        No  12669  2101
+##        Yes   104    86
+##                                           
+##                Accuracy : 0.8526          
+##                  95% CI : (0.8468, 0.8583)
+##     No Information Rate : 0.8538          
+##     P-Value [Acc > NIR] : 0.6665          
+##                                           
+##                   Kappa : 0.0502          
+##                                           
+##  Mcnemar's Test P-Value : <2e-16          
+##                                           
+##             Sensitivity : 0.99186         
+##             Specificity : 0.03932         
+##          Pos Pred Value : 0.85775         
+##          Neg Pred Value : 0.45263         
+##              Prevalence : 0.85381         
+##          Detection Rate : 0.84686         
+##    Detection Prevalence : 0.98730         
+##       Balanced Accuracy : 0.51559         
+##                                           
+##        'Positive' Class : No              
+## 
+```
+
+```r
+# accuracy
+accuracy_logi <- confusion_matrix_logistic$overall['Accuracy']
+print(paste("Accuracy:", round(accuracy_logi, 2)))
+```
+
+```
+## [1] "Accuracy: 0.85"
+```
+
+```r
+# Precision, Recall, F1-Score
+precision_logi <- confusion_matrix_logistic$byClass['Pos Pred Value']
+recall_logi <- confusion_matrix_logistic$byClass['Sensitivity'] 
+F1_score_logi <- 2 * ((precision_logi * recall_logi) / (precision_logi + recall_logi))
+print(paste("Precision:", round(precision_logi, 2)))
+```
+
+```
+## [1] "Precision: 0.86"
+```
+
+```r
+print(paste("Recall:", round(recall_logi, 2)))
+```
+
+```
+## [1] "Recall: 0.99"
+```
+
+```r
+print(paste("F1-Score:", round(F1_score_logi, 2)))
+```
+
+```
+## [1] "F1-Score: 0.92"
+```
+
+```r
+# AUC
+pred <- prediction(test$predicted_prob, test$SUD_MJ)
+perf_auc <- performance(pred, measure = "auc")
+auc_value <- perf_auc@y.values[[1]]
+print(paste("AUC:", round(auc_value, 2)))
+```
+
+```
+## [1] "AUC: 0.76"
+```
+
+```r
+perf_roc <- performance(pred, measure = "tpr", x.measure = "fpr")
+plot(perf_roc, main = "ROC Curve", col = "red", lwd = 2)
+abline(a = 0, b = 1, lty = 2, col = "gray")
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+
+### 2. Random Forest
+
+```r
+# Train random forest model using training data 
+set.seed(123)
+rf_model<- randomForest(SUD_MJ ~ ., 
+                        data = train, 
+                        ntree = 500, 
+                        importance = TRUE)
+# Tune the Rf model by finding the optimal mtry value 
+# Select mtry value with minimum out of bag(OOB) error
+mtry <- tuneRF(train[, -ncol(train)],train$SUD_MJ, ntreeTry=500,
+               stepFactor=1.5,improve=0.01, trace=TRUE, plot=TRUE)
+```
+
+```
+## mtry = 3  OOB error = 14.7% 
+## Searching left ...
+## mtry = 2 	OOB error = 14.45% 
+## 0.01724524 0.01 
+## Searching right ...
+## mtry = 4 	OOB error = 15.11% 
+## -0.04603464 0.01
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+
+```r
+best.m <- mtry[mtry[, 2] == min(mtry[, 2]), 1]
+print(mtry)
+```
+
+```
+##       mtry  OOBError
+## 2.OOB    2 0.1444799
+## 3.OOB    3 0.1470152
+## 4.OOB    4 0.1511310
+```
+
+```r
+print(best.m)
+```
+
+```
+## [1] 2
+```
 
 
+```r
+# Refit the model using best mtry
+rf_tuned <- randomForest(SUD_MJ ~., data = train, ntree = 500, mtry = best.m, importance=TRUE)
+print(rf_tuned)
+```
 
+```
+## 
+## Call:
+##  randomForest(formula = SUD_MJ ~ ., data = train, ntree = 500,      mtry = best.m, importance = TRUE) 
+##                Type of random forest: classification
+##                      Number of trees: 500
+## No. of variables tried at each split: 2
+## 
+##         OOB estimate of  error rate: 14.46%
+## Confusion matrix:
+##        No Yes class.error
+## No  25969  12 0.000461876
+## Yes  4380  10 0.997722096
+```
+
+```r
+importance(rf_tuned) 
+```
+
+```
+##                    No         Yes MeanDecreaseAccuracy MeanDecreaseGini
+## age          31.62330  -6.8097770             33.69835        146.91830
+## sex          16.74189   1.1962322             16.26212         78.40928
+## race         16.05316  12.0027117             20.94219        239.61525
+## health       17.51914   7.5985078             20.50821         64.80729
+## marital      33.60580 -11.0479339             34.99733        186.22278
+## degree       19.76163   6.9917209             24.51384        138.35584
+## student      28.71188 -15.8802242             24.43010         64.41979
+## employ       34.21988 -10.8155253             30.61820        168.58646
+## family       29.49790  -9.4380882             27.59184        228.11015
+## kid          28.35491 -14.0350027             25.61441        131.15952
+## elderly      30.19227 -17.1138738             27.86301         76.28111
+## health_insur 11.14520   8.5301862             14.83579         56.18484
+## income       22.01537  -0.2403833             23.17022        131.46384
+## mentalhealth 35.57704  52.8341071             62.84015        820.61047
+```
+
+```r
+varImpPlot(rf_tuned)
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+
+```r
+# Higher the value of mean decrease accuracy or mean decrease gini score , higher the importance of the variable in the model. In the plot shown blow, mental health is most important variable.
+# Mean Decrease Accuracy - How much the model accuracy decreases if we drop that variable.
+# Mean Decrease Gini - Measure of variable importance based on the Gini impurity index used for the calculation of splits in trees.
+# Making predictions based on test data
+test$pred_prob_rf_tuned <- predict(rf_tuned, newdata = test, type = "prob")[, 2]
+test$pred_class_rf_tuned <- ifelse(test$pred_prob_rf_tuned > 0.5, "Yes", "No")
+# Print confusion matrix
+confusion_matrix_rf_tuned <- confusionMatrix(as.factor(test$pred_class_rf_tuned), test$SUD_MJ)
+print(confusion_matrix_rf_tuned)
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    No   Yes
+##        No  12771  2182
+##        Yes     2     5
+##                                           
+##                Accuracy : 0.854           
+##                  95% CI : (0.8483, 0.8596)
+##     No Information Rate : 0.8538          
+##     P-Value [Acc > NIR] : 0.478           
+##                                           
+##                   Kappa : 0.0036          
+##                                           
+##  Mcnemar's Test P-Value : <2e-16          
+##                                           
+##             Sensitivity : 0.999843        
+##             Specificity : 0.002286        
+##          Pos Pred Value : 0.854076        
+##          Neg Pred Value : 0.714286        
+##              Prevalence : 0.853810        
+##          Detection Rate : 0.853676        
+##    Detection Prevalence : 0.999532        
+##       Balanced Accuracy : 0.501065        
+##                                           
+##        'Positive' Class : No              
+## 
+```
+
+#### Model Performance
+
+```r
+# Accuracy
+accuracy_rf_tuned <- confusion_matrix_rf_tuned$overall['Accuracy']
+print(paste("Accuracy:", round(accuracy_rf_tuned, 2)))
+```
+
+```
+## [1] "Accuracy: 0.85"
+```
+
+```r
+# Precision, Recall, F1-Score
+precision_rf_tuned <- confusion_matrix_rf_tuned$byClass['Pos Pred Value']
+recall_rf_tuned <- confusion_matrix_rf_tuned$byClass['Sensitivity']
+F1_rf_tuned <- 2 * ((precision_rf_tuned * recall_rf_tuned) / (precision_rf_tuned + recall_rf_tuned))
+print(paste("Precision:", round(precision_rf_tuned, 2)))
+```
+
+```
+## [1] "Precision: 0.85"
+```
+
+```r
+print(paste("Recall:", round(recall_rf_tuned, 2)))
+```
+
+```
+## [1] "Recall: 1"
+```
+
+```r
+print(paste("F1-Score:", round(F1_rf_tuned, 2)))
+```
+
+```
+## [1] "F1-Score: 0.92"
+```
+
+```r
+# AUC
+pred_rf_tuned <- prediction(test$pred_prob_rf_tuned, test$SUD_MJ)
+auc_rf_tuned <- performance(pred_rf_tuned, "auc")
+auc_value_rf_tuned <- auc_rf_tuned@y.values[[1]]
+print(paste("AUC:", round(auc_value_rf_tuned, 2)))
+```
+
+```
+## [1] "AUC: 0.72"
+```
+
+```r
+roc_rf_tuned <- performance(pred_rf_tuned, measure = "tpr", x.measure = "fpr")
+plot(roc_rf_tuned, main="ROC Curve for Random Forest",col=2,lwd=2)
+abline(a=0,b=1,lwd=2,lty=2,col="gray")
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
+
+### 3. Gradient Boosting Model
+
+```r
+# One-hot encode using model.matrix
+train_matrix <- model.matrix(SUD_MJ ~ . - 1, data = train)
+test_matrix <- model.matrix(SUD_MJ ~ . - 1, data = test)
+
+# Convert the results to data frames
+train_encoded <- as.data.frame(train_matrix)
+test_encoded <- as.data.frame(test_matrix)
+
+# Ensure the target variable SUD_MJ is included
+train_encoded$SUD_MJ <- train$SUD_MJ
+test_encoded$SUD_MJ <- test$SUD_MJ
+
+# Identify numeric columns
+numeric_cols_train <- sapply(train_encoded, is.numeric)
+numeric_cols_test <- sapply(test_encoded, is.numeric)
+
+# Apply normalization (scaling)
+train_encoded[numeric_cols_train] <- scale(train_encoded[numeric_cols_train])
+test_encoded[numeric_cols_test] <- scale(test_encoded[numeric_cols_test])
+
+# Verify column names again after scaling
+identical(names(train_encoded), names(test_encoded))
+```
+
+```
+## [1] FALSE
+```
+
+
+```r
+# Set the seed for reproducibility
+set.seed(123)
+# 10-folds cross-validation to prevent overfitting
+trControl <- trainControl(method = "cv", 
+                          number = 10, 
+                          classProbs = TRUE, 
+                          summaryFunction = twoClassSummary,
+                          search = "grid")
+# tune the hyperparameters
+tuneGrid <- expand.grid(interaction.depth = c(1, 3, 5),  # Depth of each tree
+                        n.trees = c(50, 100, 150),       # Number of trees
+                        shrinkage = c(0.01, 0.1, 0.3),   # Learning rate
+                        n.minobsinnode = c(10, 20))
+# fit gbm model with train data
+gbm_model <- caret::train(SUD_MJ ~ ., 
+                          data = train_encoded, 
+                          method = "gbm", 
+                          trControl = trControl, 
+                          tuneGrid = tuneGrid, 
+                          metric = "ROC", 
+                          verbose = FALSE)
+print(gbm_model)
+```
+
+```
+## Stochastic Gradient Boosting 
+## 
+## 30371 samples
+##    56 predictor
+##     2 classes: 'No', 'Yes' 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 27333, 27334, 27334, 27334, 27334, 27334, ... 
+## Resampling results across tuning parameters:
+## 
+##   shrinkage  interaction.depth  n.minobsinnode  n.trees  ROC        Sens     
+##   0.01       1                  10               50      0.6606615  1.0000000
+##   0.01       1                  10              100      0.6775371  1.0000000
+##   0.01       1                  10              150      0.6894952  1.0000000
+##   0.01       1                  20               50      0.6610557  1.0000000
+##   0.01       1                  20              100      0.6789322  1.0000000
+##   0.01       1                  20              150      0.6884493  1.0000000
+##   0.01       3                  10               50      0.7043603  1.0000000
+##   0.01       3                  10              100      0.7100773  1.0000000
+##   0.01       3                  10              150      0.7131742  1.0000000
+##   0.01       3                  20               50      0.7040545  1.0000000
+##   0.01       3                  20              100      0.7097042  1.0000000
+##   0.01       3                  20              150      0.7132267  1.0000000
+##   0.01       5                  10               50      0.7101017  1.0000000
+##   0.01       5                  10              100      0.7157797  1.0000000
+##   0.01       5                  10              150      0.7191753  1.0000000
+##   0.01       5                  20               50      0.7096339  1.0000000
+##   0.01       5                  20              100      0.7154154  1.0000000
+##   0.01       5                  20              150      0.7191780  1.0000000
+##   0.10       1                  10               50      0.7136552  1.0000000
+##   0.10       1                  10              100      0.7297231  1.0000000
+##   0.10       1                  10              150      0.7382853  0.9999230
+##   0.10       1                  20               50      0.7147003  1.0000000
+##   0.10       1                  20              100      0.7297452  0.9999615
+##   0.10       1                  20              150      0.7394520  0.9999230
+##   0.10       3                  10               50      0.7357178  0.9998075
+##   0.10       3                  10              100      0.7475526  0.9979600
+##   0.10       3                  10              150      0.7516516  0.9950348
+##   0.10       3                  20               50      0.7356028  0.9998075
+##   0.10       3                  20              100      0.7476589  0.9976521
+##   0.10       3                  20              150      0.7515993  0.9950734
+##   0.10       5                  10               50      0.7431635  0.9987299
+##   0.10       5                  10              100      0.7507682  0.9945345
+##   0.10       5                  10              150      0.7527424  0.9918402
+##   0.10       5                  20               50      0.7433164  0.9987683
+##   0.10       5                  20              100      0.7505973  0.9940341
+##   0.10       5                  20              150      0.7521612  0.9916092
+##   0.30       1                  10               50      0.7387339  0.9997691
+##   0.30       1                  10              100      0.7501736  0.9973827
+##   0.30       1                  10              150      0.7533193  0.9944189
+##   0.30       1                  20               50      0.7381452  0.9998460
+##   0.30       1                  20              100      0.7496742  0.9979215
+##   0.30       1                  20              150      0.7532913  0.9947269
+##   0.30       3                  10               50      0.7506859  0.9932643
+##   0.30       3                  10              100      0.7516462  0.9888380
+##   0.30       3                  10              150      0.7514273  0.9866825
+##   0.30       3                  20               50      0.7504954  0.9937262
+##   0.30       3                  20              100      0.7517616  0.9898388
+##   0.30       3                  20              150      0.7510277  0.9875294
+##   0.30       5                  10               50      0.7490036  0.9893385
+##   0.30       5                  10              100      0.7486196  0.9844502
+##   0.30       5                  10              150      0.7461652  0.9827181
+##   0.30       5                  20               50      0.7511328  0.9898773
+##   0.30       5                  20              100      0.7502270  0.9868365
+##   0.30       5                  20              150      0.7482429  0.9846042
+##   Spec        
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0000000000
+##   0.0006833713
+##   0.0000000000
+##   0.0000000000
+##   0.0004555809
+##   0.0009111617
+##   0.0118451025
+##   0.0232346241
+##   0.0011389522
+##   0.0109339408
+##   0.0259681093
+##   0.0068337130
+##   0.0268792711
+##   0.0416856492
+##   0.0082004556
+##   0.0296127563
+##   0.0410022779
+##   0.0009111617
+##   0.0136674260
+##   0.0271070615
+##   0.0009111617
+##   0.0109339408
+##   0.0266514806
+##   0.0328018223
+##   0.0530751708
+##   0.0587699317
+##   0.0264236902
+##   0.0453302961
+##   0.0569476082
+##   0.0507972665
+##   0.0617312073
+##   0.0710706150
+##   0.0503416856
+##   0.0660592255
+##   0.0706150342
+## 
+## ROC was used to select the optimal model using the largest value.
+## The final values used for the model were n.trees = 150, interaction.depth =
+##  1, shrinkage = 0.3 and n.minobsinnode = 10.
+```
+
+
+```r
+best_params <- gbm_model$bestTune
+print(best_params)
+```
+
+```
+##    n.trees interaction.depth shrinkage n.minobsinnode
+## 39     150                 1       0.3             10
+```
+
+
+```r
+# Convert target variable to numeric (0 and 1)
+train_encoded$SUD_MJ <- ifelse(train_encoded$SUD_MJ == "Yes", 1, 0)
+test_encoded$SUD_MJ <- ifelse(test_encoded$SUD_MJ == "Yes", 1, 0)
+
+gbm_best <- gbm::gbm(SUD_MJ ~ ., 
+                      data = train_encoded, 
+                      distribution = "bernoulli", 
+                      n.trees = best_params$n.trees, 
+                      interaction.depth = best_params$interaction.depth, 
+                      shrinkage = best_params$shrinkage, 
+                      n.minobsinnode = best_params$n.minobsinnode, 
+                      cv.folds = 10, 
+                      keep.data = TRUE, 
+                      verbose = FALSE)
+summary(gbm_best)
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-27-1.png)<!-- --><div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["var"],"name":[1],"type":["chr"],"align":["left"]},{"label":["rel.inf"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"age2","2":"16.3186532","_rn_":"age2"},{"1":"marital1","2":"12.1920714","_rn_":"marital1"},{"1":"age4","2":"4.6200249","_rn_":"age4"},{"1":"degree3","2":"4.5242165","_rn_":"degree3"},{"1":"sex1","2":"3.2530688","_rn_":"sex1"},{"1":"mentalhealth12","2":"3.2152945","_rn_":"mentalhealth12"},{"1":"mentalhealth16","2":"3.2121709","_rn_":"mentalhealth16"},{"1":"mentalhealth24","2":"3.0395127","_rn_":"mentalhealth24"},{"1":"mentalhealth18","2":"2.9633906","_rn_":"mentalhealth18"},{"1":"mentalhealth14","2":"2.8545466","_rn_":"mentalhealth14"},{"1":"race5","2":"2.7746464","_rn_":"race5"},{"1":"mentalhealth20","2":"2.6907415","_rn_":"mentalhealth20"},{"1":"mentalhealth15","2":"2.5779868","_rn_":"mentalhealth15"},{"1":"health1","2":"2.5605541","_rn_":"health1"},{"1":"mentalhealth17","2":"2.5167799","_rn_":"mentalhealth17"},{"1":"student1","2":"2.4710658","_rn_":"student1"},{"1":"mentalhealth13","2":"2.2665946","_rn_":"mentalhealth13"},{"1":"mentalhealth9","2":"2.1260470","_rn_":"mentalhealth9"},{"1":"mentalhealth10","2":"2.1120305","_rn_":"mentalhealth10"},{"1":"income3","2":"2.0763541","_rn_":"income3"},{"1":"mentalhealth11","2":"1.9515746","_rn_":"mentalhealth11"},{"1":"mentalhealth22","2":"1.6168500","_rn_":"mentalhealth22"},{"1":"mentalhealth21","2":"1.6027575","_rn_":"mentalhealth21"},{"1":"mentalhealth19","2":"1.4875027","_rn_":"mentalhealth19"},{"1":"mentalhealth1","2":"1.4696651","_rn_":"mentalhealth1"},{"1":"race6","2":"1.3568273","_rn_":"race6"},{"1":"mentalhealth7","2":"1.2683412","_rn_":"mentalhealth7"},{"1":"mentalhealth8","2":"1.2458004","_rn_":"mentalhealth8"},{"1":"mentalhealth23","2":"1.2213087","_rn_":"mentalhealth23"},{"1":"race3","2":"1.1297726","_rn_":"race3"},{"1":"mentalhealth6","2":"0.8755914","_rn_":"mentalhealth6"},{"1":"family2","2":"0.8431360","_rn_":"family2"},{"1":"race2","2":"0.7549786","_rn_":"race2"},{"1":"kid3","2":"0.4569654","_rn_":"kid3"},{"1":"race7","2":"0.4331358","_rn_":"race7"},{"1":"employ4","2":"0.3091339","_rn_":"employ4"},{"1":"mentalhealth4","2":"0.2937680","_rn_":"mentalhealth4"},{"1":"mentalhealth2","2":"0.2901376","_rn_":"mentalhealth2"},{"1":"marital2","2":"0.2706359","_rn_":"marital2"},{"1":"family6","2":"0.2697946","_rn_":"family6"},{"1":"employ2","2":"0.2350592","_rn_":"employ2"},{"1":"mentalhealth5","2":"0.1296869","_rn_":"mentalhealth5"},{"1":"elderly1","2":"0.1218257","_rn_":"elderly1"},{"1":"age3","2":"0.0000000","_rn_":"age3"},{"1":"race4","2":"0.0000000","_rn_":"race4"},{"1":"degree2","2":"0.0000000","_rn_":"degree2"},{"1":"employ3","2":"0.0000000","_rn_":"employ3"},{"1":"family3","2":"0.0000000","_rn_":"family3"},{"1":"family4","2":"0.0000000","_rn_":"family4"},{"1":"family5","2":"0.0000000","_rn_":"family5"},{"1":"kid1","2":"0.0000000","_rn_":"kid1"},{"1":"kid2","2":"0.0000000","_rn_":"kid2"},{"1":"elderly2","2":"0.0000000","_rn_":"elderly2"},{"1":"health_insur1","2":"0.0000000","_rn_":"health_insur1"},{"1":"income2","2":"0.0000000","_rn_":"income2"},{"1":"mentalhealth3","2":"0.0000000","_rn_":"mentalhealth3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+#### Model Performance
+
+```r
+# Make predictions on the testing set
+test_encoded$predicted_prob_gbm <- predict(gbm_best, newdata = test_encoded, n.trees = best_params$n.trees, type = "response")
+test_encoded$predicted_class_gbm <- ifelse(test_encoded$predicted_prob_gbm > 0.5, 1, 0)
+
+# Confusion matrix to evaluate the GBM model on the testing set
+confusion_matrix_test_gbm <- confusionMatrix(as.factor(test_encoded$predicted_class_gbm), as.factor(test_encoded$SUD_MJ))
+print(confusion_matrix_test_gbm)
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction     0     1
+##          0 12719  2125
+##          1    54    62
+##                                         
+##                Accuracy : 0.8543        
+##                  95% CI : (0.8486, 0.86)
+##     No Information Rate : 0.8538        
+##     P-Value [Acc > NIR] : 0.4321        
+##                                         
+##                   Kappa : 0.0397        
+##                                         
+##  Mcnemar's Test P-Value : <2e-16        
+##                                         
+##             Sensitivity : 0.99577       
+##             Specificity : 0.02835       
+##          Pos Pred Value : 0.85684       
+##          Neg Pred Value : 0.53448       
+##              Prevalence : 0.85381       
+##          Detection Rate : 0.85020       
+##    Detection Prevalence : 0.99225       
+##       Balanced Accuracy : 0.51206       
+##                                         
+##        'Positive' Class : 0             
+## 
+```
+
+```r
+# Calculate and print performance metrics for the GBM model on the testing set
+accuracy_test_gbm <- confusion_matrix_test_gbm$overall['Accuracy']
+print(paste("Accuracy:", round(accuracy_test_gbm, 2)))
+```
+
+```
+## [1] "Accuracy: 0.85"
+```
+
+```r
+precision_test_gbm <- confusion_matrix_test_gbm$byClass['Pos Pred Value']
+recall_test_gbm <- confusion_matrix_test_gbm$byClass['Sensitivity']
+f1_score_test_gbm <- 2 * ((precision_test_gbm * recall_test_gbm) / (precision_test_gbm + recall_test_gbm))
+
+print(paste("Precision:", round(precision_test_gbm, 2)))
+```
+
+```
+## [1] "Precision: 0.86"
+```
+
+```r
+print(paste("Recall:", round(recall_test_gbm, 2)))
+```
+
+```
+## [1] "Recall: 1"
+```
+
+```r
+print(paste("F1-Score:", round(f1_score_test_gbm, 2)))
+```
+
+```
+## [1] "F1-Score: 0.92"
+```
+
+```r
+# Using ROCR to calculate AUC and plot ROC curve for the GBM model
+pred_gbm <- prediction(test_encoded$predicted_prob_gbm, test_encoded$SUD_MJ)
+perf_auc_gbm <- performance(pred_gbm, measure = "auc")
+auc_value_gbm <- perf_auc_gbm@y.values[[1]]
+print(paste("AUC:", round(auc_value_gbm, 2)))
+```
+
+```
+## [1] "AUC: 0.76"
+```
+
+```r
+# Performance object for ROC
+perf_roc_gbm <- performance(pred_gbm, measure = "tpr", x.measure = "fpr")
+
+# Plot the ROC curve for the GBM model
+plot(perf_roc_gbm, main = "ROC Curve for GBM", col = "blue", lwd = 2)
+abline(a = 0, b = 1, lty = 2, col = "gray")
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-28-1.png)<!-- -->

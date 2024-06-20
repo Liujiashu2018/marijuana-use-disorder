@@ -137,7 +137,7 @@ varImpPlot(rf_tuned)
 # Mean Decrease Gini - Measure of variable importance based on the Gini impurity index used for the calculation of splits in trees.
 # Making predictions based on test data
 test$pred_prob_rf_tuned <- predict(rf_tuned, newdata = test, type = "prob")[, 2]
-test$pred_class_rf_tuned <- ifelse(test$pred_prob_rf_tuned > 0.5, 1, 0)
+test$pred_class_rf_tuned <- ifelse(test$pred_prob_rf_tuned > 0.5, "Yes", "No")
 confusion_matrix_rf_tuned <- confusionMatrix(as.factor(test$pred_class_rf_tuned), test$SUD_MJ)
 print(confusion_matrix_rf_tuned)
 ```
