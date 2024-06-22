@@ -105,23 +105,23 @@ codebook %>%
 ```
 
 ```{=html}
-<div id="vgukgcjrjq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#vgukgcjrjq table {
+<div id="bxlxuckeks" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bxlxuckeks table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#vgukgcjrjq thead, #vgukgcjrjq tbody, #vgukgcjrjq tfoot, #vgukgcjrjq tr, #vgukgcjrjq td, #vgukgcjrjq th {
+#bxlxuckeks thead, #bxlxuckeks tbody, #bxlxuckeks tfoot, #bxlxuckeks tr, #bxlxuckeks td, #bxlxuckeks th {
   border-style: none;
 }
 
-#vgukgcjrjq p {
+#bxlxuckeks p {
   margin: 0;
   padding: 0;
 }
 
-#vgukgcjrjq .gt_table {
+#bxlxuckeks .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -147,12 +147,12 @@ codebook %>%
   border-left-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_caption {
+#bxlxuckeks .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#vgukgcjrjq .gt_title {
+#bxlxuckeks .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -164,7 +164,7 @@ codebook %>%
   border-bottom-width: 0;
 }
 
-#vgukgcjrjq .gt_subtitle {
+#bxlxuckeks .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -176,7 +176,7 @@ codebook %>%
   border-top-width: 0;
 }
 
-#vgukgcjrjq .gt_heading {
+#bxlxuckeks .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -188,13 +188,13 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_bottom_border {
+#bxlxuckeks .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_col_headings {
+#bxlxuckeks .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -209,7 +209,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_col_heading {
+#bxlxuckeks .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -229,7 +229,7 @@ codebook %>%
   overflow-x: hidden;
 }
 
-#vgukgcjrjq .gt_column_spanner_outer {
+#bxlxuckeks .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -241,15 +241,15 @@ codebook %>%
   padding-right: 4px;
 }
 
-#vgukgcjrjq .gt_column_spanner_outer:first-child {
+#bxlxuckeks .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vgukgcjrjq .gt_column_spanner_outer:last-child {
+#bxlxuckeks .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vgukgcjrjq .gt_column_spanner {
+#bxlxuckeks .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -261,11 +261,11 @@ codebook %>%
   width: 100%;
 }
 
-#vgukgcjrjq .gt_spanner_row {
+#bxlxuckeks .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#vgukgcjrjq .gt_group_heading {
+#bxlxuckeks .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -291,7 +291,7 @@ codebook %>%
   text-align: left;
 }
 
-#vgukgcjrjq .gt_empty_group_heading {
+#bxlxuckeks .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -306,15 +306,15 @@ codebook %>%
   vertical-align: middle;
 }
 
-#vgukgcjrjq .gt_from_md > :first-child {
+#bxlxuckeks .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vgukgcjrjq .gt_from_md > :last-child {
+#bxlxuckeks .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vgukgcjrjq .gt_row {
+#bxlxuckeks .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -333,7 +333,7 @@ codebook %>%
   overflow-x: hidden;
 }
 
-#vgukgcjrjq .gt_stub {
+#bxlxuckeks .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -346,7 +346,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#vgukgcjrjq .gt_stub_row_group {
+#bxlxuckeks .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -360,15 +360,15 @@ codebook %>%
   vertical-align: top;
 }
 
-#vgukgcjrjq .gt_row_group_first td {
+#bxlxuckeks .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#vgukgcjrjq .gt_row_group_first th {
+#bxlxuckeks .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#vgukgcjrjq .gt_summary_row {
+#bxlxuckeks .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -378,16 +378,16 @@ codebook %>%
   padding-right: 5px;
 }
 
-#vgukgcjrjq .gt_first_summary_row {
+#bxlxuckeks .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_first_summary_row.thick {
+#bxlxuckeks .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#vgukgcjrjq .gt_last_summary_row {
+#bxlxuckeks .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -397,7 +397,7 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_grand_summary_row {
+#bxlxuckeks .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -407,7 +407,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#vgukgcjrjq .gt_first_grand_summary_row {
+#bxlxuckeks .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -417,7 +417,7 @@ codebook %>%
   border-top-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_last_grand_summary_row_top {
+#bxlxuckeks .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -427,11 +427,11 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_striped {
+#bxlxuckeks .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vgukgcjrjq .gt_table_body {
+#bxlxuckeks .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -440,7 +440,7 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_footnotes {
+#bxlxuckeks .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -454,7 +454,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_footnote {
+#bxlxuckeks .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -463,7 +463,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#vgukgcjrjq .gt_sourcenotes {
+#bxlxuckeks .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -477,7 +477,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#vgukgcjrjq .gt_sourcenote {
+#bxlxuckeks .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -485,63 +485,63 @@ codebook %>%
   padding-right: 5px;
 }
 
-#vgukgcjrjq .gt_left {
+#bxlxuckeks .gt_left {
   text-align: left;
 }
 
-#vgukgcjrjq .gt_center {
+#bxlxuckeks .gt_center {
   text-align: center;
 }
 
-#vgukgcjrjq .gt_right {
+#bxlxuckeks .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vgukgcjrjq .gt_font_normal {
+#bxlxuckeks .gt_font_normal {
   font-weight: normal;
 }
 
-#vgukgcjrjq .gt_font_bold {
+#bxlxuckeks .gt_font_bold {
   font-weight: bold;
 }
 
-#vgukgcjrjq .gt_font_italic {
+#bxlxuckeks .gt_font_italic {
   font-style: italic;
 }
 
-#vgukgcjrjq .gt_super {
+#bxlxuckeks .gt_super {
   font-size: 65%;
 }
 
-#vgukgcjrjq .gt_footnote_marks {
+#bxlxuckeks .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#vgukgcjrjq .gt_asterisk {
+#bxlxuckeks .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#vgukgcjrjq .gt_indent_1 {
+#bxlxuckeks .gt_indent_1 {
   text-indent: 5px;
 }
 
-#vgukgcjrjq .gt_indent_2 {
+#bxlxuckeks .gt_indent_2 {
   text-indent: 10px;
 }
 
-#vgukgcjrjq .gt_indent_3 {
+#bxlxuckeks .gt_indent_3 {
   text-indent: 15px;
 }
 
-#vgukgcjrjq .gt_indent_4 {
+#bxlxuckeks .gt_indent_4 {
   text-indent: 20px;
 }
 
-#vgukgcjrjq .gt_indent_5 {
+#bxlxuckeks .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -779,7 +779,6 @@ p1.1
 ![](Final_Writeup_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 **Sex**
-
 From the bar plot, we can see that the percentage of males having a marijuana use disorder in 2022 is slightly higher than that of females, with 17% of males and 12.5% of females affected.
 
 ```r
@@ -838,23 +837,23 @@ highlighted_table
 ```
 
 ```{=html}
-<div id="oqyoszcmnm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#oqyoszcmnm table {
+<div id="jzgtqruehs" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jzgtqruehs table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#oqyoszcmnm thead, #oqyoszcmnm tbody, #oqyoszcmnm tfoot, #oqyoszcmnm tr, #oqyoszcmnm td, #oqyoszcmnm th {
+#jzgtqruehs thead, #jzgtqruehs tbody, #jzgtqruehs tfoot, #jzgtqruehs tr, #jzgtqruehs td, #jzgtqruehs th {
   border-style: none;
 }
 
-#oqyoszcmnm p {
+#jzgtqruehs p {
   margin: 0;
   padding: 0;
 }
 
-#oqyoszcmnm .gt_table {
+#jzgtqruehs .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -880,12 +879,12 @@ highlighted_table
   border-left-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_caption {
+#jzgtqruehs .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#oqyoszcmnm .gt_title {
+#jzgtqruehs .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -897,7 +896,7 @@ highlighted_table
   border-bottom-width: 0;
 }
 
-#oqyoszcmnm .gt_subtitle {
+#jzgtqruehs .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -909,7 +908,7 @@ highlighted_table
   border-top-width: 0;
 }
 
-#oqyoszcmnm .gt_heading {
+#jzgtqruehs .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -921,13 +920,13 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_bottom_border {
+#jzgtqruehs .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_col_headings {
+#jzgtqruehs .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -942,7 +941,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_col_heading {
+#jzgtqruehs .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -962,7 +961,7 @@ highlighted_table
   overflow-x: hidden;
 }
 
-#oqyoszcmnm .gt_column_spanner_outer {
+#jzgtqruehs .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -974,15 +973,15 @@ highlighted_table
   padding-right: 4px;
 }
 
-#oqyoszcmnm .gt_column_spanner_outer:first-child {
+#jzgtqruehs .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#oqyoszcmnm .gt_column_spanner_outer:last-child {
+#jzgtqruehs .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#oqyoszcmnm .gt_column_spanner {
+#jzgtqruehs .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -994,11 +993,11 @@ highlighted_table
   width: 100%;
 }
 
-#oqyoszcmnm .gt_spanner_row {
+#jzgtqruehs .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#oqyoszcmnm .gt_group_heading {
+#jzgtqruehs .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1024,7 +1023,7 @@ highlighted_table
   text-align: left;
 }
 
-#oqyoszcmnm .gt_empty_group_heading {
+#jzgtqruehs .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1039,15 +1038,15 @@ highlighted_table
   vertical-align: middle;
 }
 
-#oqyoszcmnm .gt_from_md > :first-child {
+#jzgtqruehs .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#oqyoszcmnm .gt_from_md > :last-child {
+#jzgtqruehs .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#oqyoszcmnm .gt_row {
+#jzgtqruehs .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1066,7 +1065,7 @@ highlighted_table
   overflow-x: hidden;
 }
 
-#oqyoszcmnm .gt_stub {
+#jzgtqruehs .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1079,7 +1078,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#oqyoszcmnm .gt_stub_row_group {
+#jzgtqruehs .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1093,15 +1092,15 @@ highlighted_table
   vertical-align: top;
 }
 
-#oqyoszcmnm .gt_row_group_first td {
+#jzgtqruehs .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#oqyoszcmnm .gt_row_group_first th {
+#jzgtqruehs .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#oqyoszcmnm .gt_summary_row {
+#jzgtqruehs .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1111,16 +1110,16 @@ highlighted_table
   padding-right: 5px;
 }
 
-#oqyoszcmnm .gt_first_summary_row {
+#jzgtqruehs .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_first_summary_row.thick {
+#jzgtqruehs .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#oqyoszcmnm .gt_last_summary_row {
+#jzgtqruehs .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1130,7 +1129,7 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_grand_summary_row {
+#jzgtqruehs .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1140,7 +1139,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#oqyoszcmnm .gt_first_grand_summary_row {
+#jzgtqruehs .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1150,7 +1149,7 @@ highlighted_table
   border-top-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_last_grand_summary_row_top {
+#jzgtqruehs .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1160,11 +1159,11 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_striped {
+#jzgtqruehs .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#oqyoszcmnm .gt_table_body {
+#jzgtqruehs .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1173,7 +1172,7 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_footnotes {
+#jzgtqruehs .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1187,7 +1186,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_footnote {
+#jzgtqruehs .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1196,7 +1195,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#oqyoszcmnm .gt_sourcenotes {
+#jzgtqruehs .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1210,7 +1209,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#oqyoszcmnm .gt_sourcenote {
+#jzgtqruehs .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1218,63 +1217,63 @@ highlighted_table
   padding-right: 5px;
 }
 
-#oqyoszcmnm .gt_left {
+#jzgtqruehs .gt_left {
   text-align: left;
 }
 
-#oqyoszcmnm .gt_center {
+#jzgtqruehs .gt_center {
   text-align: center;
 }
 
-#oqyoszcmnm .gt_right {
+#jzgtqruehs .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#oqyoszcmnm .gt_font_normal {
+#jzgtqruehs .gt_font_normal {
   font-weight: normal;
 }
 
-#oqyoszcmnm .gt_font_bold {
+#jzgtqruehs .gt_font_bold {
   font-weight: bold;
 }
 
-#oqyoszcmnm .gt_font_italic {
+#jzgtqruehs .gt_font_italic {
   font-style: italic;
 }
 
-#oqyoszcmnm .gt_super {
+#jzgtqruehs .gt_super {
   font-size: 65%;
 }
 
-#oqyoszcmnm .gt_footnote_marks {
+#jzgtqruehs .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#oqyoszcmnm .gt_asterisk {
+#jzgtqruehs .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#oqyoszcmnm .gt_indent_1 {
+#jzgtqruehs .gt_indent_1 {
   text-indent: 5px;
 }
 
-#oqyoszcmnm .gt_indent_2 {
+#jzgtqruehs .gt_indent_2 {
   text-indent: 10px;
 }
 
-#oqyoszcmnm .gt_indent_3 {
+#jzgtqruehs .gt_indent_3 {
   text-indent: 15px;
 }
 
-#oqyoszcmnm .gt_indent_4 {
+#jzgtqruehs .gt_indent_4 {
   text-indent: 20px;
 }
 
-#oqyoszcmnm .gt_indent_5 {
+#jzgtqruehs .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1411,7 +1410,6 @@ p4
 ![](Final_Writeup_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 **Education**
-
 The bar plot on the left displays the distribution of marijuana use disorder (SUD_MJ) among individuals with different educational levels. The variable "degree" shows the highest degree repsondents obtained, and is categorized into three groups: "without high school degree", "high school degree", and "higher (associate's degree/college graduate or higher)". The percentages of individuals with and without SUD_MJ within each educational group are displayed on the bars.
 
 - Among individuals without a high school degree, 18.6% have a marijuana use disorder, while 81.4% do not.
@@ -1603,7 +1601,11 @@ results_df
 </div>
 
 # Model Fitting
-### Splitting Training and Testing Set
+
+In the model fitting section, I use the cleaned dataset sud_2022 with selected predictors. Before applying the machine learning classification models, I first examined the outcome variable, marijuana use disorder (SUD_MJ). The outcome shows that our data is highly imbalanced, with 15% of individuals having SUD_MJ = 'Yes' and 85% having SUD_MJ = 'No'. This imbalance needs to be addressed to ensure that the classification models perform effectively and do not bias towards the majority class. 
+
+I split the dataset into 67% for training and 33% for testing. To avoid overfitting, I initiated a 10-fold cross-validation that can be used later in the models.
+
 
 ```r
 # Load in dataset
@@ -1679,22 +1681,8 @@ test <- NSDUH_2022[-split_size, ]
 # Otherwise this will lead to errors in trainControl
 levels(train$SUD_MJ) <- c("No", "Yes")
 levels(test$SUD_MJ) <- c("No", "Yes")
-levels(train$SUD_MJ)
-```
-
-```
-## [1] "No"  "Yes"
-```
-
-```r
-levels(test$SUD_MJ)
-```
-
-```
-## [1] "No"  "Yes"
-```
-
-```r
+#levels(train$SUD_MJ)
+#levels(test$SUD_MJ)
 # Stratified cross-validation
 trControl <- trainControl(method = "cv", 
                           number = 10, 
@@ -1703,6 +1691,9 @@ trControl <- trainControl(method = "cv",
 ```
 
 ### 1. Logistic Regression
+
+I first start with modeling using logistic regression, as it is one of the most straightforward and interpretable models that is suitable for binary classification tasks. The logistic regression model allows us to estimate the probability that a given input belongs to a specific class (in this case, whether an individual has marijuana use disorder). It could serve as a good baseline model against which more complex models can be compared.
+
 
 ```r
 # Train logistic regression model on training set
@@ -1713,26 +1704,8 @@ logistic_cv <- caret::train(SUD_MJ ~ .,
                                   family = binomial, 
                                   trControl = trControl, # using cv to avoid overfitting
                                   metric = "ROC")
-print(logistic_cv)
-```
+# print(logistic_cv)
 
-```
-## Generalized Linear Model 
-## 
-## 30371 samples
-##    14 predictor
-##     2 classes: 'No', 'Yes' 
-## 
-## No pre-processing
-## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 27333, 27334, 27334, 27334, 27334, 27334, ... 
-## Resampling results:
-## 
-##   ROC        Sens       Spec      
-##   0.7568734  0.9914938  0.04145786
-```
-
-```r
 # Make predictions on the testing set
 test$predicted_prob_logistic <- predict(logistic_cv, newdata = test, type = "prob")[, "Yes"]
 test$predicted_class_logistic <- ifelse(test$predicted_prob_logistic > 0.5, "Yes", "No")
@@ -1740,6 +1713,18 @@ test$predicted_class_logistic <- factor(test$predicted_class_logistic, levels = 
 ```
 
 #### Model Performance 
+
+After fitting the logistic regression model to the training data and making predictions on the test data, I evaluated the model's performance using a confusion matrix and various performance metrics.
+
+- Accuracy: The model achieved an accuracy of 85.26%, indicating that in general, 85.26% of the predictions made by the model were correct.
+- Precision: The precision, or positive predictive value, is 85.78%, meaning that 85.78% of the individuals predicted to not have SUD_MJ actually do not have it.
+- Specificity: The specificity in this model is very low at 3.93%, indicating that the model struggled to correctly identify individuals with SUD_MJ.
+- Recall: The recall rate, also called sensitivity, is 99.19%, meaning that the model correctly identified 99.19% of the individuals who do not have SUD_MJ.
+- F1-Score: The F1-score is 92%, providing a balance between precision and recall.
+- AUC: The AUC is 0.76, indicating that the model has a fair ability to distinguish between the two classes.
+
+The model's high sensitivity but low specificity highlight the challenges of correctly identifying respondents with SUD_MJ with this imbalanced dataset. In the context of an imbalanced dataset, traditional metrics like accuracy can be misleading because they are dominated by the majority class. AUC (Area Under the Curve) is a more reliable measure in this case , as it measures the ability of the model to discriminate between the positive and negative classes across different threshold settings. An AUC of 0.76 suggests that the model has a fair ability to distinguish between individuals with and without SUD_MJ.
+
 
 ```r
 confusion_matrix_logistic <- confusionMatrix(test$predicted_class_logistic, test$SUD_MJ)
@@ -1832,9 +1817,14 @@ plot(perf_roc, main = "ROC Curve", col = "red", lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
 
 ### 2. Random Forest
+
+I further employed the random forest model to tackle the binary classification problem of predicting marijuana use disorder (SUD_MJ). Unlike logistic regression, which is a linear model, the random forest is a non-linear model capable of capturing more complex relationships between features. Additionally, the random forest model provides feature importance metrics, which help identify the most relevant features for the classification task.
+
+The model was initially trained on the training data with 500 trees, and the number of variables tried at each split (mtry) was set to the optimal value found during tuning. The optimal mtry value was determined by tuning the model to minimize the Out-Of-Bag (OOB) error estimate. The OOB error estimate serves as an internal validation metric for the model, providing an unbiased estimate of the prediction error. The random forest model achieved a minimum OOB error rate of 14.48%, indicating that approximately 14.48% of the predictions made by the model on the training data were incorrect. I selected the mtry value that corresponded to the lowest OOB error rate for the final model.
+
 
 ```r
 # Train random forest model using training data 
@@ -1859,7 +1849,7 @@ mtry <- tuneRF(train[, -ncol(train)],train$SUD_MJ, ntreeTry=500,
 ## -0.04603464 0.01
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
 
 ```r
 best.m <- mtry[mtry[, 2] == min(mtry[, 2]), 1]
@@ -1880,6 +1870,8 @@ print(best.m)
 ```
 ## [1] 2
 ```
+
+In the next step, I refit the model using the best mtry value (mtry = 2), generate variable importance plots, and make predictions using the testing data. The variable importance plot highlights the most influential predictors in the Random Forest model. According to the Mean Decrease Accuracy and Mean Decrease Gini metrics, 'mentalhealth', 'age', 'race', 'marital', 'family', and 'employ' were among the most important variables for predicting SUD_MJ. The Mean Decrease Accuracy measures the reduction in model accuracy when a variable is excluded, while the Mean Decrease Gini indicates the total decrease in node impurity that a variable contributes across all trees in the forest.
 
 
 ```r
@@ -1929,7 +1921,7 @@ importance(rf_tuned)
 varImpPlot(rf_tuned)
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
 
 ```r
 # Higher the value of mean decrease accuracy or mean decrease gini score , higher the importance of the variable in the model. In the plot shown blow, mental health is most important variable.
@@ -1940,6 +1932,20 @@ test$pred_prob_rf_tuned <- predict(rf_tuned, newdata = test, type = "prob")[, 2]
 test$pred_class_rf_tuned <- ifelse(test$pred_prob_rf_tuned > 0.5, "Yes", "No")
 # Print confusion matrix
 confusion_matrix_rf_tuned <- confusionMatrix(as.factor(test$pred_class_rf_tuned), test$SUD_MJ)
+```
+
+#### Model Performance
+
+- Accuracy: Evaluating on the testing data, the Random Forest model achieved an accuracy of 85.41%, with a 95% confidence interval ranging from 84.83% to 85.97%.
+- Precision: The precision is 85.41%, meaning that when the model predicted "No" for SUD_MJ, it was correct 85.41% of the time.
+- Recall (sensitivity): In this model, the recall rate is extremely high at 99.99%, indicating that the model correctly identified nearly all individuals without SUD_MJ.
+- Specificity: The specificity is very low at 0.23%, reflecting the model's difficulty in correctly identifying individuals with SUD_MJ. 
+- F1-Score: The F1-Score is 92%, providing a balance between precision and recall.
+- AUC: The AUC for the random forest model is 0.72, which is even lower than that of the logistic regression model. 
+
+
+```r
+# Accuracy
 print(confusion_matrix_rf_tuned)
 ```
 
@@ -1973,10 +1979,7 @@ print(confusion_matrix_rf_tuned)
 ## 
 ```
 
-#### Model Performance
-
 ```r
-# Accuracy
 accuracy_rf_tuned <- confusion_matrix_rf_tuned$overall['Accuracy']
 print(paste("Accuracy:", round(accuracy_rf_tuned, 2)))
 ```
@@ -2031,7 +2034,7 @@ plot(roc_rf_tuned, main="ROC Curve for Random Forest",col=2,lwd=2)
 abline(a=0,b=1,lwd=2,lty=2,col="gray")
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
 
 ### 3. Gradient Boosting Model
 
@@ -2248,7 +2251,7 @@ gbm_best <- gbm::gbm(SUD_MJ ~ .,
 summary(gbm_best)
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-27-1.png)<!-- --><div data-pagedtable="false">
+![](Final_Writeup_files/figure-html/unnamed-chunk-25-1.png)<!-- --><div data-pagedtable="false">
   <script data-pagedtable-source type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["var"],"name":[1],"type":["chr"],"align":["left"]},{"label":["rel.inf"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"age2","2":"16.3186532","_rn_":"age2"},{"1":"marital1","2":"12.1920714","_rn_":"marital1"},{"1":"age4","2":"4.6200249","_rn_":"age4"},{"1":"degree3","2":"4.5242165","_rn_":"degree3"},{"1":"sex1","2":"3.2530688","_rn_":"sex1"},{"1":"mentalhealth12","2":"3.2152945","_rn_":"mentalhealth12"},{"1":"mentalhealth16","2":"3.2121709","_rn_":"mentalhealth16"},{"1":"mentalhealth24","2":"3.0395127","_rn_":"mentalhealth24"},{"1":"mentalhealth18","2":"2.9633906","_rn_":"mentalhealth18"},{"1":"mentalhealth14","2":"2.8545466","_rn_":"mentalhealth14"},{"1":"race5","2":"2.7746464","_rn_":"race5"},{"1":"mentalhealth20","2":"2.6907415","_rn_":"mentalhealth20"},{"1":"mentalhealth15","2":"2.5779868","_rn_":"mentalhealth15"},{"1":"health1","2":"2.5605541","_rn_":"health1"},{"1":"mentalhealth17","2":"2.5167799","_rn_":"mentalhealth17"},{"1":"student1","2":"2.4710658","_rn_":"student1"},{"1":"mentalhealth13","2":"2.2665946","_rn_":"mentalhealth13"},{"1":"mentalhealth9","2":"2.1260470","_rn_":"mentalhealth9"},{"1":"mentalhealth10","2":"2.1120305","_rn_":"mentalhealth10"},{"1":"income3","2":"2.0763541","_rn_":"income3"},{"1":"mentalhealth11","2":"1.9515746","_rn_":"mentalhealth11"},{"1":"mentalhealth22","2":"1.6168500","_rn_":"mentalhealth22"},{"1":"mentalhealth21","2":"1.6027575","_rn_":"mentalhealth21"},{"1":"mentalhealth19","2":"1.4875027","_rn_":"mentalhealth19"},{"1":"mentalhealth1","2":"1.4696651","_rn_":"mentalhealth1"},{"1":"race6","2":"1.3568273","_rn_":"race6"},{"1":"mentalhealth7","2":"1.2683412","_rn_":"mentalhealth7"},{"1":"mentalhealth8","2":"1.2458004","_rn_":"mentalhealth8"},{"1":"mentalhealth23","2":"1.2213087","_rn_":"mentalhealth23"},{"1":"race3","2":"1.1297726","_rn_":"race3"},{"1":"mentalhealth6","2":"0.8755914","_rn_":"mentalhealth6"},{"1":"family2","2":"0.8431360","_rn_":"family2"},{"1":"race2","2":"0.7549786","_rn_":"race2"},{"1":"kid3","2":"0.4569654","_rn_":"kid3"},{"1":"race7","2":"0.4331358","_rn_":"race7"},{"1":"employ4","2":"0.3091339","_rn_":"employ4"},{"1":"mentalhealth4","2":"0.2937680","_rn_":"mentalhealth4"},{"1":"mentalhealth2","2":"0.2901376","_rn_":"mentalhealth2"},{"1":"marital2","2":"0.2706359","_rn_":"marital2"},{"1":"family6","2":"0.2697946","_rn_":"family6"},{"1":"employ2","2":"0.2350592","_rn_":"employ2"},{"1":"mentalhealth5","2":"0.1296869","_rn_":"mentalhealth5"},{"1":"elderly1","2":"0.1218257","_rn_":"elderly1"},{"1":"age3","2":"0.0000000","_rn_":"age3"},{"1":"race4","2":"0.0000000","_rn_":"race4"},{"1":"degree2","2":"0.0000000","_rn_":"degree2"},{"1":"employ3","2":"0.0000000","_rn_":"employ3"},{"1":"family3","2":"0.0000000","_rn_":"family3"},{"1":"family4","2":"0.0000000","_rn_":"family4"},{"1":"family5","2":"0.0000000","_rn_":"family5"},{"1":"kid1","2":"0.0000000","_rn_":"kid1"},{"1":"kid2","2":"0.0000000","_rn_":"kid2"},{"1":"elderly2","2":"0.0000000","_rn_":"elderly2"},{"1":"health_insur1","2":"0.0000000","_rn_":"health_insur1"},{"1":"income2","2":"0.0000000","_rn_":"income2"},{"1":"mentalhealth3","2":"0.0000000","_rn_":"mentalhealth3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
@@ -2355,4 +2358,4 @@ plot(perf_roc_gbm, main = "ROC Curve for GBM", col = "blue", lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-26-1.png)<!-- -->

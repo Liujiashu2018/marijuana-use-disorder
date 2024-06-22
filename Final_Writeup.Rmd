@@ -273,7 +273,6 @@ p1.1
 ```
 
 **Sex**
-
 From the bar plot, we can see that the percentage of males having a marijuana use disorder in 2022 is slightly higher than that of females, with 17% of males and 12.5% of females affected.
 ```{r}
 # Calculate the percentage of SUD_MJ for each sex and each level of SUD_MJ
@@ -381,7 +380,6 @@ p4
 ```
 
 **Education**
-
 The bar plot on the left displays the distribution of marijuana use disorder (SUD_MJ) among individuals with different educational levels. The variable "degree" shows the highest degree repsondents obtained, and is categorized into three groups: "without high school degree", "high school degree", and "higher (associate's degree/college graduate or higher)". The percentages of individuals with and without SUD_MJ within each educational group are displayed on the bars.
 
 - Among individuals without a high school degree, 18.6% have a marijuana use disorder, while 81.4% do not.
@@ -545,16 +543,18 @@ results_df
 ```
 
 # Model Fitting
-### Splitting Training and Testing Set
+
+In the model fitting section, I use the cleaned dataset sud_2022 with selected predictors. Before applying the machine learning classification models, I first examined the outcome variable, marijuana use disorder (SUD_MJ). The outcome shows that our data is highly imbalanced, with 15% of individuals having SUD_MJ = 'Yes' and 85% having SUD_MJ = 'No'. This imbalance needs to be addressed to ensure that the classification models perform effectively and do not bias towards the majority class. 
+
+I split the dataset into 67% for training and 33% for testing. To avoid overfitting, I initiated a 10-fold cross-validation that can be used later in the models.
+
 ```{r}
 # Load in dataset
 NSDUH_2022 <- read.csv("/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/sud_2022.csv")
 # Convert all the variables into factors
 NSDUH_2022 <- NSDUH_2022 %>% 
-  mutate(across(where(is.numeric), as.factor))
+   mutate(across(where(is.numeric), as.factor))
 str(NSDUH_2022)
-```
-```{r}
 # NSDUH_2022 is an imbalanced dataset
 table(NSDUH_2022$SUD_MJ)
 sud_mj_yes <- subset(NSDUH_2022, SUD_MJ == 1)
@@ -566,39 +566,68 @@ ratio_no <- nrow(sud_mj_no) / nrow(NSDUH_2022)
 cat("Ratio of SUD_MJ = Yes:", round(ratio_yes, 2), "\n")
 cat("Ratio of SUD_MJ = No:", round(ratio_no, 2), "\n")
 ```
-```{r}
-# Split training and Testing
+
+```{r train-test split}
+# Set seed for reproducibility
 set.seed(123)
 # find split_size to divide data in 67% train/ 33% test sets
 split_size <- sample(1:nrow(NSDUH_2022), floor(0.67 * nrow(NSDUH_2022)))
 
 # Extract the train and test sets
-train <- NSDUH_2022[split_size, ]
-test <- NSDUH_2022[-split_size, ]
+training <- NSDUH_2022[split_size, ]
+testing <- NSDUH_2022[-split_size, ]
 # Change the levels of SUD_MJ from 0 and 1 to 'No' and 'Yes'.
 # Otherwise this will lead to errors in trainControl
-levels(train$SUD_MJ) <- c("No", "Yes")
-levels(test$SUD_MJ) <- c("No", "Yes")
-levels(train$SUD_MJ)
-levels(test$SUD_MJ)
+levels(training$SUD_MJ) <- c("No", "Yes")
+levels(testing$SUD_MJ) <- c("No", "Yes")
+
 # Stratified cross-validation
 trControl <- trainControl(method = "cv", 
                           number = 10, 
                           classProbs = TRUE, 
                           summaryFunction = twoClassSummary)
+
+# One-hot encoding for categorical variables
+train_matrix <- model.matrix(SUD_MJ ~ . - 1, data = training)
+test_matrix <- model.matrix(SUD_MJ ~ . - 1, data = testing)
+train <- as.data.frame(train_matrix)
+test <- as.data.frame(test_matrix)
+
+# Ensure that the target variable SUD_MJ is included
+train$SUD_MJ <- training$SUD_MJ
+test$SUD_MJ <- testing$SUD_MJ
+
+# Identify numeric columns
+numeric_cols_train <- sapply(train, is.numeric)
+numeric_cols_test <- sapply(test, is.numeric)
+numeric_cols_train
+# Change the levels of SUD_MJ from 0 and 1 to 'No' and 'Yes'
+train$SUD_MJ <- factor(train$SUD_MJ, levels = c(0, 1), labels = c("No", "Yes"))
+test$SUD_MJ <- factor(test$SUD_MJ, levels = c(0, 1), labels = c("No", "Yes"))
+levels(test$SUD_MJ)
 ```
 
 ### 1. Logistic Regression
+
+I first start with modeling using logistic regression, as it is one of the most straightforward and interpretable models that is suitable for binary classification tasks. The logistic regression model allows us to estimate the probability that a given input belongs to a specific class (in this case, whether an individual has marijuana use disorder). It could serve as a good baseline model against which more complex models can be compared.
+
 ```{r}
 # Train logistic regression model on training set
 set.seed(123)
+# Stratified cross-validation
+trControl <- trainControl(method = "cv", 
+                          number = 10, 
+                          classProbs = TRUE, 
+                          summaryFunction = twoClassSummary)
+
+# Train the logistic regression model using cross-validation
 logistic_cv <- caret::train(SUD_MJ ~ ., 
-                                  data = train, 
-                                  method = "glm", 
-                                  family = binomial, 
-                                  trControl = trControl, # using cv to avoid overfitting
-                                  metric = "ROC")
-print(logistic_cv)
+                            data = train, 
+                            method = "glm", 
+                            family = binomial, 
+                            trControl = trControl, # using cv to avoid overfitting
+                            metric = "ROC")
+# print(logistic_cv)
 
 # Make predictions on the testing set
 test$predicted_prob_logistic <- predict(logistic_cv, newdata = test, type = "prob")[, "Yes"]
@@ -607,6 +636,18 @@ test$predicted_class_logistic <- factor(test$predicted_class_logistic, levels = 
 ```
 
 #### Model Performance 
+
+After fitting the logistic regression model to the training data and making predictions on the test data, I evaluated the model's performance using a confusion matrix and various performance metrics.
+
+- Accuracy: The model achieved an accuracy of 85.26%, indicating that in general, 85.26% of the predictions made by the model were correct.
+- Precision: The precision, or positive predictive value, is 85.78%, meaning that 85.78% of the individuals predicted to not have SUD_MJ actually do not have it.
+- Specificity: The specificity in this model is very low at 3.93%, indicating that the model struggled to correctly identify individuals with SUD_MJ.
+- Recall: The recall rate, also called sensitivity, is 99.19%, meaning that the model correctly identified 99.19% of the individuals who do not have SUD_MJ.
+- F1-Score: The F1-score is 92%, providing a balance between precision and recall.
+- AUC: The AUC is 0.76, indicating that the model has a fair ability to distinguish between the two classes.
+
+The model's high sensitivity but low specificity highlight the challenges of correctly identifying respondents with SUD_MJ with this imbalanced dataset. In the context of an imbalanced dataset, traditional metrics like accuracy can be misleading because they are dominated by the majority class. AUC (Area Under the Curve) is a more reliable measure in this case , as it measures the ability of the model to discriminate between the positive and negative classes across different threshold settings. An AUC of 0.76 suggests that the model has a fair ability to distinguish between individuals with and without SUD_MJ.
+
 ```{r}
 confusion_matrix_logistic <- confusionMatrix(test$predicted_class_logistic, test$SUD_MJ)
 print(confusion_matrix_logistic)
@@ -631,25 +672,32 @@ abline(a = 0, b = 1, lty = 2, col = "gray")
 ```
 
 ### 2. Random Forest
+
+I further employed the random forest model to tackle the binary classification problem of predicting marijuana use disorder (SUD_MJ). Unlike logistic regression, which is a linear model, the random forest is a non-linear model capable of capturing more complex relationships between features. Additionally, the random forest model provides feature importance metrics, which help identify the most relevant features for the classification task.
+
+The model was initially trained on the training data with 500 trees, and the number of variables tried at each split (mtry) was set to the optimal value found during tuning. The optimal mtry value was determined by tuning the model to minimize the Out-Of-Bag (OOB) error estimate. The OOB error estimate serves as an internal validation metric for the model, providing an unbiased estimate of the prediction error. The random forest model achieved a minimum OOB error rate of 14.48%, indicating that approximately 14.48% of the predictions made by the model on the training data were incorrect. I selected the mtry value that corresponded to the lowest OOB error rate for the final model.
+
 ```{r}
 # Train random forest model using training data 
 set.seed(123)
 rf_model<- randomForest(SUD_MJ ~ ., 
-                        data = train, 
+                        data = training, 
                         ntree = 500, 
                         importance = TRUE)
 # Tune the Rf model by finding the optimal mtry value 
 # Select mtry value with minimum out of bag(OOB) error
-mtry <- tuneRF(train[, -ncol(train)],train$SUD_MJ, ntreeTry=500,
+mtry <- tuneRF(training[, -ncol(training)],training$SUD_MJ, ntreeTry=500,
                stepFactor=1.5,improve=0.01, trace=TRUE, plot=TRUE)
 best.m <- mtry[mtry[, 2] == min(mtry[, 2]), 1]
 print(mtry)
 print(best.m)
 ```
 
+In the next step, I refit the model using the best mtry value (mtry = 2), generate variable importance plots, and make predictions using the testing data. The variable importance plot highlights the most influential predictors in the Random Forest model. According to the Mean Decrease Accuracy and Mean Decrease Gini metrics, 'mentalhealth', 'age', 'race', 'marital', 'family', and 'employ' were among the most important variables for predicting SUD_MJ. The Mean Decrease Accuracy measures the reduction in model accuracy when a variable is excluded, while the Mean Decrease Gini indicates the total decrease in node impurity that a variable contributes across all trees in the forest.
+
 ```{r}
 # Refit the model using best mtry
-rf_tuned <- randomForest(SUD_MJ ~., data = train, ntree = 500, mtry = best.m, importance=TRUE)
+rf_tuned <- randomForest(SUD_MJ ~., data = training, ntree = 500, mtry = best.m, importance=TRUE)
 print(rf_tuned)
 importance(rf_tuned) 
 varImpPlot(rf_tuned)
@@ -657,16 +705,24 @@ varImpPlot(rf_tuned)
 # Mean Decrease Accuracy - How much the model accuracy decreases if we drop that variable.
 # Mean Decrease Gini - Measure of variable importance based on the Gini impurity index used for the calculation of splits in trees.
 # Making predictions based on test data
-test$pred_prob_rf_tuned <- predict(rf_tuned, newdata = test, type = "prob")[, 2]
-test$pred_class_rf_tuned <- ifelse(test$pred_prob_rf_tuned > 0.5, "Yes", "No")
+testing$pred_prob_rf_tuned <- predict(rf_tuned, newdata = testing, type = "prob")[, 2]
+testing$pred_class_rf_tuned <- ifelse(testing$pred_prob_rf_tuned > 0.5, "Yes", "No")
 # Print confusion matrix
-confusion_matrix_rf_tuned <- confusionMatrix(as.factor(test$pred_class_rf_tuned), test$SUD_MJ)
-print(confusion_matrix_rf_tuned)
+confusion_matrix_rf_tuned <- confusionMatrix(as.factor(testing$pred_class_rf_tuned), testing$SUD_MJ)
 ```
 
 #### Model Performance
+
+- Accuracy: Evaluating on the testing data, the Random Forest model achieved an accuracy of 85.41%, with a 95% confidence interval ranging from 84.83% to 85.97%.
+- Precision: The precision is 85.41%, meaning that when the model predicted "No" for SUD_MJ, it was correct 85.41% of the time.
+- Recall (sensitivity): In this model, the recall rate is extremely high at 99.99%, indicating that the model correctly identified nearly all individuals without SUD_MJ.
+- Specificity: The specificity is very low at 0.23%, reflecting the model's difficulty in correctly identifying individuals with SUD_MJ. 
+- F1-Score: The F1-Score is 92%, providing a balance between precision and recall.
+- AUC: The AUC for the random forest model is 0.72, which is even lower than that of the logistic regression model. 
+
 ```{r}
 # Accuracy
+print(confusion_matrix_rf_tuned)
 accuracy_rf_tuned <- confusion_matrix_rf_tuned$overall['Accuracy']
 print(paste("Accuracy:", round(accuracy_rf_tuned, 2)))
 # Precision, Recall, F1-Score
@@ -677,7 +733,7 @@ print(paste("Precision:", round(precision_rf_tuned, 2)))
 print(paste("Recall:", round(recall_rf_tuned, 2)))
 print(paste("F1-Score:", round(F1_rf_tuned, 2)))
 # AUC
-pred_rf_tuned <- prediction(test$pred_prob_rf_tuned, test$SUD_MJ)
+pred_rf_tuned <- prediction(testing$pred_prob_rf_tuned, testing$SUD_MJ)
 auc_rf_tuned <- performance(pred_rf_tuned, "auc")
 auc_value_rf_tuned <- auc_rf_tuned@y.values[[1]]
 print(paste("AUC:", round(auc_value_rf_tuned, 2)))
@@ -687,40 +743,10 @@ abline(a=0,b=1,lwd=2,lty=2,col="gray")
 ```
 
 ### 3. Gradient Boosting Model
-```{r}
-# One-hot encode using model.matrix
-train_matrix <- model.matrix(SUD_MJ ~ . - 1, data = train)
-test_matrix <- model.matrix(SUD_MJ ~ . - 1, data = test)
-
-# Convert the results to data frames
-train_encoded <- as.data.frame(train_matrix)
-test_encoded <- as.data.frame(test_matrix)
-
-# Ensure the target variable SUD_MJ is included
-train_encoded$SUD_MJ <- train$SUD_MJ
-test_encoded$SUD_MJ <- test$SUD_MJ
-
-# Identify numeric columns
-numeric_cols_train <- sapply(train_encoded, is.numeric)
-numeric_cols_test <- sapply(test_encoded, is.numeric)
-
-# Apply normalization (scaling)
-train_encoded[numeric_cols_train] <- scale(train_encoded[numeric_cols_train])
-test_encoded[numeric_cols_test] <- scale(test_encoded[numeric_cols_test])
-
-# Verify column names again after scaling
-identical(names(train_encoded), names(test_encoded))
-```
 
 ```{r}
 # Set the seed for reproducibility
 set.seed(123)
-# 10-folds cross-validation to prevent overfitting
-trControl <- trainControl(method = "cv", 
-                          number = 10, 
-                          classProbs = TRUE, 
-                          summaryFunction = twoClassSummary,
-                          search = "grid")
 # tune the hyperparameters
 tuneGrid <- expand.grid(interaction.depth = c(1, 3, 5),  # Depth of each tree
                         n.trees = c(50, 100, 150),       # Number of trees
@@ -728,7 +754,7 @@ tuneGrid <- expand.grid(interaction.depth = c(1, 3, 5),  # Depth of each tree
                         n.minobsinnode = c(10, 20))
 # fit gbm model with train data
 gbm_model <- caret::train(SUD_MJ ~ ., 
-                          data = train_encoded, 
+                          data = train, 
                           method = "gbm", 
                           trControl = trControl, 
                           tuneGrid = tuneGrid, 
@@ -744,11 +770,11 @@ print(best_params)
 
 ```{r}
 # Convert target variable to numeric (0 and 1)
-train_encoded$SUD_MJ <- ifelse(train_encoded$SUD_MJ == "Yes", 1, 0)
-test_encoded$SUD_MJ <- ifelse(test_encoded$SUD_MJ == "Yes", 1, 0)
+train$SUD_MJ <- ifelse(train$SUD_MJ == "Yes", 1, 0)
+test$SUD_MJ <- ifelse(test$SUD_MJ == "Yes", 1, 0)
 
 gbm_best <- gbm::gbm(SUD_MJ ~ ., 
-                      data = train_encoded, 
+                      data = train, 
                       distribution = "bernoulli", 
                       n.trees = best_params$n.trees, 
                       interaction.depth = best_params$interaction.depth, 
@@ -763,11 +789,11 @@ summary(gbm_best)
 #### Model Performance
 ```{r}
 # Make predictions on the testing set
-test_encoded$predicted_prob_gbm <- predict(gbm_best, newdata = test_encoded, n.trees = best_params$n.trees, type = "response")
-test_encoded$predicted_class_gbm <- ifelse(test_encoded$predicted_prob_gbm > 0.5, 1, 0)
+test$predicted_prob_gbm <- predict(gbm_best, newdata = test, n.trees = best_params$n.trees, type = "response")
+test$predicted_class_gbm <- ifelse(test$predicted_prob_gbm > 0.5, 1, 0)
 
 # Confusion matrix to evaluate the GBM model on the testing set
-confusion_matrix_test_gbm <- confusionMatrix(as.factor(test_encoded$predicted_class_gbm), as.factor(test_encoded$SUD_MJ))
+confusion_matrix_test_gbm <- confusionMatrix(as.factor(test$predicted_class_gbm), as.factor(test$SUD_MJ))
 print(confusion_matrix_test_gbm)
 
 # Calculate and print performance metrics for the GBM model on the testing set
@@ -783,7 +809,7 @@ print(paste("Recall:", round(recall_test_gbm, 2)))
 print(paste("F1-Score:", round(f1_score_test_gbm, 2)))
 
 # Using ROCR to calculate AUC and plot ROC curve for the GBM model
-pred_gbm <- prediction(test_encoded$predicted_prob_gbm, test_encoded$SUD_MJ)
+pred_gbm <- prediction(test$predicted_prob_gbm, test$SUD_MJ)
 perf_auc_gbm <- performance(pred_gbm, measure = "auc")
 auc_value_gbm <- perf_auc_gbm@y.values[[1]]
 print(paste("AUC:", round(auc_value_gbm, 2)))
