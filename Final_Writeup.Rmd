@@ -555,18 +555,15 @@ NSDUH_2022 <- read.csv("/Users/jiashuliu/Desktop/Projects/substance_use_disorder
 NSDUH_2022 <- NSDUH_2022 %>% 
    mutate(across(where(is.numeric), as.factor))
 str(NSDUH_2022)
-# NSDUH_2022 is an imbalanced dataset
-table(NSDUH_2022$SUD_MJ)
 sud_mj_yes <- subset(NSDUH_2022, SUD_MJ == 1)
 sud_mj_no <- subset(NSDUH_2022, SUD_MJ == 0)
 ratio_yes <- nrow(sud_mj_yes) / nrow(NSDUH_2022)
 ratio_no <- nrow(sud_mj_no) / nrow(NSDUH_2022)
 
-# Display the ratios
+# # NSDUH_2022 is an imbalanced dataset
 cat("Ratio of SUD_MJ = Yes:", round(ratio_yes, 2), "\n")
 cat("Ratio of SUD_MJ = No:", round(ratio_no, 2), "\n")
 
-# Set seed for reproducibility
 set.seed(123)
 # Split data in 67% train/ 33% test sets
 split_size <- sample(1:nrow(NSDUH_2022), floor(0.67 * nrow(NSDUH_2022)))
@@ -593,27 +590,20 @@ test <- as.data.frame(test_matrix)
 # Ensure that the target variable SUD_MJ is included
 train$SUD_MJ <- training$SUD_MJ
 test$SUD_MJ <- testing$SUD_MJ
-
-# check numeric columns
-# numeric_train <- sapply(train, is.numeric)
-# numeric_test <- sapply(test, is.numeric)
-# numeric_train
-# levels(test$SUD_MJ)
 ```
 ### 1. Logistic Regression
 
 I first started with modeling using logistic regression, as it is one of the most straightforward and interpretable models that is suitable for binary classification tasks. The logistic regression model allows us to estimate the probability that a given input belongs to a specific class (in this case, whether an individual has marijuana use disorder). It could serve as a good baseline model against which more complex models can be compared.
 
 ```{r train logistic reg}
-# Train logistic regression model on training set
 set.seed(123)
-# Stratified cross-validation
+# 10-folds cross-validation
 trControl <- trainControl(method = "cv", 
                           number = 10, 
                           classProbs = TRUE, 
                           summaryFunction = twoClassSummary)
 
-# Train the logistic regression model using cross-validation
+# Train the logistic regression model using cv
 logistic_cv <- caret::train(SUD_MJ ~ ., 
                             data = train, 
                             method = "glm", 
@@ -644,7 +634,7 @@ The model's high sensitivity but low specificity highlight the challenges of cor
 ```{r logi perf}
 confusion_matrix_logistic <- confusionMatrix(test$predicted_class_logistic, test$SUD_MJ)
 print(confusion_matrix_logistic)
-# accuracy
+# Accuracy
 accuracy_logi <- confusion_matrix_logistic$overall['Accuracy']
 print(paste("Accuracy:", round(accuracy_logi, 2)))
 # Precision, Recall, F1-Score
@@ -659,6 +649,7 @@ pred <- prediction(test$predicted_prob, test$SUD_MJ)
 perf_auc <- performance(pred, measure = "auc")
 auc_value <- perf_auc@y.values[[1]]
 print(paste("AUC:", round(auc_value, 2)))
+# Plot ROC Curve
 perf_roc <- performance(pred, measure = "tpr", x.measure = "fpr")
 plot(perf_roc, main = "ROC Curve", col = "red", lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
@@ -730,6 +721,7 @@ pred_rf_tuned <- prediction(testing$pred_prob_rf_tuned, testing$SUD_MJ)
 auc_rf_tuned <- performance(pred_rf_tuned, "auc")
 auc_value_rf_tuned <- auc_rf_tuned@y.values[[1]]
 print(paste("AUC:", round(auc_value_rf_tuned, 2)))
+# Plot ROC
 roc_rf_tuned <- performance(pred_rf_tuned, measure = "tpr", x.measure = "fpr")
 plot(roc_rf_tuned, main="ROC Curve for Random Forest",col=2,lwd=2)
 abline(a=0,b=1,lwd=2,lty=2,col="gray")
@@ -742,14 +734,13 @@ In this section, I used a Gradient Boosting Machine (GBM) for regression. Unlike
 To optimize the performance of the GBM, I first performed hyperparameter tuning using a grid search. The model was then trained on the training data using 10-fold cross-validation to prevent overfitting. The most optimal GBM model hyperparameters were found to be: n.trees = 150, interaction.depth = 1, shrinkage = 0.3, and n.minobsinnode = 10. These values were selected because they produced the highest ROC value during cross-validation, indicating the model's strong ability to distinguish between individuals with and without SUD_MJ.
 
 ```{r tune gbm}
-# Set the seed for reproducibility
 set.seed(123)
-# tune the hyperparameters
+# Tune the hyperparameters
 tuneGrid <- expand.grid(interaction.depth = c(1, 3, 5),  # Depth of each tree
                         n.trees = c(50, 100, 150),       # Number of trees
                         shrinkage = c(0.01, 0.1, 0.3),   # Learning rate
                         n.minobsinnode = c(10, 20))
-# fit gbm model with train data
+# Fit gbm with train data
 gbm_model <- caret::train(SUD_MJ ~ ., 
                           data = train, 
                           method = "gbm", 
@@ -763,11 +754,11 @@ print(best_params)
 After training the GBM model with the best hyperparameters, I examined the variable importance again to understand which features were most influential in predicting SUD_MJ. The relative influence of the variables showed that 'Young Adult' (age2) and 'Married' (marital1) were the most important predictors, followed by 'Elderly: 65+' (age4), 'Associate's degree/college graduate or higher' (degree3), and 'Male' (sex1). Various mental health-related variables (e.g., mentalhealth12, mentalhealth16, mentalhealth24) also showed significant importance. This analysis highlights the key factors that contribute to the prediction of marijuana use disorder, providing insights for further research and model improvement.
 
 ```{r gbm with best params}
-# Convert outcome variable to numeric (0 and 1)
+# Convert outcome variable to numeric 0 and 1
 train$SUD_MJ <- ifelse(train$SUD_MJ == "Yes", 1, 0)
 test$SUD_MJ <- ifelse(test$SUD_MJ == "Yes", 1, 0)
 
-# Train the gbm model again wit best parameters tuned 
+# Train the gbm model again with best parameters 
 gbm_best <- gbm::gbm(SUD_MJ ~ ., 
                       data = train, 
                       distribution = "bernoulli", 
@@ -794,11 +785,11 @@ summary(gbm_best)
 test$predicted_prob_gbm <- predict(gbm_best, newdata = test, n.trees = best_params$n.trees, type = "response")
 test$predicted_class_gbm <- ifelse(test$predicted_prob_gbm > 0.5, 1, 0)
 
-# Confusion matrix to evaluate the GBM model on the testing set
+# Confusion matrix on the testing set
 confusion_matrix_test_gbm <- confusionMatrix(as.factor(test$predicted_class_gbm), as.factor(test$SUD_MJ))
 print(confusion_matrix_test_gbm)
 
-# Calculate and print performance metrics for the GBM model on the testing set
+# Calculate performance metrics on the testing set
 accuracy_test_gbm <- confusion_matrix_test_gbm$overall['Accuracy']
 print(paste("Accuracy:", round(accuracy_test_gbm, 2)))
 
@@ -810,16 +801,14 @@ print(paste("Precision:", round(precision_test_gbm, 2)))
 print(paste("Recall:", round(recall_test_gbm, 2)))
 print(paste("F1-Score:", round(f1_score_test_gbm, 2)))
 
-# Using ROCR to calculate AUC and plot ROC curve for the GBM model
+# Calculate AUC
 pred_gbm <- prediction(test$predicted_prob_gbm, test$SUD_MJ)
 perf_auc_gbm <- performance(pred_gbm, measure = "auc")
 auc_value_gbm <- perf_auc_gbm@y.values[[1]]
 print(paste("AUC:", round(auc_value_gbm, 2)))
 
-# Performance object for ROC
+# Plot the ROC curve
 perf_roc_gbm <- performance(pred_gbm, measure = "tpr", x.measure = "fpr")
-
-# Plot the ROC curve for the GBM model
 plot(perf_roc_gbm, main = "ROC Curve for GBM", col = "blue", lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
 ```
