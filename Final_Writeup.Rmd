@@ -4,10 +4,13 @@ author: "Jiashu Liu"
 date: "2024-06-16"
 output:
   html_document:
+    toc: true
+    toc_float:
+      collapsed: true
+    theme: lumen
     keep_md: true
     df_print: paged
     code_download: true
-    theme: journal
     code_folding: hide
     css: styles.css
 font-family: Times New Roman
@@ -815,3 +818,17 @@ abline(a = 0, b = 1, lty = 2, col = "gray")
 
 
 ### Model Comparison
+
+```{r}
+metrics <- data.frame(
+  Model = c("Logistic Regression", "Random Forest", "GBM"),
+  Accuracy = c(accuracy_logi, accuracy_rf_tuned, accuracy_test_gbm),
+  Precision = c(precision_logi, precision_rf_tuned, precision_test_gbm),
+  Recall = c(recall_logi, recall_rf_tuned, recall_test_gbm),
+  Specificity = c(confusion_matrix_logistic$byClass['Specificity'], confusion_matrix_rf_tuned$byClass['Specificity'], confusion_matrix_test_gbm$byClass['Specificity'] ),
+  F1_Score = c(F1_score_logi, F1_rf_tuned, f1_score_test_gbm),
+  AUC = c(auc_value, auc_value_rf_tuned, auc_value_gbm)
+  )
+print(metrics)
+```
+

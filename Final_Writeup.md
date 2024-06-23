@@ -4,10 +4,13 @@ author: "Jiashu Liu"
 date: "2024-06-16"
 output:
   html_document:
+    toc: true
+    toc_float:
+      collapsed: true
+    theme: united
     keep_md: true
     df_print: paged
     code_download: true
-    theme: journal
     code_folding: hide
     css: styles.css
 font-family: Times New Roman
@@ -105,23 +108,23 @@ codebook %>%
 ```
 
 ```{=html}
-<div id="bxlxuckeks" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#bxlxuckeks table {
+<div id="rauouztubr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#rauouztubr table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#bxlxuckeks thead, #bxlxuckeks tbody, #bxlxuckeks tfoot, #bxlxuckeks tr, #bxlxuckeks td, #bxlxuckeks th {
+#rauouztubr thead, #rauouztubr tbody, #rauouztubr tfoot, #rauouztubr tr, #rauouztubr td, #rauouztubr th {
   border-style: none;
 }
 
-#bxlxuckeks p {
+#rauouztubr p {
   margin: 0;
   padding: 0;
 }
 
-#bxlxuckeks .gt_table {
+#rauouztubr .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -147,12 +150,12 @@ codebook %>%
   border-left-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_caption {
+#rauouztubr .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#bxlxuckeks .gt_title {
+#rauouztubr .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -164,7 +167,7 @@ codebook %>%
   border-bottom-width: 0;
 }
 
-#bxlxuckeks .gt_subtitle {
+#rauouztubr .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -176,7 +179,7 @@ codebook %>%
   border-top-width: 0;
 }
 
-#bxlxuckeks .gt_heading {
+#rauouztubr .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -188,13 +191,13 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_bottom_border {
+#rauouztubr .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_col_headings {
+#rauouztubr .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -209,7 +212,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_col_heading {
+#rauouztubr .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -229,7 +232,7 @@ codebook %>%
   overflow-x: hidden;
 }
 
-#bxlxuckeks .gt_column_spanner_outer {
+#rauouztubr .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -241,15 +244,15 @@ codebook %>%
   padding-right: 4px;
 }
 
-#bxlxuckeks .gt_column_spanner_outer:first-child {
+#rauouztubr .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#bxlxuckeks .gt_column_spanner_outer:last-child {
+#rauouztubr .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#bxlxuckeks .gt_column_spanner {
+#rauouztubr .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -261,11 +264,11 @@ codebook %>%
   width: 100%;
 }
 
-#bxlxuckeks .gt_spanner_row {
+#rauouztubr .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#bxlxuckeks .gt_group_heading {
+#rauouztubr .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -291,7 +294,7 @@ codebook %>%
   text-align: left;
 }
 
-#bxlxuckeks .gt_empty_group_heading {
+#rauouztubr .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -306,15 +309,15 @@ codebook %>%
   vertical-align: middle;
 }
 
-#bxlxuckeks .gt_from_md > :first-child {
+#rauouztubr .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#bxlxuckeks .gt_from_md > :last-child {
+#rauouztubr .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#bxlxuckeks .gt_row {
+#rauouztubr .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -333,7 +336,7 @@ codebook %>%
   overflow-x: hidden;
 }
 
-#bxlxuckeks .gt_stub {
+#rauouztubr .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -346,7 +349,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#bxlxuckeks .gt_stub_row_group {
+#rauouztubr .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -360,15 +363,15 @@ codebook %>%
   vertical-align: top;
 }
 
-#bxlxuckeks .gt_row_group_first td {
+#rauouztubr .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#bxlxuckeks .gt_row_group_first th {
+#rauouztubr .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#bxlxuckeks .gt_summary_row {
+#rauouztubr .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -378,16 +381,16 @@ codebook %>%
   padding-right: 5px;
 }
 
-#bxlxuckeks .gt_first_summary_row {
+#rauouztubr .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_first_summary_row.thick {
+#rauouztubr .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#bxlxuckeks .gt_last_summary_row {
+#rauouztubr .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -397,7 +400,7 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_grand_summary_row {
+#rauouztubr .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -407,7 +410,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#bxlxuckeks .gt_first_grand_summary_row {
+#rauouztubr .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -417,7 +420,7 @@ codebook %>%
   border-top-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_last_grand_summary_row_top {
+#rauouztubr .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -427,11 +430,11 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_striped {
+#rauouztubr .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#bxlxuckeks .gt_table_body {
+#rauouztubr .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -440,7 +443,7 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_footnotes {
+#rauouztubr .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -454,7 +457,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_footnote {
+#rauouztubr .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -463,7 +466,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#bxlxuckeks .gt_sourcenotes {
+#rauouztubr .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -477,7 +480,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#bxlxuckeks .gt_sourcenote {
+#rauouztubr .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -485,63 +488,63 @@ codebook %>%
   padding-right: 5px;
 }
 
-#bxlxuckeks .gt_left {
+#rauouztubr .gt_left {
   text-align: left;
 }
 
-#bxlxuckeks .gt_center {
+#rauouztubr .gt_center {
   text-align: center;
 }
 
-#bxlxuckeks .gt_right {
+#rauouztubr .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#bxlxuckeks .gt_font_normal {
+#rauouztubr .gt_font_normal {
   font-weight: normal;
 }
 
-#bxlxuckeks .gt_font_bold {
+#rauouztubr .gt_font_bold {
   font-weight: bold;
 }
 
-#bxlxuckeks .gt_font_italic {
+#rauouztubr .gt_font_italic {
   font-style: italic;
 }
 
-#bxlxuckeks .gt_super {
+#rauouztubr .gt_super {
   font-size: 65%;
 }
 
-#bxlxuckeks .gt_footnote_marks {
+#rauouztubr .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#bxlxuckeks .gt_asterisk {
+#rauouztubr .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#bxlxuckeks .gt_indent_1 {
+#rauouztubr .gt_indent_1 {
   text-indent: 5px;
 }
 
-#bxlxuckeks .gt_indent_2 {
+#rauouztubr .gt_indent_2 {
   text-indent: 10px;
 }
 
-#bxlxuckeks .gt_indent_3 {
+#rauouztubr .gt_indent_3 {
   text-indent: 15px;
 }
 
-#bxlxuckeks .gt_indent_4 {
+#rauouztubr .gt_indent_4 {
   text-indent: 20px;
 }
 
-#bxlxuckeks .gt_indent_5 {
+#rauouztubr .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -837,23 +840,23 @@ highlighted_table
 ```
 
 ```{=html}
-<div id="jzgtqruehs" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jzgtqruehs table {
+<div id="mwgxfkidnt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#mwgxfkidnt table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#jzgtqruehs thead, #jzgtqruehs tbody, #jzgtqruehs tfoot, #jzgtqruehs tr, #jzgtqruehs td, #jzgtqruehs th {
+#mwgxfkidnt thead, #mwgxfkidnt tbody, #mwgxfkidnt tfoot, #mwgxfkidnt tr, #mwgxfkidnt td, #mwgxfkidnt th {
   border-style: none;
 }
 
-#jzgtqruehs p {
+#mwgxfkidnt p {
   margin: 0;
   padding: 0;
 }
 
-#jzgtqruehs .gt_table {
+#mwgxfkidnt .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -879,12 +882,12 @@ highlighted_table
   border-left-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_caption {
+#mwgxfkidnt .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#jzgtqruehs .gt_title {
+#mwgxfkidnt .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -896,7 +899,7 @@ highlighted_table
   border-bottom-width: 0;
 }
 
-#jzgtqruehs .gt_subtitle {
+#mwgxfkidnt .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -908,7 +911,7 @@ highlighted_table
   border-top-width: 0;
 }
 
-#jzgtqruehs .gt_heading {
+#mwgxfkidnt .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -920,13 +923,13 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_bottom_border {
+#mwgxfkidnt .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_col_headings {
+#mwgxfkidnt .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -941,7 +944,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_col_heading {
+#mwgxfkidnt .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -961,7 +964,7 @@ highlighted_table
   overflow-x: hidden;
 }
 
-#jzgtqruehs .gt_column_spanner_outer {
+#mwgxfkidnt .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -973,15 +976,15 @@ highlighted_table
   padding-right: 4px;
 }
 
-#jzgtqruehs .gt_column_spanner_outer:first-child {
+#mwgxfkidnt .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jzgtqruehs .gt_column_spanner_outer:last-child {
+#mwgxfkidnt .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jzgtqruehs .gt_column_spanner {
+#mwgxfkidnt .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -993,11 +996,11 @@ highlighted_table
   width: 100%;
 }
 
-#jzgtqruehs .gt_spanner_row {
+#mwgxfkidnt .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#jzgtqruehs .gt_group_heading {
+#mwgxfkidnt .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1023,7 +1026,7 @@ highlighted_table
   text-align: left;
 }
 
-#jzgtqruehs .gt_empty_group_heading {
+#mwgxfkidnt .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1038,15 +1041,15 @@ highlighted_table
   vertical-align: middle;
 }
 
-#jzgtqruehs .gt_from_md > :first-child {
+#mwgxfkidnt .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jzgtqruehs .gt_from_md > :last-child {
+#mwgxfkidnt .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jzgtqruehs .gt_row {
+#mwgxfkidnt .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1065,7 +1068,7 @@ highlighted_table
   overflow-x: hidden;
 }
 
-#jzgtqruehs .gt_stub {
+#mwgxfkidnt .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1078,7 +1081,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#jzgtqruehs .gt_stub_row_group {
+#mwgxfkidnt .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1092,15 +1095,15 @@ highlighted_table
   vertical-align: top;
 }
 
-#jzgtqruehs .gt_row_group_first td {
+#mwgxfkidnt .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#jzgtqruehs .gt_row_group_first th {
+#mwgxfkidnt .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#jzgtqruehs .gt_summary_row {
+#mwgxfkidnt .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1110,16 +1113,16 @@ highlighted_table
   padding-right: 5px;
 }
 
-#jzgtqruehs .gt_first_summary_row {
+#mwgxfkidnt .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_first_summary_row.thick {
+#mwgxfkidnt .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#jzgtqruehs .gt_last_summary_row {
+#mwgxfkidnt .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1129,7 +1132,7 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_grand_summary_row {
+#mwgxfkidnt .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1139,7 +1142,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#jzgtqruehs .gt_first_grand_summary_row {
+#mwgxfkidnt .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1149,7 +1152,7 @@ highlighted_table
   border-top-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_last_grand_summary_row_top {
+#mwgxfkidnt .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1159,11 +1162,11 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_striped {
+#mwgxfkidnt .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jzgtqruehs .gt_table_body {
+#mwgxfkidnt .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1172,7 +1175,7 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_footnotes {
+#mwgxfkidnt .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1186,7 +1189,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_footnote {
+#mwgxfkidnt .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1195,7 +1198,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#jzgtqruehs .gt_sourcenotes {
+#mwgxfkidnt .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1209,7 +1212,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#jzgtqruehs .gt_sourcenote {
+#mwgxfkidnt .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1217,63 +1220,63 @@ highlighted_table
   padding-right: 5px;
 }
 
-#jzgtqruehs .gt_left {
+#mwgxfkidnt .gt_left {
   text-align: left;
 }
 
-#jzgtqruehs .gt_center {
+#mwgxfkidnt .gt_center {
   text-align: center;
 }
 
-#jzgtqruehs .gt_right {
+#mwgxfkidnt .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jzgtqruehs .gt_font_normal {
+#mwgxfkidnt .gt_font_normal {
   font-weight: normal;
 }
 
-#jzgtqruehs .gt_font_bold {
+#mwgxfkidnt .gt_font_bold {
   font-weight: bold;
 }
 
-#jzgtqruehs .gt_font_italic {
+#mwgxfkidnt .gt_font_italic {
   font-style: italic;
 }
 
-#jzgtqruehs .gt_super {
+#mwgxfkidnt .gt_super {
   font-size: 65%;
 }
 
-#jzgtqruehs .gt_footnote_marks {
+#mwgxfkidnt .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#jzgtqruehs .gt_asterisk {
+#mwgxfkidnt .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#jzgtqruehs .gt_indent_1 {
+#mwgxfkidnt .gt_indent_1 {
   text-indent: 5px;
 }
 
-#jzgtqruehs .gt_indent_2 {
+#mwgxfkidnt .gt_indent_2 {
   text-indent: 10px;
 }
 
-#jzgtqruehs .gt_indent_3 {
+#mwgxfkidnt .gt_indent_3 {
   text-indent: 15px;
 }
 
-#jzgtqruehs .gt_indent_4 {
+#mwgxfkidnt .gt_indent_4 {
   text-indent: 20px;
 }
 
-#jzgtqruehs .gt_indent_5 {
+#mwgxfkidnt .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1612,7 +1615,7 @@ I split the dataset into 67% for training and 33% for testing. To avoid overfitt
 NSDUH_2022 <- read.csv("/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/sud_2022.csv")
 # Convert all the variables into factors
 NSDUH_2022 <- NSDUH_2022 %>% 
-  mutate(across(where(is.numeric), as.factor))
+   mutate(across(where(is.numeric), as.factor))
 str(NSDUH_2022)
 ```
 
@@ -1636,23 +1639,12 @@ str(NSDUH_2022)
 ```
 
 ```r
-# NSDUH_2022 is an imbalanced dataset
-table(NSDUH_2022$SUD_MJ)
-```
-
-```
-## 
-##     0     1 
-## 38754  6577
-```
-
-```r
 sud_mj_yes <- subset(NSDUH_2022, SUD_MJ == 1)
 sud_mj_no <- subset(NSDUH_2022, SUD_MJ == 0)
 ratio_yes <- nrow(sud_mj_yes) / nrow(NSDUH_2022)
 ratio_no <- nrow(sud_mj_no) / nrow(NSDUH_2022)
 
-# Display the ratios
+# # NSDUH_2022 is an imbalanced dataset
 cat("Ratio of SUD_MJ = Yes:", round(ratio_yes, 2), "\n")
 ```
 
@@ -1669,41 +1661,54 @@ cat("Ratio of SUD_MJ = No:", round(ratio_no, 2), "\n")
 ```
 
 ```r
-# Split training and Testing
 set.seed(123)
-# find split_size to divide data in 67% train/ 33% test sets
+# Split data in 67% train/ 33% test sets
 split_size <- sample(1:nrow(NSDUH_2022), floor(0.67 * nrow(NSDUH_2022)))
+training <- NSDUH_2022[split_size, ]
+testing <- NSDUH_2022[-split_size, ]
 
-# Extract the train and test sets
-train <- NSDUH_2022[split_size, ]
-test <- NSDUH_2022[-split_size, ]
-# Change the levels of SUD_MJ from 0 and 1 to 'No' and 'Yes'.
-# Otherwise this will lead to errors in trainControl
-levels(train$SUD_MJ) <- c("No", "Yes")
-levels(test$SUD_MJ) <- c("No", "Yes")
-#levels(train$SUD_MJ)
-#levels(test$SUD_MJ)
-# Stratified cross-validation
+# Change the levels of SUD_MJ from 0 and 1 to 'No' and 'Yes'. Otherwise this will lead to errors in trainControl
+levels(training$SUD_MJ) <- c("No", "Yes")
+levels(testing$SUD_MJ) <- c("No", "Yes")
+```
+Before actually fitting the model, I transformed the categorical variables into into binaries where each category is represented by a separate binary feature using one-hot encoding techinque. I will used the one-hot encoding dataset for the logistic regression and GBM prediction in the later section. 
+
+However, it is important to note that the random forest model does not require one-hot encoding. Random forests can handle categorical variables directly by splitting nodes based on the original categorical values. In fact, I found that applying one-hot encoding to the random forest model can make its performance worse. This degradation might be due to the increased dimensionality and sparsity introduced by one-hot encoding, making it harder for the random forest to find the optimal splits. 
+ 
+Therefore, for the random forest model, I retained the original categorical variables without applying one-hot encoding. This approach leverages the inherent capability of random forests to handle categorical data effectively and maintains the model's performance.
+
+
+```r
+# One-hot encoding for categorical variables
+train_matrix <- model.matrix(SUD_MJ ~ . - 1, data = training)
+test_matrix <- model.matrix(SUD_MJ ~ . - 1, data = testing)
+train <- as.data.frame(train_matrix)
+test <- as.data.frame(test_matrix)
+
+# Ensure that the target variable SUD_MJ is included
+train$SUD_MJ <- training$SUD_MJ
+test$SUD_MJ <- testing$SUD_MJ
+```
+### 1. Logistic Regression
+
+I first started with modeling using logistic regression, as it is one of the most straightforward and interpretable models that is suitable for binary classification tasks. The logistic regression model allows us to estimate the probability that a given input belongs to a specific class (in this case, whether an individual has marijuana use disorder). It could serve as a good baseline model against which more complex models can be compared.
+
+
+```r
+set.seed(123)
+# 10-folds cross-validation
 trControl <- trainControl(method = "cv", 
                           number = 10, 
                           classProbs = TRUE, 
                           summaryFunction = twoClassSummary)
-```
 
-### 1. Logistic Regression
-
-I first start with modeling using logistic regression, as it is one of the most straightforward and interpretable models that is suitable for binary classification tasks. The logistic regression model allows us to estimate the probability that a given input belongs to a specific class (in this case, whether an individual has marijuana use disorder). It could serve as a good baseline model against which more complex models can be compared.
-
-
-```r
-# Train logistic regression model on training set
-set.seed(123)
+# Train the logistic regression model using cv
 logistic_cv <- caret::train(SUD_MJ ~ ., 
-                                  data = train, 
-                                  method = "glm", 
-                                  family = binomial, 
-                                  trControl = trControl, # using cv to avoid overfitting
-                                  metric = "ROC")
+                            data = train, 
+                            method = "glm", 
+                            family = binomial, 
+                            trControl = trControl, # using cv to avoid overfitting
+                            metric = "ROC")
 # print(logistic_cv)
 
 # Make predictions on the testing set
@@ -1723,7 +1728,7 @@ After fitting the logistic regression model to the training data and making pred
 - F1-Score: The F1-score is 92%, providing a balance between precision and recall.
 - AUC: The AUC is 0.76, indicating that the model has a fair ability to distinguish between the two classes.
 
-The model's high sensitivity but low specificity highlight the challenges of correctly identifying respondents with SUD_MJ with this imbalanced dataset. In the context of an imbalanced dataset, traditional metrics like accuracy can be misleading because they are dominated by the majority class. AUC (Area Under the Curve) is a more reliable measure in this case , as it measures the ability of the model to discriminate between the positive and negative classes across different threshold settings. An AUC of 0.76 suggests that the model has a fair ability to distinguish between individuals with and without SUD_MJ.
+The model's high sensitivity but low specificity highlight the challenges of correctly identifying respondents with SUD_MJ with this imbalanced dataset. In the context of an imbalanced dataset, traditional metrics like accuracy can be misleading because they are dominated by the majority class. AUC (Area Under the Curve) is a more reliable measure in this case , as it measures the ability of the model to discriminate between the positive and negative classes across different threshold settings. An AUC of 0.76 suggests that the model has a moderate ability to distinguish between individuals with and without SUD_MJ.
 
 
 ```r
@@ -1762,7 +1767,7 @@ print(confusion_matrix_logistic)
 ```
 
 ```r
-# accuracy
+# Accuracy
 accuracy_logi <- confusion_matrix_logistic$overall['Accuracy']
 print(paste("Accuracy:", round(accuracy_logi, 2)))
 ```
@@ -1812,30 +1817,31 @@ print(paste("AUC:", round(auc_value, 2)))
 ```
 
 ```r
+# Plot ROC Curve
 perf_roc <- performance(pred, measure = "tpr", x.measure = "fpr")
 plot(perf_roc, main = "ROC Curve", col = "red", lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/logi perf-1.png)<!-- -->
 
 ### 2. Random Forest
 
 I further employed the random forest model to tackle the binary classification problem of predicting marijuana use disorder (SUD_MJ). Unlike logistic regression, which is a linear model, the random forest is a non-linear model capable of capturing more complex relationships between features. Additionally, the random forest model provides feature importance metrics, which help identify the most relevant features for the classification task.
 
-The model was initially trained on the training data with 500 trees, and the number of variables tried at each split (mtry) was set to the optimal value found during tuning. The optimal mtry value was determined by tuning the model to minimize the Out-Of-Bag (OOB) error estimate. The OOB error estimate serves as an internal validation metric for the model, providing an unbiased estimate of the prediction error. The random forest model achieved a minimum OOB error rate of 14.48%, indicating that approximately 14.48% of the predictions made by the model on the training data were incorrect. I selected the mtry value that corresponded to the lowest OOB error rate for the final model.
+The model was initially trained on the training data with 500 trees, and the number of variables tried at each split (mtry) was set to the optimal value found during tuning. The optimal mtry value was determined by tuning the model to minimize the Out-Of-Bag (OOB) error estimate. The OOB error estimate serves as an internal validation metric for the model, providing an unbiased estimate of the prediction error. The random forest model achieved a minimum OOB error rate of 14.45%, indicating that approximately 14.45% of the predictions made by the model on the training data were incorrect. I selected the mtry value that corresponded to the lowest OOB error rate for the final model.
 
 
 ```r
 # Train random forest model using training data 
 set.seed(123)
 rf_model<- randomForest(SUD_MJ ~ ., 
-                        data = train, 
+                        data = training, 
                         ntree = 500, 
                         importance = TRUE)
 # Tune the Rf model by finding the optimal mtry value 
 # Select mtry value with minimum out of bag(OOB) error
-mtry <- tuneRF(train[, -ncol(train)],train$SUD_MJ, ntreeTry=500,
+mtry <- tuneRF(training[, -ncol(training)],training$SUD_MJ, ntreeTry=500,
                stepFactor=1.5,improve=0.01, trace=TRUE, plot=TRUE)
 ```
 
@@ -1849,7 +1855,7 @@ mtry <- tuneRF(train[, -ncol(train)],train$SUD_MJ, ntreeTry=500,
 ## -0.04603464 0.01
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/train rf-1.png)<!-- -->
 
 ```r
 best.m <- mtry[mtry[, 2] == min(mtry[, 2]), 1]
@@ -1876,14 +1882,14 @@ In the next step, I refit the model using the best mtry value (mtry = 2), genera
 
 ```r
 # Refit the model using best mtry
-rf_tuned <- randomForest(SUD_MJ ~., data = train, ntree = 500, mtry = best.m, importance=TRUE)
+rf_tuned <- randomForest(SUD_MJ ~., data = training, ntree = 500, mtry = best.m, importance=TRUE)
 print(rf_tuned)
 ```
 
 ```
 ## 
 ## Call:
-##  randomForest(formula = SUD_MJ ~ ., data = train, ntree = 500,      mtry = best.m, importance = TRUE) 
+##  randomForest(formula = SUD_MJ ~ ., data = training, ntree = 500,      mtry = best.m, importance = TRUE) 
 ##                Type of random forest: classification
 ##                      Number of trees: 500
 ## No. of variables tried at each split: 2
@@ -1921,24 +1927,24 @@ importance(rf_tuned)
 varImpPlot(rf_tuned)
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/tune rf-1.png)<!-- -->
 
 ```r
 # Higher the value of mean decrease accuracy or mean decrease gini score , higher the importance of the variable in the model. In the plot shown blow, mental health is most important variable.
 # Mean Decrease Accuracy - How much the model accuracy decreases if we drop that variable.
 # Mean Decrease Gini - Measure of variable importance based on the Gini impurity index used for the calculation of splits in trees.
 # Making predictions based on test data
-test$pred_prob_rf_tuned <- predict(rf_tuned, newdata = test, type = "prob")[, 2]
-test$pred_class_rf_tuned <- ifelse(test$pred_prob_rf_tuned > 0.5, "Yes", "No")
+testing$pred_prob_rf_tuned <- predict(rf_tuned, newdata = testing, type = "prob")[, 2]
+testing$pred_class_rf_tuned <- ifelse(testing$pred_prob_rf_tuned > 0.5, "Yes", "No")
 # Print confusion matrix
-confusion_matrix_rf_tuned <- confusionMatrix(as.factor(test$pred_class_rf_tuned), test$SUD_MJ)
+confusion_matrix_rf_tuned <- confusionMatrix(as.factor(testing$pred_class_rf_tuned), testing$SUD_MJ)
 ```
 
 #### Model Performance
 
-- Accuracy: Evaluating on the testing data, the Random Forest model achieved an accuracy of 85.41%, with a 95% confidence interval ranging from 84.83% to 85.97%.
+- Accuracy: Evaluating on the testing data, the Random Forest model achieved an overall prediction accuracy of 85.4%.
 - Precision: The precision is 85.41%, meaning that when the model predicted "No" for SUD_MJ, it was correct 85.41% of the time.
-- Recall (sensitivity): In this model, the recall rate is extremely high at 99.99%, indicating that the model correctly identified nearly all individuals without SUD_MJ.
+- Recall (sensitivity): In this model, the recall rate is extremely high at 99.99%, indicating that the model correctly identified nearly all individuals without SUD_MJ, reflecting the nature of the imbalanced dataset.
 - Specificity: The specificity is very low at 0.23%, reflecting the model's difficulty in correctly identifying individuals with SUD_MJ. 
 - F1-Score: The F1-Score is 92%, providing a balance between precision and recall.
 - AUC: The AUC for the random forest model is 0.72, which is even lower than that of the logistic regression model. 
@@ -2018,7 +2024,7 @@ print(paste("F1-Score:", round(F1_rf_tuned, 2)))
 
 ```r
 # AUC
-pred_rf_tuned <- prediction(test$pred_prob_rf_tuned, test$SUD_MJ)
+pred_rf_tuned <- prediction(testing$pred_prob_rf_tuned, testing$SUD_MJ)
 auc_rf_tuned <- performance(pred_rf_tuned, "auc")
 auc_value_rf_tuned <- auc_rf_tuned@y.values[[1]]
 print(paste("AUC:", round(auc_value_rf_tuned, 2)))
@@ -2029,200 +2035,36 @@ print(paste("AUC:", round(auc_value_rf_tuned, 2)))
 ```
 
 ```r
+# Plot ROC
 roc_rf_tuned <- performance(pred_rf_tuned, measure = "tpr", x.measure = "fpr")
 plot(roc_rf_tuned, main="ROC Curve for Random Forest",col=2,lwd=2)
 abline(a=0,b=1,lwd=2,lty=2,col="gray")
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/rf perf-1.png)<!-- -->
 
-### 3. Gradient Boosting Model
+### 3. Generalized Boosted Regression Model (GBM)
 
-```r
-# One-hot encode using model.matrix
-train_matrix <- model.matrix(SUD_MJ ~ . - 1, data = train)
-test_matrix <- model.matrix(SUD_MJ ~ . - 1, data = test)
+In this section, I used a Gradient Boosting Machine (GBM) for regression. Unlike Random Forest, where each decision tree is built independently from each sample, the trees in GBM are built sequentially. Each tree corrects the errors made by the previous one, enhancing the overall model performance.
 
-# Convert the results to data frames
-train_encoded <- as.data.frame(train_matrix)
-test_encoded <- as.data.frame(test_matrix)
-
-# Ensure the target variable SUD_MJ is included
-train_encoded$SUD_MJ <- train$SUD_MJ
-test_encoded$SUD_MJ <- test$SUD_MJ
-
-# Identify numeric columns
-numeric_cols_train <- sapply(train_encoded, is.numeric)
-numeric_cols_test <- sapply(test_encoded, is.numeric)
-
-# Apply normalization (scaling)
-train_encoded[numeric_cols_train] <- scale(train_encoded[numeric_cols_train])
-test_encoded[numeric_cols_test] <- scale(test_encoded[numeric_cols_test])
-
-# Verify column names again after scaling
-identical(names(train_encoded), names(test_encoded))
-```
-
-```
-## [1] FALSE
-```
+To optimize the performance of the GBM, I first performed hyperparameter tuning using a grid search. The model was then trained on the training data using 10-fold cross-validation to prevent overfitting. The most optimal GBM model hyperparameters were found to be: n.trees = 150, interaction.depth = 1, shrinkage = 0.3, and n.minobsinnode = 10. These values were selected because they produced the highest ROC value during cross-validation, indicating the model's strong ability to distinguish between individuals with and without SUD_MJ.
 
 
 ```r
-# Set the seed for reproducibility
 set.seed(123)
-# 10-folds cross-validation to prevent overfitting
-trControl <- trainControl(method = "cv", 
-                          number = 10, 
-                          classProbs = TRUE, 
-                          summaryFunction = twoClassSummary,
-                          search = "grid")
-# tune the hyperparameters
+# Tune the hyperparameters
 tuneGrid <- expand.grid(interaction.depth = c(1, 3, 5),  # Depth of each tree
                         n.trees = c(50, 100, 150),       # Number of trees
                         shrinkage = c(0.01, 0.1, 0.3),   # Learning rate
                         n.minobsinnode = c(10, 20))
-# fit gbm model with train data
+# Fit gbm with train data
 gbm_model <- caret::train(SUD_MJ ~ ., 
-                          data = train_encoded, 
+                          data = train, 
                           method = "gbm", 
                           trControl = trControl, 
                           tuneGrid = tuneGrid, 
                           metric = "ROC", 
                           verbose = FALSE)
-print(gbm_model)
-```
-
-```
-## Stochastic Gradient Boosting 
-## 
-## 30371 samples
-##    56 predictor
-##     2 classes: 'No', 'Yes' 
-## 
-## No pre-processing
-## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 27333, 27334, 27334, 27334, 27334, 27334, ... 
-## Resampling results across tuning parameters:
-## 
-##   shrinkage  interaction.depth  n.minobsinnode  n.trees  ROC        Sens     
-##   0.01       1                  10               50      0.6606615  1.0000000
-##   0.01       1                  10              100      0.6775371  1.0000000
-##   0.01       1                  10              150      0.6894952  1.0000000
-##   0.01       1                  20               50      0.6610557  1.0000000
-##   0.01       1                  20              100      0.6789322  1.0000000
-##   0.01       1                  20              150      0.6884493  1.0000000
-##   0.01       3                  10               50      0.7043603  1.0000000
-##   0.01       3                  10              100      0.7100773  1.0000000
-##   0.01       3                  10              150      0.7131742  1.0000000
-##   0.01       3                  20               50      0.7040545  1.0000000
-##   0.01       3                  20              100      0.7097042  1.0000000
-##   0.01       3                  20              150      0.7132267  1.0000000
-##   0.01       5                  10               50      0.7101017  1.0000000
-##   0.01       5                  10              100      0.7157797  1.0000000
-##   0.01       5                  10              150      0.7191753  1.0000000
-##   0.01       5                  20               50      0.7096339  1.0000000
-##   0.01       5                  20              100      0.7154154  1.0000000
-##   0.01       5                  20              150      0.7191780  1.0000000
-##   0.10       1                  10               50      0.7136552  1.0000000
-##   0.10       1                  10              100      0.7297231  1.0000000
-##   0.10       1                  10              150      0.7382853  0.9999230
-##   0.10       1                  20               50      0.7147003  1.0000000
-##   0.10       1                  20              100      0.7297452  0.9999615
-##   0.10       1                  20              150      0.7394520  0.9999230
-##   0.10       3                  10               50      0.7357178  0.9998075
-##   0.10       3                  10              100      0.7475526  0.9979600
-##   0.10       3                  10              150      0.7516516  0.9950348
-##   0.10       3                  20               50      0.7356028  0.9998075
-##   0.10       3                  20              100      0.7476589  0.9976521
-##   0.10       3                  20              150      0.7515993  0.9950734
-##   0.10       5                  10               50      0.7431635  0.9987299
-##   0.10       5                  10              100      0.7507682  0.9945345
-##   0.10       5                  10              150      0.7527424  0.9918402
-##   0.10       5                  20               50      0.7433164  0.9987683
-##   0.10       5                  20              100      0.7505973  0.9940341
-##   0.10       5                  20              150      0.7521612  0.9916092
-##   0.30       1                  10               50      0.7387339  0.9997691
-##   0.30       1                  10              100      0.7501736  0.9973827
-##   0.30       1                  10              150      0.7533193  0.9944189
-##   0.30       1                  20               50      0.7381452  0.9998460
-##   0.30       1                  20              100      0.7496742  0.9979215
-##   0.30       1                  20              150      0.7532913  0.9947269
-##   0.30       3                  10               50      0.7506859  0.9932643
-##   0.30       3                  10              100      0.7516462  0.9888380
-##   0.30       3                  10              150      0.7514273  0.9866825
-##   0.30       3                  20               50      0.7504954  0.9937262
-##   0.30       3                  20              100      0.7517616  0.9898388
-##   0.30       3                  20              150      0.7510277  0.9875294
-##   0.30       5                  10               50      0.7490036  0.9893385
-##   0.30       5                  10              100      0.7486196  0.9844502
-##   0.30       5                  10              150      0.7461652  0.9827181
-##   0.30       5                  20               50      0.7511328  0.9898773
-##   0.30       5                  20              100      0.7502270  0.9868365
-##   0.30       5                  20              150      0.7482429  0.9846042
-##   Spec        
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0000000000
-##   0.0006833713
-##   0.0000000000
-##   0.0000000000
-##   0.0004555809
-##   0.0009111617
-##   0.0118451025
-##   0.0232346241
-##   0.0011389522
-##   0.0109339408
-##   0.0259681093
-##   0.0068337130
-##   0.0268792711
-##   0.0416856492
-##   0.0082004556
-##   0.0296127563
-##   0.0410022779
-##   0.0009111617
-##   0.0136674260
-##   0.0271070615
-##   0.0009111617
-##   0.0109339408
-##   0.0266514806
-##   0.0328018223
-##   0.0530751708
-##   0.0587699317
-##   0.0264236902
-##   0.0453302961
-##   0.0569476082
-##   0.0507972665
-##   0.0617312073
-##   0.0710706150
-##   0.0503416856
-##   0.0660592255
-##   0.0706150342
-## 
-## ROC was used to select the optimal model using the largest value.
-## The final values used for the model were n.trees = 150, interaction.depth =
-##  1, shrinkage = 0.3 and n.minobsinnode = 10.
-```
-
-
-```r
 best_params <- gbm_model$bestTune
 print(best_params)
 ```
@@ -2231,15 +2073,17 @@ print(best_params)
 ##    n.trees interaction.depth shrinkage n.minobsinnode
 ## 39     150                 1       0.3             10
 ```
+After training the GBM model with the best hyperparameters, I examined the variable importance again to understand which features were most influential in predicting SUD_MJ. The relative influence of the variables showed that 'Young Adult' (age2) and 'Married' (marital1) were the most important predictors, followed by 'Elderly: 65+' (age4), 'Associate's degree/college graduate or higher' (degree3), and 'Male' (sex1). Various mental health-related variables (e.g., mentalhealth12, mentalhealth16, mentalhealth24) also showed significant importance. This analysis highlights the key factors that contribute to the prediction of marijuana use disorder, providing insights for further research and model improvement.
 
 
 ```r
-# Convert target variable to numeric (0 and 1)
-train_encoded$SUD_MJ <- ifelse(train_encoded$SUD_MJ == "Yes", 1, 0)
-test_encoded$SUD_MJ <- ifelse(test_encoded$SUD_MJ == "Yes", 1, 0)
+# Convert outcome variable to numeric 0 and 1
+train$SUD_MJ <- ifelse(train$SUD_MJ == "Yes", 1, 0)
+test$SUD_MJ <- ifelse(test$SUD_MJ == "Yes", 1, 0)
 
+# Train the gbm model again with best parameters 
 gbm_best <- gbm::gbm(SUD_MJ ~ ., 
-                      data = train_encoded, 
+                      data = train, 
                       distribution = "bernoulli", 
                       n.trees = best_params$n.trees, 
                       interaction.depth = best_params$interaction.depth, 
@@ -2251,7 +2095,7 @@ gbm_best <- gbm::gbm(SUD_MJ ~ .,
 summary(gbm_best)
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-25-1.png)<!-- --><div data-pagedtable="false">
+![](Final_Writeup_files/figure-html/gbm with best params-1.png)<!-- --><div data-pagedtable="false">
   <script data-pagedtable-source type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["var"],"name":[1],"type":["chr"],"align":["left"]},{"label":["rel.inf"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"age2","2":"16.3186532","_rn_":"age2"},{"1":"marital1","2":"12.1920714","_rn_":"marital1"},{"1":"age4","2":"4.6200249","_rn_":"age4"},{"1":"degree3","2":"4.5242165","_rn_":"degree3"},{"1":"sex1","2":"3.2530688","_rn_":"sex1"},{"1":"mentalhealth12","2":"3.2152945","_rn_":"mentalhealth12"},{"1":"mentalhealth16","2":"3.2121709","_rn_":"mentalhealth16"},{"1":"mentalhealth24","2":"3.0395127","_rn_":"mentalhealth24"},{"1":"mentalhealth18","2":"2.9633906","_rn_":"mentalhealth18"},{"1":"mentalhealth14","2":"2.8545466","_rn_":"mentalhealth14"},{"1":"race5","2":"2.7746464","_rn_":"race5"},{"1":"mentalhealth20","2":"2.6907415","_rn_":"mentalhealth20"},{"1":"mentalhealth15","2":"2.5779868","_rn_":"mentalhealth15"},{"1":"health1","2":"2.5605541","_rn_":"health1"},{"1":"mentalhealth17","2":"2.5167799","_rn_":"mentalhealth17"},{"1":"student1","2":"2.4710658","_rn_":"student1"},{"1":"mentalhealth13","2":"2.2665946","_rn_":"mentalhealth13"},{"1":"mentalhealth9","2":"2.1260470","_rn_":"mentalhealth9"},{"1":"mentalhealth10","2":"2.1120305","_rn_":"mentalhealth10"},{"1":"income3","2":"2.0763541","_rn_":"income3"},{"1":"mentalhealth11","2":"1.9515746","_rn_":"mentalhealth11"},{"1":"mentalhealth22","2":"1.6168500","_rn_":"mentalhealth22"},{"1":"mentalhealth21","2":"1.6027575","_rn_":"mentalhealth21"},{"1":"mentalhealth19","2":"1.4875027","_rn_":"mentalhealth19"},{"1":"mentalhealth1","2":"1.4696651","_rn_":"mentalhealth1"},{"1":"race6","2":"1.3568273","_rn_":"race6"},{"1":"mentalhealth7","2":"1.2683412","_rn_":"mentalhealth7"},{"1":"mentalhealth8","2":"1.2458004","_rn_":"mentalhealth8"},{"1":"mentalhealth23","2":"1.2213087","_rn_":"mentalhealth23"},{"1":"race3","2":"1.1297726","_rn_":"race3"},{"1":"mentalhealth6","2":"0.8755914","_rn_":"mentalhealth6"},{"1":"family2","2":"0.8431360","_rn_":"family2"},{"1":"race2","2":"0.7549786","_rn_":"race2"},{"1":"kid3","2":"0.4569654","_rn_":"kid3"},{"1":"race7","2":"0.4331358","_rn_":"race7"},{"1":"employ4","2":"0.3091339","_rn_":"employ4"},{"1":"mentalhealth4","2":"0.2937680","_rn_":"mentalhealth4"},{"1":"mentalhealth2","2":"0.2901376","_rn_":"mentalhealth2"},{"1":"marital2","2":"0.2706359","_rn_":"marital2"},{"1":"family6","2":"0.2697946","_rn_":"family6"},{"1":"employ2","2":"0.2350592","_rn_":"employ2"},{"1":"mentalhealth5","2":"0.1296869","_rn_":"mentalhealth5"},{"1":"elderly1","2":"0.1218257","_rn_":"elderly1"},{"1":"age3","2":"0.0000000","_rn_":"age3"},{"1":"race4","2":"0.0000000","_rn_":"race4"},{"1":"degree2","2":"0.0000000","_rn_":"degree2"},{"1":"employ3","2":"0.0000000","_rn_":"employ3"},{"1":"family3","2":"0.0000000","_rn_":"family3"},{"1":"family4","2":"0.0000000","_rn_":"family4"},{"1":"family5","2":"0.0000000","_rn_":"family5"},{"1":"kid1","2":"0.0000000","_rn_":"kid1"},{"1":"kid2","2":"0.0000000","_rn_":"kid2"},{"1":"elderly2","2":"0.0000000","_rn_":"elderly2"},{"1":"health_insur1","2":"0.0000000","_rn_":"health_insur1"},{"1":"income2","2":"0.0000000","_rn_":"income2"},{"1":"mentalhealth3","2":"0.0000000","_rn_":"mentalhealth3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
@@ -2259,13 +2103,20 @@ summary(gbm_best)
 
 #### Model Performance
 
+- Accuracy: The model correctly classified 85.43% of the instances overall.
+- Precision: The model has a fairly high precision of 85.68%.
+- Sensitivity (Recall): The recall rate is very high at 99%, likely due to the highly imbalanced dataset, with many 'No' instances and only a few 'Yes' instances.
+- F-1 Score: The high F1-score indicates a good balance between precision and recall for the majority class (SUD_MJ = No).
+- AUC: An AUC of 0.76 indicates that the model has a moderate ability to distinguish between 'Yes' and 'No'.
+
+
 ```r
 # Make predictions on the testing set
-test_encoded$predicted_prob_gbm <- predict(gbm_best, newdata = test_encoded, n.trees = best_params$n.trees, type = "response")
-test_encoded$predicted_class_gbm <- ifelse(test_encoded$predicted_prob_gbm > 0.5, 1, 0)
+test$predicted_prob_gbm <- predict(gbm_best, newdata = test, n.trees = best_params$n.trees, type = "response")
+test$predicted_class_gbm <- ifelse(test$predicted_prob_gbm > 0.5, 1, 0)
 
-# Confusion matrix to evaluate the GBM model on the testing set
-confusion_matrix_test_gbm <- confusionMatrix(as.factor(test_encoded$predicted_class_gbm), as.factor(test_encoded$SUD_MJ))
+# Confusion matrix on the testing set
+confusion_matrix_test_gbm <- confusionMatrix(as.factor(test$predicted_class_gbm), as.factor(test$SUD_MJ))
 print(confusion_matrix_test_gbm)
 ```
 
@@ -2300,7 +2151,7 @@ print(confusion_matrix_test_gbm)
 ```
 
 ```r
-# Calculate and print performance metrics for the GBM model on the testing set
+# Calculate performance metrics on the testing set
 accuracy_test_gbm <- confusion_matrix_test_gbm$overall['Accuracy']
 print(paste("Accuracy:", round(accuracy_test_gbm, 2)))
 ```
@@ -2338,8 +2189,8 @@ print(paste("F1-Score:", round(f1_score_test_gbm, 2)))
 ```
 
 ```r
-# Using ROCR to calculate AUC and plot ROC curve for the GBM model
-pred_gbm <- prediction(test_encoded$predicted_prob_gbm, test_encoded$SUD_MJ)
+# Calculate AUC
+pred_gbm <- prediction(test$predicted_prob_gbm, test$SUD_MJ)
 perf_auc_gbm <- performance(pred_gbm, measure = "auc")
 auc_value_gbm <- perf_auc_gbm@y.values[[1]]
 print(paste("AUC:", round(auc_value_gbm, 2)))
@@ -2350,12 +2201,39 @@ print(paste("AUC:", round(auc_value_gbm, 2)))
 ```
 
 ```r
-# Performance object for ROC
+# Plot the ROC curve
 perf_roc_gbm <- performance(pred_gbm, measure = "tpr", x.measure = "fpr")
-
-# Plot the ROC curve for the GBM model
 plot(perf_roc_gbm, main = "ROC Curve for GBM", col = "blue", lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/gbm perf-1.png)<!-- -->
+
+
+### Model Comparison
+
+
+```r
+metrics <- data.frame(
+  Model = c("Logistic Regression", "Random Forest", "GBM"),
+  Accuracy = c(accuracy_logi, accuracy_rf_tuned, accuracy_test_gbm),
+  Precision = c(precision_logi, precision_rf_tuned, precision_test_gbm),
+  Recall = c(recall_logi, recall_rf_tuned, recall_test_gbm),
+  Specificity = c(confusion_matrix_logistic$byClass['Specificity'], confusion_matrix_rf_tuned$byClass['Specificity'], confusion_matrix_test_gbm$byClass['Specificity'] ),
+  F1_Score = c(F1_score_logi, F1_rf_tuned, f1_score_test_gbm),
+  AUC = c(auc_value, auc_value_rf_tuned, auc_value_gbm)
+  )
+print(metrics)
+```
+
+```
+##                 Model  Accuracy Precision    Recall Specificity  F1_Score
+## 1 Logistic Regression 0.8526070 0.8577522 0.9918578 0.039323274 0.9199434
+## 2       Random Forest 0.8540107 0.8540761 0.9998434 0.002286237 0.9212292
+## 3                 GBM 0.8543449 0.8568445 0.9957723 0.028349337 0.9210993
+##         AUC
+## 1 0.7611017
+## 2 0.7167963
+## 3 0.7560643
+```
+
