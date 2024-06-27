@@ -14,6 +14,7 @@ output:
     code_folding: hide
     css: styles.css
 font-family: Times New Roman
+bibliography: references.bib  
 ---
 
 ```{r setup, include=FALSE}
@@ -36,18 +37,23 @@ library(gridExtra)
 library(ROCR)
 library(ranger)
 library(randomForest)
-#library(pak)
-#pak::pak("caret")
 library(caret)
 library(e1071)
 library(nnet)
 library(dummy)
 library(gbm)
+library(glmnet)
 ```
 
 # Introduction 
 
-Based on the previous group project, we changed some methods. 
+Marijuana has gained increasing prevalence in the US. As of April 2024, 38 states have legalized the medical use of marijuana products, and among these, 24 states have also legalized recreational marijuana [@ncsl]. The pros and cons of marijuana legalization remain an ongoing debate. Some studies suggest that the increasing popularity of marijuana products is associated with an increasing risk of developing marijuana use disorder[@compton2019]. In 2012-2013, among the 9.52% of US adults who used marijuana, 2.9% had a diagnosis of DSM-IV marijuana use disorder. In other words, nearly 3 out of every 10 marijuana users had a diagnosis of a marijuana use disorder [@hhs2023]. A more recent study suggests that about 27% of lifetime cannabis users transition to marijuana use disorder based on the DSM-5 diagnosis criteria [@feingold2020]. Given the prevalence of marijuana products and the high risk of developing marijuana use disorder, it is imperative to identify and predict the associated risk factors. 
+
+Previous literature has employed machine learning frameworks to research substance use disorder. For example, in a study by Acion et al. (2017)[@acion2017], researchers used several machine learning models, including logistic regression, Random Forest (RF), Artificial Neural Network (ANN), and Super Learning (SL), as prediction tools for the success of substance use disorder treatment.
+
+The goal of this project is to investigate the socio-demographic factors potentially associated with the risk of a marijuana user developing substance use disorder using a machine learning approach. By leveraging advanced machine learning models, I aim to identify key predictors and improve our understanding of the factors contributing to marijuana use disorder. The methodology I used is based on Rajapaksha et al. (2020)[@rajapaksha2020], in which the researchers employed LASSO, KNN, Random Forest, SVM, and Gradient Boosting to estimate the chance of developing SUD based on various demographic, behavioral, psychiatric, and cognitive risk factors. 
+
+In this project, I will use logistic regression, Lasso logistic regression, Random Forest, and Gradient Boosting The overall performance of the machine learning models will be evaluated using the area under the receiver operating characteristic curve (AUC), overall accuracy (i.e., the proportion of overall correct classifications), sensitivity (i.e., the proportion of correct classifications among the SUD instances/true positives), and specificity (i.e., the proportion of correct classifications among the non-SUD instances/true negatives). By comparing these metrics, I aim to determine the most effective machine learning model for predicting the risk of developing marijuana use disorder. This project can inform prevention and intervention strategies, ultimately aiding in addressing the challenges posed by increased marijuana use.
 
 # Data
 
@@ -59,7 +65,7 @@ load("/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/NSDUH_2022.R
 sud_2022 <- read_csv("/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/sud_2022.csv")
 ```
 
-### Outcome Variable 
+#### Outcome Variable 
 
 The outcome variable SUD_MJ is based on the DSM-5 Diagnostic Criteria for diagnosing and classifying substance use disorders. I reviewed questions from the marijuana use disorder section of the 2022 NSDUH data and identified the most relevant questions corresponding to the DSM-5 criteria. An SUD_MJ value of 1 indicates that the respondent has some level of marijuana use disorder, while a value of 0 indicates the absence of such a disorder. 
 
@@ -75,9 +81,9 @@ NSDUH_2022_full <- NSDUH_2022 %>%
          SUD_MJ = if_else(SUD_MJ, 1, 0))
 ```
 
-### Predictors
+#### Predictors
 
-There are 14 selected predictors, including age, sex, race, whether the respondent has health problems, marital status, highest degree obtained, school attendance, employment status, number of people in the household, number of children under 18 in the household, number of elderly people over 65 in the household, health insurance status, family income level, and mental health status.
+A previous study indicates that the prevalence of marijuana use disorder varies among different age groups, races, and between people with and without mental health problems (@santaella2019). In this project,  there are 14 selected predictors, including age, sex, race, health status, marital status, highest degree obtained, school attendance, employment status, number of people in the household, number of children under 18 in the household, number of elderly people over 65 in the household, health insurance status, family income level, and mental health status.
 
 All the socio-demographic variables in the survey are provided as categorical variables with various levels. I followed the methodology used in the original survey data but reorganized some variables into more general levels to make the data easier to analyze and interpret. For example, the predictor age (AGE3 in the survey data) originally had 10 levels. I consolidated these into four levels: 1 represents adolescents under age 18, 2 represents young adults aged 18 to 29, 3 indicates middle-aged individuals aged 30 to 64, and 4 represents elderly individuals aged 65 and older. The final cleaned dataset 
 
@@ -135,9 +141,7 @@ NSDUH_2022_full <- NSDUH_2022_full %>%
   mutate(marital = case_when(irmarit %in% c(4,99) ~ 0,
                              irmarit %in% c(2:3) ~ 2,
                              TRUE ~ 1))
-```
 
-```{r}
 # Predictors -- Education
 # 6) degree (1=w/o high school, 2=high school degree, 3=associate's degree/college graduate or higher)
 NSDUH_2022_full <- NSDUH_2022_full %>% 
@@ -150,9 +154,7 @@ NSDUH_2022_full <- NSDUH_2022_full %>%
   mutate(student = case_when(eduschlgo %in% c(1, 11) ~ 1,
                              eduschlgo == 2 ~ 0,
                              TRUE ~ NA))
-```
 
-```{r}
 # Predictors: Employment and Houshold Composition
 # 8) employ (1=employed full time, 2=employed part time, 3=unemployed, 4=Other(incl. not in labor force))
 NSDUH_2022_full <- NSDUH_2022_full %>% 
@@ -176,9 +178,7 @@ NSDUH_2022_full <- NSDUH_2022_full %>% mutate(kid = IRKI17_2 - 1)
 # 1 = One person 65 or older in household
 # 2 = Two or more people 65 or older in household
 NSDUH_2022_full <- NSDUH_2022_full %>% mutate(elderly = IRHH65_2-1)
-```
 
-```{r}
 # Predictors: Health and Income 
 # 12) health_insur (0=w/o health insurance, 1=health insurance)
 NSDUH_2022_full <- NSDUH_2022_full %>% 
@@ -241,9 +241,7 @@ NSDUH_2022_full <- NSDUH_2022_full %>%
 #"most of the time" were coded 3, "some of the time" were coded 2, "a little of the time" 
 #were coded 1, and "none of the time" were coded 0. These assigned values were summed 
 #across the six items to calculate a total score for mentalhealth.
-```
 
-```{r}
 # Create new dataset and drop all the NA values
 data_cleaned <- NSDUH_2022_full %>%
   select(age, sex, race, health, marital, degree, 
@@ -260,23 +258,38 @@ data_cleaned <- NSDUH_2022_full %>%
 
 ### Data Visualization
 
-**Age**
-The bar plot of the age variable indicates that young adults aged 18 to 29 have the highest prevalence of marijuana use disorder.
+**Age**:
+The age variable is categorized into four levels: "Adolescent" (under 18), "Young Adult" (18 to 29), "Middle Age" (30 to 64), and "Elderly" (65 and older). The plot shows the percentage of individuals within each age group who either have (SUD_MJ = 1) or do not have (SUD_MJ = 0) marijuana use disorder.
+
+Among young adults (18 to 29 years), 20.6% of the respondents have marijuana use disorder, and 79.4% do not. In the middle-age group (30 to 64 years), 9.9% of respondents have marijuana use disorder, while 90.1% do not. In the elderly group (65+ years), only 2.5% of the respondents have marijuana use disorder, and 97.5% do not. The filtered survey data reveals that, at least in 2022, no adolescents are reported to have marijuana use disorder. The young adult group has the highest percentage of respondents with marijuana use disorder among the three age groups.
+
 ```{r}
 # age (1=Adolescent: 18-, 2=Young Adult: 18-29, 3=Middle Age: 30-64, 4=Elderly: 65+)
-table(sud_2022$age)
+
+# Calculate the percentage of SUD_MJ for each sex and each level of SUD_MJ
+percentage_age <- sud_2022 %>%
+  group_by(age, SUD_MJ) %>%
+  summarize(count = n()) %>%
+  mutate(percentage = count / sum(count) * 100)
+
+percentage_age <- percentage_age %>%
+  mutate(age = factor(age, levels = c(1, 2, 3, 4), labels = c("Adolescent", "Young Adult", "Middle Age","Elderly")),
+         SUD_MJ = factor(SUD_MJ, levels = c(0, 1), labels = c("0", "1")))
 
 p1.1 <- sud_2022 %>% 
   ggplot(aes(x = factor(age, levels = 1:4, labels = c("Adolescent", "Young Adult", "Middle Age","Elderly")), fill = factor(SUD_MJ))) +
   geom_bar(alpha = 0.5, position = "dodge") +
   scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
   labs(x = "age", y = "Count") +
-  theme_minimal()
+  theme_minimal()+
+  geom_text(data = percentage_age, aes(x = age, y = count, label = paste0(round(percentage, 1), "%")),
+            position = position_dodge(width = 0.9), vjust = -0.5)
 p1.1
 ```
 
-**Sex**
-From the bar plot, we can see that the percentage of males having a marijuana use disorder in 2022 is slightly higher than that of females, with 17% of males and 12.5% of females affected.
+**Sex**:
+The sex variable is categorized into two groups -- Female and Male. The plot shows the percentage of individuals within each sex group who either have (SUD_MJ = 1) or do not have (SUD_MJ = 0) marijuana use disorder. From the bar plot, we can see that the percentage of males with a marijuana use disorder in 2022 is slightly higher than that of females, with 17% of males having a marijuana use disorder and 12.5% of females having a marijuana use disorder.
+
 ```{r}
 # Calculate the percentage of SUD_MJ for each sex and each level of SUD_MJ
 percentage <- sud_2022 %>%
@@ -301,8 +314,9 @@ p2 <- sud_2022 %>%
 p2
 ```
 
-**Race**
+**Race**:
 The following table summarizes the distribution of marijuana use disorder (SUD_MJ) among different racial groups. The count and percentage are provided for each combination of race and SUD_MJ status. The "NonHisp Asian" group has the lowest percentage (5.2%) of individuals with SUD_MJ, while the "NonHisp Native Am/AK Native" group has the highest percentage (27.3%). The "NonHisp White" group has the second-lowest percentage (13.7%) of individuals with SUD_MJ, and the "NonHisp More Than One Race" group has the second-highest percentage (23.1%). The "NonHisp Black/Afr Am" group has a percentage of 17.9% of individuals with SUD_MJ, which is higher than the "Hispanic" group, which has 15.1% of individuals with SUD_MJ.
+
 ```{r}
 race_dat <- sud_2022 %>%
   mutate(race = factor(race, levels = 1:7, labels = c("NonHisp White", "NonHisp Black/Afr Am", "NonHisp Native Am/AK Native", "NonHisp Native HI/Other Pac Isl", "NonHisp Asian", "NonHisp more than one race", "Hispanic")))
@@ -329,8 +343,9 @@ highlighted_table <- race_summary %>%
 highlighted_table
 ```
 
-**Health**
-The following bar plot shows that individuals with health problems have a higher percentage (20.7%) of SUD_MJ compared to those without health problems (13.6%). Please note that the survey data did not specify the specific health problems for individuals who rate their health as fair/poor.
+**Health**:
+The health variable is categorized into two groups: with and without health problems. The bar plot shows that individuals with health problems have a higher percentage (20.7%) of SUD_MJ compared to those without health problems (13.6%). Please note that the survey data did not specify the specific health problems for individuals who rate their health as fair/poor, and we are not inferring any causal relationship between any potential health problem and marijuana use disorder here. 
+
 ```{r}
 # health (0=w/o health problem: excellent/very good/good, 1=with health problem: fair/poor)
 health_percentage <- sud_2022 %>%
@@ -353,14 +368,15 @@ p3 <- sud_2022 %>% ggplot(
 p3
 ```
 
-**Marital**
-The bar plot shows the distribution of marijuana use disorder (SUD_MJ) among different marital statuses. The variable is categorized into three groups: "Never married," "Married," and "Widowed/Divorced." The percentages of individuals with and without SUD_MJ are displayed on the bars within each group.
+**Marital**:
+The variable "Marital" is categorized into three groups: "Never married," "Married," and "Widowed/Divorced." The percentages of individuals with and without SUD_MJ are displayed on the bars within each group.
 
-- Among those who have never married, 21.9% have a marijuana use disorder, while 78.1% do not.
-- For married individuals, 7.2% have a marijuana use disorder, while a substantial 92.8% do not.
-- In the widowed/divorced group, 11.6% have a marijuana use disorder, whereas 88.4% do not.
+- Among those who have never married, 21.9% have a marijuana use disorder, while 78.1% do not. 
+- For married individuals, 7.2% have a marijuana use disorder, while a substantial 92.8% do not. 
+- In the widowed/divorced group, 11.6% have a marijuana use disorder, whereas 88.4% do not. 
 
-This plot highlights that the highest percentage of marijuana use disorder is found among those who have never married, followed by the widowed/divorced group. Married individuals have the lowest percentage of marijuana use disorder.
+The plot highlights that the highest percentage of marijuana use disorder is found among those who have never married, followed by the widowed/divorced group. Married individuals have the lowest percentage of marijuana use disorder.
+
 ```{r}
 # marital (0=never been married/cannot married<=14, 1=married, 2=widowed/divorced/separated)
 marital_percentage <- sud_2022 %>%
@@ -382,7 +398,7 @@ p4 <- sud_2022 %>% ggplot(
 p4
 ```
 
-**Education**
+**Education**:
 The bar plot on the left displays the distribution of marijuana use disorder (SUD_MJ) among individuals with different educational levels. The variable "degree" shows the highest degree repsondents obtained, and is categorized into three groups: "without high school degree", "high school degree", and "higher (associate's degree/college graduate or higher)". The percentages of individuals with and without SUD_MJ within each educational group are displayed on the bars.
 
 - Among individuals without a high school degree, 18.6% have a marijuana use disorder, while 81.4% do not.
@@ -423,7 +439,7 @@ p5.1
 grid.arrange(p5, p5.1, ncol = 2, widths = c(2, 1))
 ```
 
-**Employment**
+**Employment**:
 This bar plot illustrates the distribution of marijuana use disorder (SUD_MJ) among individuals with different employment statuses: "Full time," "Part time," "Unemployed," and "Other." 
 
 - Among individuals employed full-time, 14.1% have a marijuana use disorder, while 85.9% do not.
@@ -431,7 +447,7 @@ This bar plot illustrates the distribution of marijuana use disorder (SUD_MJ) am
 - Among unemployed individuals, 20.1% have a marijuana use disorder, whereas 79.9% do not.
 - In the "Other" employment category, 9.2% have a marijuana use disorder, while 90.8% do not.
 
-This plot highlights that the highest percentage of marijuana use disorder is found among unemployed individuals (20.1%), followed by those employed part-time (16.8%). Individuals employed full-time and those in the "Other" employment category have lower percentages of marijuana use disorder, with the "Other" category having the lowest percentage (9.2%).
+The plot highlights that the highest percentage of marijuana use disorder is found among unemployed individuals (20.1%), followed by those employed part-time (16.8%). Individuals employed full-time and those in the "Other" employment category have lower percentages of marijuana use disorder, with the "Other" category having the lowest percentage (9.2%).
 ```{r} 
 # employ (1=employed full time, 2=employed part time, 3=unemployed, 4=Other(incl. not in labor force))
 employ_percentage <- sud_2022 %>%
@@ -455,14 +471,14 @@ p6 <- sud_2022 %>% ggplot(
 p6
 ```
 
-**Income**
+**Income**:
 This bar plot illustrates the distribution of marijuana use disorder (SUD_MJ) among individuals with different family income levels: "Poverty," "Middle," and "Wealth." 
 
 - Among individuals in the "Poverty" income group, 20.9% have a marijuana use disorder, while 79.1% do not.
 - For individuals in the "Middle" income group, 16.2% have a marijuana use disorder, while 83.8% do not.
 - Among individuals in the "Wealth" income group, 10.1% have a marijuana use disorder, whereas 89.9% do not.
 
-The result highlights that the highest percentage of marijuana use disorder is found among individuals in the "Poverty" income group (20.9%), followed by those in the "Middle" income group (16.2%). Individuals in the "Wealth" income group have the lowest percentage of marijuana use disorder (10.1%).
+The result shows that the highest percentage of marijuana use disorder is found among individuals in the "Poverty" income group (20.9%), followed by those in the "Middle" income group (16.2%). Individuals in the "Wealth" income group have the lowest percentage of marijuana use disorder (10.1%).
 ```{r}
 income_percentage <- sud_2022 %>%
   group_by(income, SUD_MJ) %>%
@@ -482,7 +498,7 @@ p9 <- sud_2022 %>% ggplot(
 p9
 ```
 
-**Health Insurance**
+**Health Insurance**:
 This last bar plot illustrates the distribution of marijuana use disorder (SUD_MJ) among individuals with and without health insurance. The percentages of individuals with and without SUD_MJ within each health insurance group are displayed on the bars.
 
 - Among individuals without health insurance, 19.6% have a marijuana use disorder, while 80.4% do not.
@@ -547,9 +563,9 @@ results_df
 
 # Model Fitting
 
-In the model fitting section, I use the cleaned dataset sud_2022 with selected predictors. Before applying the machine learning classification models, I first examined the outcome variable, marijuana use disorder (SUD_MJ). The outcome shows that our data is highly imbalanced, with 15% of individuals having SUD_MJ = 'Yes' and 85% having SUD_MJ = 'No'. This imbalance needs to be addressed to ensure that the classification models perform effectively and do not bias towards the majority class. 
+In the model fitting section, I used the cleaned dataset, sud_2022, with selected predictors. Before applying the machine learning classification models, I first examined the outcome variable, marijuana use disorder (SUD_MJ). The outcome shows that our data is highly imbalanced, with 15% of individuals having SUD_MJ = 'Yes' and 85% having SUD_MJ = 'No'. Given this imbalance, when interpreting and evaluating the model performance, I will focus not only on overall accuracy but also on metrics such as AUC, sensitivity, and specificity to ensure a more comprehensive assessment.
 
-I split the dataset into 67% for training and 33% for testing. To avoid overfitting, I initiated a 10-fold cross-validation that can be used later in the models.
+To prepare for model training and testing, I split the dataset into 67% for training and 33% for testing. To avoid overfitting, I implemented a 10-fold cross-validation approach, which will be applied later in the models. This method helps ensure that the model generalizes well to unseen data by validating its performance across multiple subsets of the training data.
 
 ```{r train-test split}
 # Load in dataset
@@ -585,8 +601,8 @@ Therefore, for the random forest model, I retained the original categorical vari
 
 ```{r}
 # One-hot encoding for categorical variables
-train_matrix <- model.matrix(SUD_MJ ~ . - 1, data = training)
-test_matrix <- model.matrix(SUD_MJ ~ . - 1, data = testing)
+train_matrix <- model.matrix(SUD_MJ ~ . - 1, data = training)[, -1]
+test_matrix <- model.matrix(SUD_MJ ~ . - 1, data = testing)[, -1]
 train <- as.data.frame(train_matrix)
 test <- as.data.frame(test_matrix)
 
@@ -596,7 +612,20 @@ test$SUD_MJ <- testing$SUD_MJ
 ```
 ### 1. Logistic Regression
 
-I first started with modeling using logistic regression, as it is one of the most straightforward and interpretable models that is suitable for binary classification tasks. The logistic regression model allows us to estimate the probability that a given input belongs to a specific class (in this case, whether an individual has marijuana use disorder). It could serve as a good baseline model against which more complex models can be compared.
+A logistic regression model is used to predict the probability of a binary outcome based on one or more predictor variables. It is widely utilized for classification tasks where the outcome variable is categorical with two possible outcomes. I began with logistic regression because it is straightforward and highly interpretable, making it an excellent baseline model for comparison against more complex models
+
+#### Model Performance 
+
+After fitting the logistic regression model to the training data and making predictions on the test data, I evaluated the model's performance using a confusion matrix and various performance metrics. 
+
+- Accuracy: The model achieved an accuracy of 85.26%, indicating that in general, 85.26% of the predictions made by the model were correct.
+- Sensitivity: The sensitivity, also called recall rate, in this model is very low at 3.93%, indicating that the model struggled to correctly identify individuals with SUD_MJ. 
+- Specificity: The specificity is 99.19%, meaning that the model correctly identified 99.19% of the individuals who do not have SUD_MJ.
+- Precision: The precision, or positive predictive value, is about 45%, meaning that when the model predicts 'Yes' for SUD_MJ, it is correct 45.26% of the time. Therefore, we call also tell that there are a substantial amount of false positives. 
+- F1-Score: The F1-score is 7%, which is a measure of the balance between recall/sensitifity and the precision. A very low F-1 score further indicates that the logistic regression model has limited ability of identifying positive cases. 
+- AUC: The AUC is 0.76, indicating that the model has a fair ability to distinguish between the two classes.
+
+The model demonstrates high specificity but extremely low sensitivity, meaning it is highly effective at identifying individuals without marijuana use disorder but fails significantly in identifying those with the disorder. The accuracy of 85.26% is misleading due to the class imbalance, as it closely mirrors the baseline accuracy of always predicting the majority class ('No'). The sensitivity,  specificity and F-1 score highlight the model's limitations in dealing with the minority class ('Yes'). In this case, AUC is a more reliable measure of the overall performance of the model given in context of imbalanced data. An AUC of 0.76 suggests the model has a moderate ability in distinguishing the positive and negative classes. In general, these model performance metrics suggest that while the model performs well overall due to the high prevalence of 'No' cases, it requires improvements, particularly in its ability to correctly identify and predict instances of marijuana use disorder. 
 
 ```{r train logistic reg}
 set.seed(123)
@@ -613,42 +642,29 @@ logistic_cv <- caret::train(SUD_MJ ~ .,
                             family = binomial, 
                             trControl = trControl, # using cv to avoid overfitting
                             metric = "ROC")
-# print(logistic_cv)
+summary(logistic_cv)
 
 # Make predictions on the testing set
-test$predicted_prob_logistic <- predict(logistic_cv, newdata = test, type = "prob")[, "Yes"]
-test$predicted_class_logistic <- ifelse(test$predicted_prob_logistic > 0.5, "Yes", "No")
-test$predicted_class_logistic <- factor(test$predicted_class_logistic, levels = c("No", "Yes"))
-```
+prob.logi <- predict(logistic_cv, newdata = test, type = "prob")[, "Yes"]
+pred.logi <- ifelse(prob.logi > 0.5, "Yes", "No")
+pred.logi <- factor(pred.logi, levels = c("No", "Yes"))
 
-#### Model Performance 
-
-After fitting the logistic regression model to the training data and making predictions on the test data, I evaluated the model's performance using a confusion matrix and various performance metrics.
-
-- Accuracy: The model achieved an accuracy of 85.26%, indicating that in general, 85.26% of the predictions made by the model were correct.
-- Precision: The precision, or positive predictive value, is 85.78%, meaning that 85.78% of the individuals predicted to not have SUD_MJ actually do not have it.
-- Specificity: The specificity in this model is very low at 3.93%, indicating that the model struggled to correctly identify individuals with SUD_MJ.
-- Recall: The recall rate, also called sensitivity, is 99.19%, meaning that the model correctly identified 99.19% of the individuals who do not have SUD_MJ.
-- F1-Score: The F1-score is 92%, providing a balance between precision and recall.
-- AUC: The AUC is 0.76, indicating that the model has a fair ability to distinguish between the two classes.
-
-The model's high sensitivity but low specificity highlight the challenges of correctly identifying respondents with SUD_MJ with this imbalanced dataset. In the context of an imbalanced dataset, traditional metrics like accuracy can be misleading because they are dominated by the majority class. AUC (Area Under the Curve) is a more reliable measure in this case , as it measures the ability of the model to discriminate between the positive and negative classes across different threshold settings. An AUC of 0.76 suggests that the model has a moderate ability to distinguish between individuals with and without SUD_MJ.
-
-```{r logi perf}
-confusion_matrix_logistic <- confusionMatrix(test$predicted_class_logistic, test$SUD_MJ)
+confusion_matrix_logistic <- confusionMatrix(pred.logi, test$SUD_MJ, positive = "Yes")
 print(confusion_matrix_logistic)
 # Accuracy
 accuracy_logi <- confusion_matrix_logistic$overall['Accuracy']
 print(paste("Accuracy:", round(accuracy_logi, 2)))
-# Precision, Recall, F1-Score
+# Precision, Sensitivity, Specificity, and F1-Score
+sensitivity_logi <- confusion_matrix_logistic$byClass['Sensitivity']
+specificity_logi <- confusion_matrix_logistic$byClass['Specificity'] 
 precision_logi <- confusion_matrix_logistic$byClass['Pos Pred Value']
-recall_logi <- confusion_matrix_logistic$byClass['Sensitivity'] 
-F1_score_logi <- 2 * ((precision_logi * recall_logi) / (precision_logi + recall_logi))
+F1_score_logi <- 2 * ((precision_logi * sensitivity_logi) / (precision_logi + sensitivity_logi))
+print(paste("Sensitivity:", round(sensitivity_logi, 2)))
+print(paste("Specificity:", round(specificity_logi, 2)))
 print(paste("Precision:", round(precision_logi, 2)))
-print(paste("Recall:", round(recall_logi, 2)))
 print(paste("F1-Score:", round(F1_score_logi, 2)))
 # AUC
-pred <- prediction(test$predicted_prob, test$SUD_MJ)
+pred <- prediction(prob.logi, test$SUD_MJ)
 perf_auc <- performance(pred, measure = "auc")
 auc_value <- perf_auc@y.values[[1]]
 print(paste("AUC:", round(auc_value, 2)))
@@ -658,9 +674,105 @@ plot(perf_roc, main = "ROC Curve", col = "red", lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
 ```
 
-### 2. Random Forest
+### 2. Lasso logistic Regression
 
-I further employed the random forest model to tackle the binary classification problem of predicting marijuana use disorder (SUD_MJ). Unlike logistic regression, which is a linear model, the random forest is a non-linear model capable of capturing more complex relationships between features. Additionally, the random forest model provides feature importance metrics, which help identify the most relevant features for the classification task.
+Next, I initiated a Lasso logistic regression. The Lasso penalty term shrinks the coefficients of the less important variables to zero, effectively performing variable selection. I first trained the Lasso logistic regression model using 10-fold cross-validation to find the optimal lambda value that minimizes the mean cross-validation error. After determining the optimal lambda, I fit the final model using this value and made predictions on the test data. This approach helps to enhance the model's performance by focusing only on the most relevant predictors and reducing overfitting.
+
+#### Model Performance 
+
+- Accuracy: The model achieved an overall accuracy of 85.38%, indicating that 85.38% of the total predictions were correct. 
+
+- Sensitivity: The sensitivity (or recall) is extremely low at 0.000457, meaning that the model correctly identified only a very small fraction of the actual 'Yes' cases. In the confusion matrix, the model actually only identified 1 true positive instances. 
+
+- Specificity: The specificity, on the other hand, is very high at 0.99, meaning that the model correctly identifying most of the negative cases. 
+
+- Precision: The precision is about 50%, meaning that when the model predicts 'Yes' for SUD_MJ, it is correct only 50% of the time, which is no better than a random guess.
+
+Overall, the Lasso logistic regression model shows poor performance. Despite having high accuracy and a decent AUC, the extremely low sensitivity and extremely high specificity indicate a poor detection of positive cases. This outcome suggests that the model heavily favors predicting the majority class ('No') and struggles to identify true positive instances of marijuana use disorder. 
+
+```{r}
+set.seed(123)
+CVlasso <- cv.glmnet(train_matrix, 
+                     train$SUD_MJ, 
+                     type.measure = "class", 
+                     family = "binomial", 
+                     alpha = 1, 
+                     nfolds = 10)
+p1 <- plot(CVlasso)
+p2 <- plot(CVlasso$glmnet.fit, 
+     "lambda", label=FALSE)
+lambda_1se <- CVlasso$lambda.1se
+lambda_min <- CVlasso$lambda.min
+print(paste("Lambda.1se: ", lambda_1se))
+print(paste("Lambda.min: ", lambda_min))
+coef(CVlasso, s = lambda_min)
+# coef(CVlasso, s = lambda_1se) # Only intercept left if using lamba 1se
+
+# Final model with lambda.min
+lasso.model <- glmnet(train_matrix, train$SUD_MJ, alpha = 1, family = "binomial",
+                      lambda = lambda_min, nfolds = 10)
+dim(test_matrix)
+dim(train_matrix)
+# Make prediction on test data
+prob.lasso <- predict(lasso.model, newx = test_matrix, type = "response")
+pred.lasso <- ifelse(prob.lasso > 0.5, "Yes", "No")
+confusion_matrix_lasso <- confusionMatrix(as.factor(pred.lasso), test$SUD_MJ, positive = "Yes")
+print(confusion_matrix_lasso)
+
+# Accuracy
+accuracy_lasso <- confusion_matrix_lasso$overall['Accuracy']
+print(paste("Accuracy:", round(accuracy_lasso, 2)))
+# Sensitivity 
+sensitivity_lasso <- confusion_matrix_lasso$byClass['Sensitivity']
+print(paste("Sensitivity:", sensitivity_lasso))
+# Specificity
+specificity_lasso <- confusion_matrix_lasso$byClass['Specificity']
+print(paste("Sensitivity:", specificity_lasso))
+# Precision
+precision_lasso <- confusion_matrix_lasso$byClass['Pos Pred Value']
+print(paste("Precision:", precision_lasso))
+# F-1 Score
+F1_lasso <- 2 * ((precision_lasso * sensitivity_lasso) / (precision_lasso + sensitivity_lasso))
+print(paste("F-1 Score:", F1_lasso))
+# AUC
+pred <- prediction(prob.lasso, test$SUD_MJ)
+perf <- performance(pred, measure = "tpr", x.measure = "fpr")
+auc_lasso <- performance(pred, measure = "auc")@y.values[[1]]
+print(paste("AUC: ", auc_lasso))
+plot(perf, main = "ROC Curve for Lasso Regression", col = "blue", lwd = 2)
+abline(a = 0, b = 1, lty = 2, col = "gray")
+```
+
+The model has identified several key predictors of marijuana use disorder.The variable importance is ranked based on the absolute values of the coefficients. The top 5 predictors include age, mental health, race, marital, and sex.
+
+**age**: age4 (elderly 65+) has the highest importance. A coefficient of -1.38 for age4 means that for individuals in the "Elderly" age category, the log-odds of having marijuana use disorder decrease by 1.3809210453 units on average compared to the reference age category, holding all other variables constant.
+
+**mental health**: Several mental health related predictors are categorized as important predictors, such as mentalhealth20, mentalhealth24, mentalhealth18, mentalhealth22, mentalhealth16, mentalhealth14, mentalhealth21, mentalhealth15, mentalhealth12, and mentalhealth23. The positive coefficients of these predictors suggest that higher mental health issues are associated with an increased risk of marijuana use disorder.
+
+**race**: race5 (Non-Hispanic Native Hawaiian/Other Pacific Islander) has a negative coefficients of -0.67, meaning that individuals identified as Non-Hispanic Native Hawaiian/Other Pacific Islander have log-odds of having marijuana use disorder that decrease by 0.67 units on average compared to the reference race category, holding all other variables constant.
+
+**marital status**: Marital status (marital1) has a negative coefficient of -0.57, meaning that married individuals have log-odds of having marijuana use disorder that decrease by 0.57 units on average compared to non-married individuals, holding all other variables constant
+
+**sex**:sex1 has a positive coefficient of 0.285, meaning that males have log-odds of having marijuana use disorder that increase by 0.285 units on average compared to females, holding all other variables constant.
+```{r variable importance}
+# Variable importance
+coef_lasso <- coef(lasso.model, s = lambda_min)
+coef_lasso <- as.data.frame(as.matrix(coef_lasso))
+print(coef(lasso.model, s = lambda_min))
+coef_lasso$variable <- rownames(coef_lasso)
+colnames(coef_lasso)[1] <- "coefficient"
+
+coef_lasso <- coef_lasso %>%
+  filter(variable != "(Intercept)") %>%
+  mutate(importance = abs(coefficient)) %>%
+  arrange(desc(importance))
+print(coef_lasso)
+```
+
+
+### 3. Random Forest
+
+I further employed the random forest model to tackle the binary classification problem. Unlike logistic regression, which is a linear model, the random forest is a non-linear model capable of capturing more complex relationships between features. Additionally, the random forest model provides feature importance metrics, which help identify the most relevant features for the classification task.
 
 The model was initially trained on the training data with 500 trees, and the number of variables tried at each split (mtry) was set to the optimal value found during tuning. The optimal mtry value was determined by tuning the model to minimize the Out-Of-Bag (OOB) error estimate. The OOB error estimate serves as an internal validation metric for the model, providing an unbiased estimate of the prediction error. The random forest model achieved a minimum OOB error rate of 14.45%, indicating that approximately 14.45% of the predictions made by the model on the training data were incorrect. I selected the mtry value that corresponded to the lowest OOB error rate for the final model.
 
@@ -692,20 +804,24 @@ varImpPlot(rf_tuned)
 # Mean Decrease Accuracy - How much the model accuracy decreases if we drop that variable.
 # Mean Decrease Gini - Measure of variable importance based on the Gini impurity index used for the calculation of splits in trees.
 # Making predictions based on test data
-testing$pred_prob_rf_tuned <- predict(rf_tuned, newdata = testing, type = "prob")[, 2]
-testing$pred_class_rf_tuned <- ifelse(testing$pred_prob_rf_tuned > 0.5, "Yes", "No")
+pred_prob_rf_tuned <- predict(rf_tuned, newdata = testing, type = "prob")[, 2]
+pred_class_rf_tuned <- ifelse(pred_prob_rf_tuned > 0.5, "Yes", "No")
 # Print confusion matrix
-confusion_matrix_rf_tuned <- confusionMatrix(as.factor(testing$pred_class_rf_tuned), testing$SUD_MJ)
+confusion_matrix_rf_tuned <- confusionMatrix(as.factor(pred_class_rf_tuned), testing$SUD_MJ, positive = "Yes")
 ```
 
 #### Model Performance
 
 - Accuracy: Evaluating on the testing data, the Random Forest model achieved an overall prediction accuracy of 85.4%.
-- Precision: The precision is 85.41%, meaning that when the model predicted "No" for SUD_MJ, it was correct 85.41% of the time.
-- Recall (sensitivity): In this model, the recall rate is extremely high at 99.99%, indicating that the model correctly identified nearly all individuals without SUD_MJ, reflecting the nature of the imbalanced dataset.
-- Specificity: The specificity is very low at 0.23%, reflecting the model's difficulty in correctly identifying individuals with SUD_MJ. 
-- F1-Score: The F1-Score is 92%, providing a balance between precision and recall.
-- AUC: The AUC for the random forest model is 0.72, which is even lower than that of the logistic regression model. 
+- Precision: The precision is 61.54%, meaning that when the model predicts 'Yes' for SUD_MJ, it is correct 61.54% of the time. 
+- Sensitivity: The model correctly identified only 0.37% of the actual 'Yes' cases, indicating a poor ability to detect true positives.
+- Specificity:  The model correctly identified 99.96% of the actual 'No' cases, showing that the model is good at detecting true negatives.
+- F1-Score: The F1-Score is extremely low at 0.01, providing a balance between precision and recall. It further prove that the random forest has poor overall performance in handling the positive cases.
+- AUC: The AUC for the random forest model is 0.72, indicating that the model has some discriminatory power, but it is not particularly strong.
+
+Overall, the Random Forest model demonstrates high specificity and reasonable precision for the majority (SUD_MJ = 'No') class, but like the previous two models, it still struggles with detecting the minority class. The sensitivity is extremely low at 0.37%, indicating the model's poor ability to identify true positive cases of marijuana use disorder. The overall accuracy of 85.4% is driven by the correct classification of the majority 'No' class, which is expected given the high imbalance in the dataset.
+
+The very low F1-Score and balanced accuracy further highlight the model's inability in handling the minority class (SUD_MJ = 'Yes'). The moderate AUC of 0.72 indicates some ability to distinguish between the classes, but I think it is not sufficient enough for reliable predictions. These results suggest the need for further adjustments or alternative modeling approaches to better address the class imbalance and improve the detection of true positive cases.
 
 ```{r rf perf}
 # Accuracy
@@ -714,13 +830,15 @@ accuracy_rf_tuned <- confusion_matrix_rf_tuned$overall['Accuracy']
 print(paste("Accuracy:", round(accuracy_rf_tuned, 2)))
 # Precision, Recall, F1-Score
 precision_rf_tuned <- confusion_matrix_rf_tuned$byClass['Pos Pred Value']
-recall_rf_tuned <- confusion_matrix_rf_tuned$byClass['Sensitivity']
-F1_rf_tuned <- 2 * ((precision_rf_tuned * recall_rf_tuned) / (precision_rf_tuned + recall_rf_tuned))
+sensitivity_rf_tuned <- confusion_matrix_rf_tuned$byClass['Sensitivity']
+specificity_rf_tuned <- confusion_matrix_rf_tuned$byClass['Specificity']
+F1_rf_tuned <- 2 * ((precision_rf_tuned * sensitivity_rf_tuned) / (precision_rf_tuned + sensitivity_rf_tuned))
 print(paste("Precision:", round(precision_rf_tuned, 2)))
-print(paste("Recall:", round(recall_rf_tuned, 2)))
+print(paste("Sensitivity:", round(sensitivity_rf_tuned, 2)))
+print(paste("Specificity:", round(specificity_rf_tuned, 2)))
 print(paste("F1-Score:", round(F1_rf_tuned, 2)))
 # AUC
-pred_rf_tuned <- prediction(testing$pred_prob_rf_tuned, testing$SUD_MJ)
+pred_rf_tuned <- prediction(pred_prob_rf_tuned, testing$SUD_MJ)
 auc_rf_tuned <- performance(pred_rf_tuned, "auc")
 auc_value_rf_tuned <- auc_rf_tuned@y.values[[1]]
 print(paste("AUC:", round(auc_value_rf_tuned, 2)))
@@ -730,9 +848,9 @@ plot(roc_rf_tuned, main="ROC Curve for Random Forest",col=2,lwd=2)
 abline(a=0,b=1,lwd=2,lty=2,col="gray")
 ```
 
-### 3. Generalized Boosted Regression Model (GBM)
+### 4. Generalized Boosted Regression Model (GBM)
 
-In this section, I used a Gradient Boosting Machine (GBM) for regression. Unlike Random Forest, where each decision tree is built independently from each sample, the trees in GBM are built sequentially. Each tree corrects the errors made by the previous one, enhancing the overall model performance.
+Lastly, I used a Generalized Boosted Regression Model (GBM). Unlike Random Forest, where each decision tree is built independently from each sample, the trees in GBM are built sequentially. Each tree corrects the errors made by the previous one, enhancing the overall model performance.
 
 To optimize the performance of the GBM, I first performed hyperparameter tuning using a grid search. The model was then trained on the training data using 10-fold cross-validation to prevent overfitting. The most optimal GBM model hyperparameters were found to be: n.trees = 150, interaction.depth = 1, shrinkage = 0.3, and n.minobsinnode = 10. These values were selected because they produced the highest ROC value during cross-validation, indicating the model's strong ability to distinguish between individuals with and without SUD_MJ.
 
@@ -754,7 +872,7 @@ gbm_model <- caret::train(SUD_MJ ~ .,
 best_params <- gbm_model$bestTune
 print(best_params)
 ```
-After training the GBM model with the best hyperparameters, I examined the variable importance again to understand which features were most influential in predicting SUD_MJ. The relative influence of the variables showed that 'Young Adult' (age2) and 'Married' (marital1) were the most important predictors, followed by 'Elderly: 65+' (age4), 'Associate's degree/college graduate or higher' (degree3), and 'Male' (sex1). Various mental health-related variables (e.g., mentalhealth12, mentalhealth16, mentalhealth24) also showed significant importance. This analysis highlights the key factors that contribute to the prediction of marijuana use disorder, providing insights for further research and model improvement.
+After training the GBM model with the best hyperparameters, I examined the variable importance again to understand which features were most influential in predicting SUD_MJ. The relative influence of the variables showed that 'Young Adult' (age2) and 'Married' (marital1) were the most important predictors, followed by 'Elderly: 65+' (age4), 'Associate's degree/college graduate or higher' (degree3), and 'Male' (sex1). Mental health-related variables (e.g., mentalhealth12, mentalhealth16, mentalhealth24) also showed significant importance. This analysis highlights the key factors that contribute to the prediction of marijuana use disorder, providing insights for further research and model improvement.
 
 ```{r gbm with best params}
 # Convert outcome variable to numeric 0 and 1
@@ -778,34 +896,38 @@ summary(gbm_best)
 #### Model Performance
 
 - Accuracy: The model correctly classified 85.43% of the instances overall.
-- Precision: The model has a fairly high precision of 85.68%.
-- Sensitivity (Recall): The recall rate is very high at 99%, likely due to the highly imbalanced dataset, with many 'No' instances and only a few 'Yes' instances.
-- F-1 Score: The high F1-score indicates a good balance between precision and recall for the majority class (SUD_MJ = No).
-- AUC: An AUC of 0.76 indicates that the model has a moderate ability to distinguish between 'Yes' and 'No'.
+- Precision: The model has a precision of 53.92%, meaning that when the model predicts 'Yes' for SUD_MJ, it is correct 53.92% of the time. 
+- Sensitivity (Recall): The recall rate is 2.51%, indicating that the model only correctly identified 2.51% of the actual 'Yes' cases.
+- Specificity: The model has a very high specificity at 99.63%, meaning that it has an excellent ability to detect true negatives.
+- F-1 Score: The very low F1-Score (0.05) indicates poor overall performance in handling the positive class.
+- AUC: An AUC of 0.76 indicates that the model has a moderate ability in distinguishing between 'Yes' and 'No'.
+The GBM model has a high specificity and a reasonable precision for predicting the majority class (SUD_MJ = "No"). However, from the very low sensitivity, we can tell that the model also struggles with detecting the minority class (SUD_MJ = "Yes"). The overall accuracy is high at 85.43%, which is driven by the correct classification of the majority 'No' class. The low F1-Score and balanced accuracy highlight the model's ineffectiveness in handling the minority class. The moderate AUC of 0.76 indicates some ability to distinguish between the classes.
 
 ```{r gbm perf}
 # Make predictions on the testing set
-test$predicted_prob_gbm <- predict(gbm_best, newdata = test, n.trees = best_params$n.trees, type = "response")
-test$predicted_class_gbm <- ifelse(test$predicted_prob_gbm > 0.5, 1, 0)
+predicted_prob_gbm <- predict(gbm_best, newdata = test, n.trees = best_params$n.trees, type = "response")
+predicted_class_gbm <- ifelse(predicted_prob_gbm > 0.5, 1, 0)
 
 # Confusion matrix on the testing set
-confusion_matrix_test_gbm <- confusionMatrix(as.factor(test$predicted_class_gbm), as.factor(test$SUD_MJ))
-print(confusion_matrix_test_gbm)
+confusion_matrix_gbm <- confusionMatrix(as.factor(predicted_class_gbm), as.factor(test$SUD_MJ), positive = '1')
+print(confusion_matrix_gbm)
 
-# Calculate performance metrics on the testing set
-accuracy_test_gbm <- confusion_matrix_test_gbm$overall['Accuracy']
-print(paste("Accuracy:", round(accuracy_test_gbm, 2)))
+# Accuracy
+accuracy_gbm <- confusion_matrix_gbm$overall['Accuracy']
+print(paste("Accuracy:", round(accuracy_gbm, 2)))
+# Precision, Sensitivity, Specificity, F-1
+precision_gbm <- confusion_matrix_gbm$byClass['Pos Pred Value']
+sensitivity_gbm <- confusion_matrix_gbm$byClass['Sensitivity']
+specificity_gbm <- confusion_matrix_gbm$byClass['Specificity']
+f1_score_gbm <- 2 * ((precision_gbm * sensitivity_gbm) / (precision_gbm + specificity_gbm))
 
-precision_test_gbm <- confusion_matrix_test_gbm$byClass['Pos Pred Value']
-recall_test_gbm <- confusion_matrix_test_gbm$byClass['Sensitivity']
-f1_score_test_gbm <- 2 * ((precision_test_gbm * recall_test_gbm) / (precision_test_gbm + recall_test_gbm))
-
-print(paste("Precision:", round(precision_test_gbm, 2)))
-print(paste("Recall:", round(recall_test_gbm, 2)))
-print(paste("F1-Score:", round(f1_score_test_gbm, 2)))
+print(paste("Precision:", round(precision_gbm, 3)))
+print(paste("Sensitivity:", round(sensitivity_gbm, 3)))
+print(paste("Specificity:", round(specificity_gbm, 3)))
+print(paste("F1-Score:", round(f1_score_gbm, 3)))
 
 # Calculate AUC
-pred_gbm <- prediction(test$predicted_prob_gbm, test$SUD_MJ)
+pred_gbm <- prediction(predicted_prob_gbm, test$SUD_MJ)
 perf_auc_gbm <- performance(pred_gbm, measure = "auc")
 auc_value_gbm <- perf_auc_gbm@y.values[[1]]
 print(paste("AUC:", round(auc_value_gbm, 2)))
@@ -816,19 +938,74 @@ plot(perf_roc_gbm, main = "ROC Curve for GBM", col = "blue", lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
 ```
 
-
 ### Model Comparison
+
+To recap, four machine learning models were used to predict marijuana use disorder (SUD_MJ): Logistic Regression, Lasso Logistic Regression, Random Forest, and GBM.
+
+Comparing all four models, logistic regression outperforms the other three, as it has the highest AUC of 0.76. Despite all models struggling to accurately identify positive cases (SUD_MJ = "Yes"), Logistic Regression performs slightly better than the others, with the highest sensitivity at 3.9%. Moreover, Logistic Regression has higher interpretability, making it easier to understand and explain the impact of each predictor on the outcome.
+
+Overall, while no model demonstrated exceptional performance in identifying positive cases, Logistic Regression's superior AUC, higher sensitivity, and interpretability make it the preferred model for predicting marijuana use disorder in this study.
 
 ```{r}
 metrics <- data.frame(
-  Model = c("Logistic Regression", "Random Forest", "GBM"),
-  Accuracy = c(accuracy_logi, accuracy_rf_tuned, accuracy_test_gbm),
-  Precision = c(precision_logi, precision_rf_tuned, precision_test_gbm),
-  Recall = c(recall_logi, recall_rf_tuned, recall_test_gbm),
-  Specificity = c(confusion_matrix_logistic$byClass['Specificity'], confusion_matrix_rf_tuned$byClass['Specificity'], confusion_matrix_test_gbm$byClass['Specificity'] ),
-  F1_Score = c(F1_score_logi, F1_rf_tuned, f1_score_test_gbm),
-  AUC = c(auc_value, auc_value_rf_tuned, auc_value_gbm)
+  Model = c("Logistic Regression","Lasso Logistic Regression", "Random Forest", "GBM"),
+  Accuracy = c(accuracy_logi, accuracy_lasso, accuracy_rf_tuned, accuracy_gbm),
+  Precision = c(precision_logi, precision_lasso, precision_rf_tuned, precision_gbm),
+  Sensitivity = c(sensitivity_logi, sensitivity_lasso, sensitivity_rf_tuned, sensitivity_gbm),
+  Specificity = c(specificity_logi,specificity_lasso, specificity_rf_tuned, specificity_gbm),
+  F1_Score = c(F1_score_logi, F1_lasso, F1_rf_tuned, f1_score_gbm),
+  AUC = c(auc_value, auc_lasso, auc_value_rf_tuned, auc_value_gbm)
   )
-print(metrics)
+metrics_table <- gt(metrics) %>%
+  tab_header(
+    title = md("**Model Performance Metrics**")
+  ) %>%
+  fmt_number(
+    columns = 2:7,
+    decimals = 4
+  ) %>%
+  cols_label(
+    Model = "Model",
+    Accuracy = "Accuracy",
+    Precision = "Precision",
+    Sensitivity = "Sensitivity",
+    Specificity = "Specificity",
+    F1_Score = "F1 Score",
+    AUC = "AUC"
+  ) %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "lightblue"),
+      cell_text(weight = "bold")
+    ),
+    locations = cells_body(
+      columns = vars(Model)
+    )
+  ) %>%
+  tab_style(
+    style = cell_borders(
+      sides = "all",
+      color = "grey",
+      weight = px(1)
+    ),
+    locations = cells_body()
+  ) %>%
+  tab_options(
+    table.width = pct(100),
+    column_labels.font.weight = "bold"
+  )
+
+# Print the gt table
+print(metrics_table)
+
 ```
 
+### Conclusion and Discussion 
+
+In this project, I employed four models to estimate the probability that a user of marijuana products will develop marijuana use disorder and to identify the socio-demographic variables associated with this outcome. The results from all four models suggest that age, mental health, sex, marital status, education, and race are the most important variables out of the 14 initially selected. To avoid overfitting, I implemented 10-fold cross-validation for each model.
+
+However, the reasons for marijuana use disorder are complex and multifaceted, varying widely between individuals. Our findings suggest that the selected socio-demographic variables might be relevant to marijuana use disorder, but more research is needed to understand the actual causes fully.
+
+Comparing the AUC, sensitivity, specificity, precision, and F1 scores, the logistic regression model demonstrated better overall performance than the other three models. This indicates that more complex models do not always lead to better performance. Logistic regression's simplicity and interpretability make it a strong choice in this context.
+
+One of the biggest limitations of this study is that the NSDUH 2022 survey dataset is inherently imbalanced. This imbalance poses a significant challenge for predictive modeling, as it can lead to biased results where the model performs well on the majority class but poorly on the minority class. Implementing either oversampling or undersampling techniques to address this imbalance can lead to a loss of valuable information. Oversampling might result in overfitting, while undersampling could omit crucial data points. Consequently, the imbalanced dataset makes accurate prediction more difficult and limits the generalizability of the model's findings. Future research should explore advanced techniques, such as synthetic data generation or ensemble methods, to mitigate these issues and enhance the model's robustness and accuracy.

@@ -7,7 +7,7 @@ output:
     toc: true
     toc_float:
       collapsed: true
-    theme: united
+    theme: lumen
     keep_md: true
     df_print: paged
     code_download: true
@@ -42,11 +42,18 @@ library(e1071)
 library(nnet)
 library(dummy)
 library(gbm)
+library(glmnet)
 ```
 
 # Introduction 
 
-Based on the previous group project, we changed some methods. 
+Marijuana has gained increasing prevalence in the US. As of April 2024, 38 states have legalized the medical use of marijuana products, and among these, 24 states have also legalized recreational marijuana (citation). The pros and cons of marijuana legalization remain an ongoing debate. Some studies suggest that the increasing popularity of marijuana products is associated with an increasing risk of developing marijuana use disorder (citation). In 2012-2013, among the 9.52% of US adults who used marijuana, 2.9% had a diagnosis of DSM-IV marijuana use disorder. In other words, nearly 3 out of every 10 marijuana users had a diagnosis of a marijuana use disorder (citation). A more recent study suggests that about 27% of lifetime cannabis users transition to marijuana use disorder based on the DSM-5 diagnosis criteria (citation). Given the prevalence of marijuana products and the high risk of developing marijuana use disorder, it is imperative to identify and predict the associated risk factors. 
+
+Previous literature has employed machine learning frameworks to research substance use disorder. For example, in a study by Acion et al. (2017), researchers used several machine learning models, including logistic regression, Random Forest (RF), Artificial Neural Network (ANN), and Super Learning (SL), as prediction tools for the success of substance use disorder treatment.
+
+The goal of this project is to investigate the socio-demographic factors potentially associated with the risk of a marijuana user developing substance use disorder using a machine learning approach. By leveraging advanced machine learning models, I aim to identify key predictors and improve our understanding of the factors contributing to marijuana use disorder. The methodology I used is based on Rajapaksha et al. (2020), in which the researchers employed LASSO, KNN, Random Forest, SVM, and Gradient Boosting to estimate the chance of developing SUD based on various demographic, behavioral, psychiatric, and cognitive risk factors. 
+
+In this project, I will use logistic regression, Lasso logistic regression, Random Forest, and Gradient Boosting The overall performance of the machine learning models will be evaluated using the area under the receiver operating characteristic curve (AUC), overall accuracy (i.e., the proportion of overall correct classifications), sensitivity (i.e., the proportion of correct classifications among the SUD instances/true positives), and specificity (i.e., the proportion of correct classifications among the non-SUD instances/true negatives). By comparing these metrics, I aim to determine the most effective machine learning model for predicting the risk of developing marijuana use disorder. This project can inform prevention and intervention strategies, ultimately aiding in addressing the challenges posed by increased marijuana use.
 
 # Data
 
@@ -59,7 +66,7 @@ load("/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/NSDUH_2022.R
 sud_2022 <- read_csv("/Users/jiashuliu/Desktop/Projects/substance_use_disorder/data/sud_2022.csv")
 ```
 
-### Outcome Variable 
+#### Outcome Variable 
 
 The outcome variable SUD_MJ is based on the DSM-5 Diagnostic Criteria for diagnosing and classifying substance use disorders. I reviewed questions from the marijuana use disorder section of the 2022 NSDUH data and identified the most relevant questions corresponding to the DSM-5 criteria. An SUD_MJ value of 1 indicates that the respondent has some level of marijuana use disorder, while a value of 0 indicates the absence of such a disorder. 
 
@@ -76,9 +83,9 @@ NSDUH_2022_full <- NSDUH_2022 %>%
          SUD_MJ = if_else(SUD_MJ, 1, 0))
 ```
 
-### Predictors
+#### Predictors
 
-There are 14 selected predictors, including age, sex, race, whether the respondent has health problems, marital status, highest degree obtained, school attendance, employment status, number of people in the household, number of children under 18 in the household, number of elderly people over 65 in the household, health insurance status, family income level, and mental health status.
+A previous study indicates that the prevalence of marijuana use disorder varies among different age groups, races, and between people with and without mental health problems (citation). In this project,  there are 14 selected predictors, including age, sex, race, health status, marital status, highest degree obtained, school attendance, employment status, number of people in the household, number of children under 18 in the household, number of elderly people over 65 in the household, health insurance status, family income level, and mental health status.
 
 All the socio-demographic variables in the survey are provided as categorical variables with various levels. I followed the methodology used in the original survey data but reorganized some variables into more general levels to make the data easier to analyze and interpret. For example, the predictor age (AGE3 in the survey data) originally had 10 levels. I consolidated these into four levels: 1 represents adolescents under age 18, 2 represents young adults aged 18 to 29, 3 indicates middle-aged individuals aged 30 to 64, and 4 represents elderly individuals aged 65 and older. The final cleaned dataset 
 
@@ -108,23 +115,23 @@ codebook %>%
 ```
 
 ```{=html}
-<div id="rauouztubr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#rauouztubr table {
+<div id="viyjzpbygm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#viyjzpbygm table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#rauouztubr thead, #rauouztubr tbody, #rauouztubr tfoot, #rauouztubr tr, #rauouztubr td, #rauouztubr th {
+#viyjzpbygm thead, #viyjzpbygm tbody, #viyjzpbygm tfoot, #viyjzpbygm tr, #viyjzpbygm td, #viyjzpbygm th {
   border-style: none;
 }
 
-#rauouztubr p {
+#viyjzpbygm p {
   margin: 0;
   padding: 0;
 }
 
-#rauouztubr .gt_table {
+#viyjzpbygm .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -150,12 +157,12 @@ codebook %>%
   border-left-color: #D3D3D3;
 }
 
-#rauouztubr .gt_caption {
+#viyjzpbygm .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#rauouztubr .gt_title {
+#viyjzpbygm .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -167,7 +174,7 @@ codebook %>%
   border-bottom-width: 0;
 }
 
-#rauouztubr .gt_subtitle {
+#viyjzpbygm .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -179,7 +186,7 @@ codebook %>%
   border-top-width: 0;
 }
 
-#rauouztubr .gt_heading {
+#viyjzpbygm .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -191,13 +198,13 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#rauouztubr .gt_bottom_border {
+#viyjzpbygm .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#rauouztubr .gt_col_headings {
+#viyjzpbygm .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -212,7 +219,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#rauouztubr .gt_col_heading {
+#viyjzpbygm .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -232,7 +239,7 @@ codebook %>%
   overflow-x: hidden;
 }
 
-#rauouztubr .gt_column_spanner_outer {
+#viyjzpbygm .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -244,15 +251,15 @@ codebook %>%
   padding-right: 4px;
 }
 
-#rauouztubr .gt_column_spanner_outer:first-child {
+#viyjzpbygm .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#rauouztubr .gt_column_spanner_outer:last-child {
+#viyjzpbygm .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#rauouztubr .gt_column_spanner {
+#viyjzpbygm .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -264,11 +271,11 @@ codebook %>%
   width: 100%;
 }
 
-#rauouztubr .gt_spanner_row {
+#viyjzpbygm .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#rauouztubr .gt_group_heading {
+#viyjzpbygm .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -294,7 +301,7 @@ codebook %>%
   text-align: left;
 }
 
-#rauouztubr .gt_empty_group_heading {
+#viyjzpbygm .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -309,15 +316,15 @@ codebook %>%
   vertical-align: middle;
 }
 
-#rauouztubr .gt_from_md > :first-child {
+#viyjzpbygm .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#rauouztubr .gt_from_md > :last-child {
+#viyjzpbygm .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#rauouztubr .gt_row {
+#viyjzpbygm .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -336,7 +343,7 @@ codebook %>%
   overflow-x: hidden;
 }
 
-#rauouztubr .gt_stub {
+#viyjzpbygm .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -349,7 +356,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#rauouztubr .gt_stub_row_group {
+#viyjzpbygm .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -363,15 +370,15 @@ codebook %>%
   vertical-align: top;
 }
 
-#rauouztubr .gt_row_group_first td {
+#viyjzpbygm .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#rauouztubr .gt_row_group_first th {
+#viyjzpbygm .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#rauouztubr .gt_summary_row {
+#viyjzpbygm .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -381,16 +388,16 @@ codebook %>%
   padding-right: 5px;
 }
 
-#rauouztubr .gt_first_summary_row {
+#viyjzpbygm .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#rauouztubr .gt_first_summary_row.thick {
+#viyjzpbygm .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#rauouztubr .gt_last_summary_row {
+#viyjzpbygm .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -400,7 +407,7 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#rauouztubr .gt_grand_summary_row {
+#viyjzpbygm .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -410,7 +417,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#rauouztubr .gt_first_grand_summary_row {
+#viyjzpbygm .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -420,7 +427,7 @@ codebook %>%
   border-top-color: #D3D3D3;
 }
 
-#rauouztubr .gt_last_grand_summary_row_top {
+#viyjzpbygm .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -430,11 +437,11 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#rauouztubr .gt_striped {
+#viyjzpbygm .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#rauouztubr .gt_table_body {
+#viyjzpbygm .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -443,7 +450,7 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#rauouztubr .gt_footnotes {
+#viyjzpbygm .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -457,7 +464,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#rauouztubr .gt_footnote {
+#viyjzpbygm .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -466,7 +473,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#rauouztubr .gt_sourcenotes {
+#viyjzpbygm .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -480,7 +487,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#rauouztubr .gt_sourcenote {
+#viyjzpbygm .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -488,63 +495,63 @@ codebook %>%
   padding-right: 5px;
 }
 
-#rauouztubr .gt_left {
+#viyjzpbygm .gt_left {
   text-align: left;
 }
 
-#rauouztubr .gt_center {
+#viyjzpbygm .gt_center {
   text-align: center;
 }
 
-#rauouztubr .gt_right {
+#viyjzpbygm .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#rauouztubr .gt_font_normal {
+#viyjzpbygm .gt_font_normal {
   font-weight: normal;
 }
 
-#rauouztubr .gt_font_bold {
+#viyjzpbygm .gt_font_bold {
   font-weight: bold;
 }
 
-#rauouztubr .gt_font_italic {
+#viyjzpbygm .gt_font_italic {
   font-style: italic;
 }
 
-#rauouztubr .gt_super {
+#viyjzpbygm .gt_super {
   font-size: 65%;
 }
 
-#rauouztubr .gt_footnote_marks {
+#viyjzpbygm .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#rauouztubr .gt_asterisk {
+#viyjzpbygm .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#rauouztubr .gt_indent_1 {
+#viyjzpbygm .gt_indent_1 {
   text-indent: 5px;
 }
 
-#rauouztubr .gt_indent_2 {
+#viyjzpbygm .gt_indent_2 {
   text-indent: 10px;
 }
 
-#rauouztubr .gt_indent_3 {
+#viyjzpbygm .gt_indent_3 {
   text-indent: 15px;
 }
 
-#rauouztubr .gt_indent_4 {
+#viyjzpbygm .gt_indent_4 {
   text-indent: 20px;
 }
 
-#rauouztubr .gt_indent_5 {
+#viyjzpbygm .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -626,10 +633,7 @@ NSDUH_2022_full <- NSDUH_2022_full %>%
   mutate(marital = case_when(irmarit %in% c(4,99) ~ 0,
                              irmarit %in% c(2:3) ~ 2,
                              TRUE ~ 1))
-```
 
-
-```r
 # Predictors -- Education
 # 6) degree (1=w/o high school, 2=high school degree, 3=associate's degree/college graduate or higher)
 NSDUH_2022_full <- NSDUH_2022_full %>% 
@@ -642,10 +646,7 @@ NSDUH_2022_full <- NSDUH_2022_full %>%
   mutate(student = case_when(eduschlgo %in% c(1, 11) ~ 1,
                              eduschlgo == 2 ~ 0,
                              TRUE ~ NA))
-```
 
-
-```r
 # Predictors: Employment and Houshold Composition
 # 8) employ (1=employed full time, 2=employed part time, 3=unemployed, 4=Other(incl. not in labor force))
 NSDUH_2022_full <- NSDUH_2022_full %>% 
@@ -669,10 +670,7 @@ NSDUH_2022_full <- NSDUH_2022_full %>% mutate(kid = IRKI17_2 - 1)
 # 1 = One person 65 or older in household
 # 2 = Two or more people 65 or older in household
 NSDUH_2022_full <- NSDUH_2022_full %>% mutate(elderly = IRHH65_2-1)
-```
 
-
-```r
 # Predictors: Health and Income 
 # 12) health_insur (0=w/o health insurance, 1=health insurance)
 NSDUH_2022_full <- NSDUH_2022_full %>% 
@@ -735,10 +733,7 @@ NSDUH_2022_full <- NSDUH_2022_full %>%
 #"most of the time" were coded 3, "some of the time" were coded 2, "a little of the time" 
 #were coded 1, and "none of the time" were coded 0. These assigned values were summed 
 #across the six items to calculate a total score for mentalhealth.
-```
 
-
-```r
 # Create new dataset and drop all the NA values
 data_cleaned <- NSDUH_2022_full %>%
   select(age, sex, race, health, marital, degree, 
@@ -755,34 +750,41 @@ data_cleaned <- NSDUH_2022_full %>%
 
 ### Data Visualization
 
-**Age**
-The bar plot of the age variable indicates that young adults aged 18 to 29 have the highest prevalence of marijuana use disorder.
+**Age**:
+The age variable is categorized into four levels: "Adolescent" (under 18), "Young Adult" (18 to 29), "Middle Age" (30 to 64), and "Elderly" (65 and older). The plot shows the percentage of individuals within each age group who either have (SUD_MJ = 1) or do not have (SUD_MJ = 0) marijuana use disorder.
+
+Among young adults (18 to 29 years), 20.6% of the respondents have marijuana use disorder, and 79.4% do not. In the middle-age group (30 to 64 years), 9.9% of respondents have marijuana use disorder, while 90.1% do not. In the elderly group (65+ years), only 2.5% of the respondents have marijuana use disorder, and 97.5% do not. The filtered survey data reveals that, at least in 2022, no adolescents are reported to have marijuana use disorder. The young adult group has the highest percentage of respondents with marijuana use disorder among the three age groups.
+
 
 ```r
 # age (1=Adolescent: 18-, 2=Young Adult: 18-29, 3=Middle Age: 30-64, 4=Elderly: 65+)
-table(sud_2022$age)
-```
 
-```
-## 
-##     2     3     4 
-## 23060 17273  4998
-```
+# Calculate the percentage of SUD_MJ for each sex and each level of SUD_MJ
+percentage_age <- sud_2022 %>%
+  group_by(age, SUD_MJ) %>%
+  summarize(count = n()) %>%
+  mutate(percentage = count / sum(count) * 100)
 
-```r
+percentage_age <- percentage_age %>%
+  mutate(age = factor(age, levels = c(1, 2, 3, 4), labels = c("Adolescent", "Young Adult", "Middle Age","Elderly")),
+         SUD_MJ = factor(SUD_MJ, levels = c(0, 1), labels = c("0", "1")))
+
 p1.1 <- sud_2022 %>% 
   ggplot(aes(x = factor(age, levels = 1:4, labels = c("Adolescent", "Young Adult", "Middle Age","Elderly")), fill = factor(SUD_MJ))) +
   geom_bar(alpha = 0.5, position = "dodge") +
   scale_fill_manual(values = c("#619CFF", "#FF595E"),name = "SUD_MJ") +
   labs(x = "age", y = "Count") +
-  theme_minimal()
+  theme_minimal()+
+  geom_text(data = percentage_age, aes(x = age, y = count, label = paste0(round(percentage, 1), "%")),
+            position = position_dodge(width = 0.9), vjust = -0.5)
 p1.1
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
 
-**Sex**
-From the bar plot, we can see that the percentage of males having a marijuana use disorder in 2022 is slightly higher than that of females, with 17% of males and 12.5% of females affected.
+**Sex**:
+The sex variable is categorized into two groups -- Female and Male. The plot shows the percentage of individuals within each sex group who either have (SUD_MJ = 1) or do not have (SUD_MJ = 0) marijuana use disorder. From the bar plot, we can see that the percentage of males with a marijuana use disorder in 2022 is slightly higher than that of females, with 17% of males having a marijuana use disorder and 12.5% of females having a marijuana use disorder.
+
 
 ```r
 # Calculate the percentage of SUD_MJ for each sex and each level of SUD_MJ
@@ -808,10 +810,11 @@ p2 <- sud_2022 %>%
 p2
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
 
-**Race**
+**Race**:
 The following table summarizes the distribution of marijuana use disorder (SUD_MJ) among different racial groups. The count and percentage are provided for each combination of race and SUD_MJ status. The "NonHisp Asian" group has the lowest percentage (5.2%) of individuals with SUD_MJ, while the "NonHisp Native Am/AK Native" group has the highest percentage (27.3%). The "NonHisp White" group has the second-lowest percentage (13.7%) of individuals with SUD_MJ, and the "NonHisp More Than One Race" group has the second-highest percentage (23.1%). The "NonHisp Black/Afr Am" group has a percentage of 17.9% of individuals with SUD_MJ, which is higher than the "Hispanic" group, which has 15.1% of individuals with SUD_MJ.
+
 
 ```r
 race_dat <- sud_2022 %>%
@@ -840,23 +843,23 @@ highlighted_table
 ```
 
 ```{=html}
-<div id="mwgxfkidnt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#mwgxfkidnt table {
+<div id="kkvchtxddf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#kkvchtxddf table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#mwgxfkidnt thead, #mwgxfkidnt tbody, #mwgxfkidnt tfoot, #mwgxfkidnt tr, #mwgxfkidnt td, #mwgxfkidnt th {
+#kkvchtxddf thead, #kkvchtxddf tbody, #kkvchtxddf tfoot, #kkvchtxddf tr, #kkvchtxddf td, #kkvchtxddf th {
   border-style: none;
 }
 
-#mwgxfkidnt p {
+#kkvchtxddf p {
   margin: 0;
   padding: 0;
 }
 
-#mwgxfkidnt .gt_table {
+#kkvchtxddf .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -882,12 +885,12 @@ highlighted_table
   border-left-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_caption {
+#kkvchtxddf .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#mwgxfkidnt .gt_title {
+#kkvchtxddf .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -899,7 +902,7 @@ highlighted_table
   border-bottom-width: 0;
 }
 
-#mwgxfkidnt .gt_subtitle {
+#kkvchtxddf .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -911,7 +914,7 @@ highlighted_table
   border-top-width: 0;
 }
 
-#mwgxfkidnt .gt_heading {
+#kkvchtxddf .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -923,13 +926,13 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_bottom_border {
+#kkvchtxddf .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_col_headings {
+#kkvchtxddf .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -944,7 +947,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_col_heading {
+#kkvchtxddf .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -964,7 +967,7 @@ highlighted_table
   overflow-x: hidden;
 }
 
-#mwgxfkidnt .gt_column_spanner_outer {
+#kkvchtxddf .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -976,15 +979,15 @@ highlighted_table
   padding-right: 4px;
 }
 
-#mwgxfkidnt .gt_column_spanner_outer:first-child {
+#kkvchtxddf .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mwgxfkidnt .gt_column_spanner_outer:last-child {
+#kkvchtxddf .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mwgxfkidnt .gt_column_spanner {
+#kkvchtxddf .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -996,11 +999,11 @@ highlighted_table
   width: 100%;
 }
 
-#mwgxfkidnt .gt_spanner_row {
+#kkvchtxddf .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#mwgxfkidnt .gt_group_heading {
+#kkvchtxddf .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1026,7 +1029,7 @@ highlighted_table
   text-align: left;
 }
 
-#mwgxfkidnt .gt_empty_group_heading {
+#kkvchtxddf .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1041,15 +1044,15 @@ highlighted_table
   vertical-align: middle;
 }
 
-#mwgxfkidnt .gt_from_md > :first-child {
+#kkvchtxddf .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mwgxfkidnt .gt_from_md > :last-child {
+#kkvchtxddf .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mwgxfkidnt .gt_row {
+#kkvchtxddf .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1068,7 +1071,7 @@ highlighted_table
   overflow-x: hidden;
 }
 
-#mwgxfkidnt .gt_stub {
+#kkvchtxddf .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1081,7 +1084,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#mwgxfkidnt .gt_stub_row_group {
+#kkvchtxddf .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1095,15 +1098,15 @@ highlighted_table
   vertical-align: top;
 }
 
-#mwgxfkidnt .gt_row_group_first td {
+#kkvchtxddf .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#mwgxfkidnt .gt_row_group_first th {
+#kkvchtxddf .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#mwgxfkidnt .gt_summary_row {
+#kkvchtxddf .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1113,16 +1116,16 @@ highlighted_table
   padding-right: 5px;
 }
 
-#mwgxfkidnt .gt_first_summary_row {
+#kkvchtxddf .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_first_summary_row.thick {
+#kkvchtxddf .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#mwgxfkidnt .gt_last_summary_row {
+#kkvchtxddf .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1132,7 +1135,7 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_grand_summary_row {
+#kkvchtxddf .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1142,7 +1145,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#mwgxfkidnt .gt_first_grand_summary_row {
+#kkvchtxddf .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1152,7 +1155,7 @@ highlighted_table
   border-top-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_last_grand_summary_row_top {
+#kkvchtxddf .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1162,11 +1165,11 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_striped {
+#kkvchtxddf .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mwgxfkidnt .gt_table_body {
+#kkvchtxddf .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1175,7 +1178,7 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_footnotes {
+#kkvchtxddf .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1189,7 +1192,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_footnote {
+#kkvchtxddf .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1198,7 +1201,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#mwgxfkidnt .gt_sourcenotes {
+#kkvchtxddf .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1212,7 +1215,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#mwgxfkidnt .gt_sourcenote {
+#kkvchtxddf .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1220,63 +1223,63 @@ highlighted_table
   padding-right: 5px;
 }
 
-#mwgxfkidnt .gt_left {
+#kkvchtxddf .gt_left {
   text-align: left;
 }
 
-#mwgxfkidnt .gt_center {
+#kkvchtxddf .gt_center {
   text-align: center;
 }
 
-#mwgxfkidnt .gt_right {
+#kkvchtxddf .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mwgxfkidnt .gt_font_normal {
+#kkvchtxddf .gt_font_normal {
   font-weight: normal;
 }
 
-#mwgxfkidnt .gt_font_bold {
+#kkvchtxddf .gt_font_bold {
   font-weight: bold;
 }
 
-#mwgxfkidnt .gt_font_italic {
+#kkvchtxddf .gt_font_italic {
   font-style: italic;
 }
 
-#mwgxfkidnt .gt_super {
+#kkvchtxddf .gt_super {
   font-size: 65%;
 }
 
-#mwgxfkidnt .gt_footnote_marks {
+#kkvchtxddf .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#mwgxfkidnt .gt_asterisk {
+#kkvchtxddf .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#mwgxfkidnt .gt_indent_1 {
+#kkvchtxddf .gt_indent_1 {
   text-indent: 5px;
 }
 
-#mwgxfkidnt .gt_indent_2 {
+#kkvchtxddf .gt_indent_2 {
   text-indent: 10px;
 }
 
-#mwgxfkidnt .gt_indent_3 {
+#kkvchtxddf .gt_indent_3 {
   text-indent: 15px;
 }
 
-#mwgxfkidnt .gt_indent_4 {
+#kkvchtxddf .gt_indent_4 {
   text-indent: 20px;
 }
 
-#mwgxfkidnt .gt_indent_5 {
+#kkvchtxddf .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1353,8 +1356,9 @@ highlighted_table
 </div>
 ```
 
-**Health**
-The following bar plot shows that individuals with health problems have a higher percentage (20.7%) of SUD_MJ compared to those without health problems (13.6%). Please note that the survey data did not specify the specific health problems for individuals who rate their health as fair/poor.
+**Health**:
+The health variable is categorized into two groups: with and without health problems. The bar plot shows that individuals with health problems have a higher percentage (20.7%) of SUD_MJ compared to those without health problems (13.6%). Please note that the survey data did not specify the specific health problems for individuals who rate their health as fair/poor, and we are not inferring any causal relationship between any potential health problem and marijuana use disorder here. 
+
 
 ```r
 # health (0=w/o health problem: excellent/very good/good, 1=with health problem: fair/poor)
@@ -1378,16 +1382,17 @@ p3 <- sud_2022 %>% ggplot(
 p3
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
-**Marital**
-The bar plot shows the distribution of marijuana use disorder (SUD_MJ) among different marital statuses. The variable is categorized into three groups: "Never married," "Married," and "Widowed/Divorced." The percentages of individuals with and without SUD_MJ are displayed on the bars within each group.
+**Marital**:
+The variable "Marital" is categorized into three groups: "Never married," "Married," and "Widowed/Divorced." The percentages of individuals with and without SUD_MJ are displayed on the bars within each group.
 
-- Among those who have never married, 21.9% have a marijuana use disorder, while 78.1% do not.
-- For married individuals, 7.2% have a marijuana use disorder, while a substantial 92.8% do not.
-- In the widowed/divorced group, 11.6% have a marijuana use disorder, whereas 88.4% do not.
+- Among those who have never married, 21.9% have a marijuana use disorder, while 78.1% do not. 
+- For married individuals, 7.2% have a marijuana use disorder, while a substantial 92.8% do not. 
+- In the widowed/divorced group, 11.6% have a marijuana use disorder, whereas 88.4% do not. 
 
-This plot highlights that the highest percentage of marijuana use disorder is found among those who have never married, followed by the widowed/divorced group. Married individuals have the lowest percentage of marijuana use disorder.
+The plot highlights that the highest percentage of marijuana use disorder is found among those who have never married, followed by the widowed/divorced group. Married individuals have the lowest percentage of marijuana use disorder.
+
 
 ```r
 # marital (0=never been married/cannot married<=14, 1=married, 2=widowed/divorced/separated)
@@ -1410,9 +1415,9 @@ p4 <- sud_2022 %>% ggplot(
 p4
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
-**Education**
+**Education**:
 The bar plot on the left displays the distribution of marijuana use disorder (SUD_MJ) among individuals with different educational levels. The variable "degree" shows the highest degree repsondents obtained, and is categorized into three groups: "without high school degree", "high school degree", and "higher (associate's degree/college graduate or higher)". The percentages of individuals with and without SUD_MJ within each educational group are displayed on the bars.
 
 - Among individuals without a high school degree, 18.6% have a marijuana use disorder, while 81.4% do not.
@@ -1444,7 +1449,7 @@ p5 <- sud_2022 %>% ggplot(
 p5
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 ```r
 #  Now going to school or not? (1/11 = now going to school,  0=No, other is NA)
@@ -1457,15 +1462,15 @@ p5.1 <- sud_2022 %>%
 p5.1
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-11-2.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-7-2.png)<!-- -->
 
 ```r
 grid.arrange(p5, p5.1, ncol = 2, widths = c(2, 1))
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-11-3.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-7-3.png)<!-- -->
 
-**Employment**
+**Employment**:
 This bar plot illustrates the distribution of marijuana use disorder (SUD_MJ) among individuals with different employment statuses: "Full time," "Part time," "Unemployed," and "Other." 
 
 - Among individuals employed full-time, 14.1% have a marijuana use disorder, while 85.9% do not.
@@ -1473,7 +1478,7 @@ This bar plot illustrates the distribution of marijuana use disorder (SUD_MJ) am
 - Among unemployed individuals, 20.1% have a marijuana use disorder, whereas 79.9% do not.
 - In the "Other" employment category, 9.2% have a marijuana use disorder, while 90.8% do not.
 
-This plot highlights that the highest percentage of marijuana use disorder is found among unemployed individuals (20.1%), followed by those employed part-time (16.8%). Individuals employed full-time and those in the "Other" employment category have lower percentages of marijuana use disorder, with the "Other" category having the lowest percentage (9.2%).
+The plot highlights that the highest percentage of marijuana use disorder is found among unemployed individuals (20.1%), followed by those employed part-time (16.8%). Individuals employed full-time and those in the "Other" employment category have lower percentages of marijuana use disorder, with the "Other" category having the lowest percentage (9.2%).
 
 ```r
 # employ (1=employed full time, 2=employed part time, 3=unemployed, 4=Other(incl. not in labor force))
@@ -1498,16 +1503,16 @@ p6 <- sud_2022 %>% ggplot(
 p6
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
-**Income**
+**Income**:
 This bar plot illustrates the distribution of marijuana use disorder (SUD_MJ) among individuals with different family income levels: "Poverty," "Middle," and "Wealth." 
 
 - Among individuals in the "Poverty" income group, 20.9% have a marijuana use disorder, while 79.1% do not.
 - For individuals in the "Middle" income group, 16.2% have a marijuana use disorder, while 83.8% do not.
 - Among individuals in the "Wealth" income group, 10.1% have a marijuana use disorder, whereas 89.9% do not.
 
-The result highlights that the highest percentage of marijuana use disorder is found among individuals in the "Poverty" income group (20.9%), followed by those in the "Middle" income group (16.2%). Individuals in the "Wealth" income group have the lowest percentage of marijuana use disorder (10.1%).
+The result shows that the highest percentage of marijuana use disorder is found among individuals in the "Poverty" income group (20.9%), followed by those in the "Middle" income group (16.2%). Individuals in the "Wealth" income group have the lowest percentage of marijuana use disorder (10.1%).
 
 ```r
 income_percentage <- sud_2022 %>%
@@ -1528,9 +1533,9 @@ p9 <- sud_2022 %>% ggplot(
 p9
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
-**Health Insurance**
+**Health Insurance**:
 This last bar plot illustrates the distribution of marijuana use disorder (SUD_MJ) among individuals with and without health insurance. The percentages of individuals with and without SUD_MJ within each health insurance group are displayed on the bars.
 
 - Among individuals without health insurance, 19.6% have a marijuana use disorder, while 80.4% do not.
@@ -1560,7 +1565,7 @@ p10 <- sud_2022 %>% ggplot(
 p10
 ```
 
-![](Final_Writeup_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 ### Hypothesis Testing
 
@@ -1605,9 +1610,9 @@ results_df
 
 # Model Fitting
 
-In the model fitting section, I use the cleaned dataset sud_2022 with selected predictors. Before applying the machine learning classification models, I first examined the outcome variable, marijuana use disorder (SUD_MJ). The outcome shows that our data is highly imbalanced, with 15% of individuals having SUD_MJ = 'Yes' and 85% having SUD_MJ = 'No'. This imbalance needs to be addressed to ensure that the classification models perform effectively and do not bias towards the majority class. 
+In the model fitting section, I used the cleaned dataset, sud_2022, with selected predictors. Before applying the machine learning classification models, I first examined the outcome variable, marijuana use disorder (SUD_MJ). The outcome shows that our data is highly imbalanced, with 15% of individuals having SUD_MJ = 'Yes' and 85% having SUD_MJ = 'No'. Given this imbalance, when interpreting and evaluating the model performance, I will focus not only on overall accuracy but also on metrics such as AUC, sensitivity, and specificity to ensure a more comprehensive assessment.
 
-I split the dataset into 67% for training and 33% for testing. To avoid overfitting, I initiated a 10-fold cross-validation that can be used later in the models.
+To prepare for model training and testing, I split the dataset into 67% for training and 33% for testing. To avoid overfitting, I implemented a 10-fold cross-validation approach, which will be applied later in the models. This method helps ensure that the model generalizes well to unseen data by validating its performance across multiple subsets of the training data.
 
 
 ```r
@@ -1680,8 +1685,8 @@ Therefore, for the random forest model, I retained the original categorical vari
 
 ```r
 # One-hot encoding for categorical variables
-train_matrix <- model.matrix(SUD_MJ ~ . - 1, data = training)
-test_matrix <- model.matrix(SUD_MJ ~ . - 1, data = testing)
+train_matrix <- model.matrix(SUD_MJ ~ . - 1, data = training)[, -1]
+test_matrix <- model.matrix(SUD_MJ ~ . - 1, data = testing)[, -1]
 train <- as.data.frame(train_matrix)
 test <- as.data.frame(test_matrix)
 
@@ -1691,7 +1696,20 @@ test$SUD_MJ <- testing$SUD_MJ
 ```
 ### 1. Logistic Regression
 
-I first started with modeling using logistic regression, as it is one of the most straightforward and interpretable models that is suitable for binary classification tasks. The logistic regression model allows us to estimate the probability that a given input belongs to a specific class (in this case, whether an individual has marijuana use disorder). It could serve as a good baseline model against which more complex models can be compared.
+I first started with modeling using logistic regression, as it is one of the most straightforward and interpretable models that is suitable for binary classification tasks. The logistic regression model allows us to estimate the probability whether an individual has marijuana use disorder. It could serve as a good baseline model against which more complex models can be compared.
+
+#### Model Performance 
+
+After fitting the logistic regression model to the training data and making predictions on the test data, I evaluated the model's performance using a confusion matrix and various performance metrics. 
+
+- Accuracy: The model achieved an accuracy of 85.26%, indicating that in general, 85.26% of the predictions made by the model were correct.
+- Sensitivity: The sensitivity, also called recall rate, in this model is very low at 3.93%, indicating that the model struggled to correctly identify individuals with SUD_MJ. 
+- Specificity: The specificity is 99.19%, meaning that the model correctly identified 99.19% of the individuals who do not have SUD_MJ.
+- Precision: The precision, or positive predictive value, is about 45%, meaning that when the model predicts 'Yes' for SUD_MJ, it is correct 45.26% of the time. Therefore, we call also tell that there are a substantial amount of false positives. 
+- F1-Score: The F1-score is 7%, which is a measure of the balance between recall/sensitifity and the precision. A very low F-1 score further indicates that the logistic regression model has limited ability of identifying positive cases. 
+- AUC: The AUC is 0.76, indicating that the model has a fair ability to distinguish between the two classes.
+
+The model demonstrates high specificity but extremely low sensitivity, meaning it is highly effective at identifying individuals without marijuana use disorder but fails significantly in identifying those with the disorder. The accuracy of 85.26% is misleading due to the class imbalance, as it closely mirrors the baseline accuracy of always predicting the majority class ('No'). The sensitivity,  specificity and F-1 score highlight the model's limitations in dealing with the minority class ('Yes'). In this case, AUC is a more reliable measure of the overall performance of the model given in context of imbalanced data. An AUC of 0.76 suggests the model has a moderate ability in distinguishing the positive and negative classes. In general, these model performance metrics suggest that while the model performs well overall due to the high prevalence of 'No' cases, it requires improvements, particularly in its ability to correctly identify and predict instances of marijuana use disorder. 
 
 
 ```r
@@ -1709,30 +1727,91 @@ logistic_cv <- caret::train(SUD_MJ ~ .,
                             family = binomial, 
                             trControl = trControl, # using cv to avoid overfitting
                             metric = "ROC")
-# print(logistic_cv)
-
-# Make predictions on the testing set
-test$predicted_prob_logistic <- predict(logistic_cv, newdata = test, type = "prob")[, "Yes"]
-test$predicted_class_logistic <- ifelse(test$predicted_prob_logistic > 0.5, "Yes", "No")
-test$predicted_class_logistic <- factor(test$predicted_class_logistic, levels = c("No", "Yes"))
+summary(logistic_cv)
 ```
 
-#### Model Performance 
-
-After fitting the logistic regression model to the training data and making predictions on the test data, I evaluated the model's performance using a confusion matrix and various performance metrics.
-
-- Accuracy: The model achieved an accuracy of 85.26%, indicating that in general, 85.26% of the predictions made by the model were correct.
-- Precision: The precision, or positive predictive value, is 85.78%, meaning that 85.78% of the individuals predicted to not have SUD_MJ actually do not have it.
-- Specificity: The specificity in this model is very low at 3.93%, indicating that the model struggled to correctly identify individuals with SUD_MJ.
-- Recall: The recall rate, also called sensitivity, is 99.19%, meaning that the model correctly identified 99.19% of the individuals who do not have SUD_MJ.
-- F1-Score: The F1-score is 92%, providing a balance between precision and recall.
-- AUC: The AUC is 0.76, indicating that the model has a fair ability to distinguish between the two classes.
-
-The model's high sensitivity but low specificity highlight the challenges of correctly identifying respondents with SUD_MJ with this imbalanced dataset. In the context of an imbalanced dataset, traditional metrics like accuracy can be misleading because they are dominated by the majority class. AUC (Area Under the Curve) is a more reliable measure in this case , as it measures the ability of the model to discriminate between the positive and negative classes across different threshold settings. An AUC of 0.76 suggests that the model has a moderate ability to distinguish between individuals with and without SUD_MJ.
-
+```
+## 
+## Call:
+## NULL
+## 
+## Coefficients:
+##                 Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)    -1.852935   0.107293 -17.270  < 2e-16 ***
+## age3           -0.429291   0.047212  -9.093  < 2e-16 ***
+## age4           -1.645012   0.146536 -11.226  < 2e-16 ***
+## sex1            0.460788   0.036102  12.763  < 2e-16 ***
+## race2           0.182629   0.054205   3.369 0.000754 ***
+## race3           0.564255   0.123458   4.570 4.87e-06 ***
+## race4          -0.041625   0.263705  -0.158 0.874577    
+## race5          -1.069142   0.121162  -8.824  < 2e-16 ***
+## race6           0.411082   0.077392   5.312 1.09e-07 ***
+## race7          -0.062315   0.048754  -1.278 0.201196    
+## health1         0.197248   0.050975   3.870 0.000109 ***
+## marital1       -0.578516   0.050483 -11.460  < 2e-16 ***
+## marital2       -0.123567   0.065894  -1.875 0.060760 .  
+## degree2        -0.091445   0.056203  -1.627 0.103728    
+## degree3        -0.434771   0.064305  -6.761 1.37e-11 ***
+## student1       -0.478170   0.048667  -9.825  < 2e-16 ***
+## employ2         0.077604   0.047774   1.624 0.104292    
+## employ3        -0.060995   0.052442  -1.163 0.244786    
+## employ4        -0.131113   0.063447  -2.067 0.038781 *  
+## family2         0.204368   0.061082   3.346 0.000820 ***
+## family3         0.078069   0.068540   1.139 0.254690    
+## family4         0.031105   0.076673   0.406 0.684976    
+## family5         0.044292   0.092873   0.477 0.633426    
+## family6         0.021991   0.109779   0.200 0.841234    
+## kid1           -0.037305   0.053571  -0.696 0.486198    
+## kid2           -0.005841   0.069535  -0.084 0.933053    
+## kid3           -0.224846   0.098601  -2.280 0.022586 *  
+## elderly1       -0.067092   0.071820  -0.934 0.350217    
+## elderly2       -0.105068   0.120326  -0.873 0.382560    
+## health_insur1  -0.012255   0.053102  -0.231 0.817488    
+## income2        -0.104105   0.046765  -2.226 0.026007 *  
+## income3        -0.348312   0.055625  -6.262 3.81e-10 ***
+## mentalhealth1  -0.024474   0.091787  -0.267 0.789743    
+## mentalhealth2   0.247206   0.084535   2.924 0.003452 ** 
+## mentalhealth3   0.465104   0.084769   5.487 4.10e-08 ***
+## mentalhealth4   0.596146   0.081510   7.314 2.60e-13 ***
+## mentalhealth5   0.616869   0.087170   7.077 1.48e-12 ***
+## mentalhealth6   0.781547   0.083427   9.368  < 2e-16 ***
+## mentalhealth7   0.921796   0.089463  10.304  < 2e-16 ***
+## mentalhealth8   0.991041   0.089192  11.111  < 2e-16 ***
+## mentalhealth9   1.139166   0.091756  12.415  < 2e-16 ***
+## mentalhealth10  1.202726   0.095362  12.612  < 2e-16 ***
+## mentalhealth11  1.183788   0.098826  11.978  < 2e-16 ***
+## mentalhealth12  1.316598   0.091916  14.324  < 2e-16 ***
+## mentalhealth13  1.266247   0.109366  11.578  < 2e-16 ***
+## mentalhealth14  1.465825   0.114180  12.838  < 2e-16 ***
+## mentalhealth15  1.394867   0.123936  11.255  < 2e-16 ***
+## mentalhealth16  1.599751   0.126029  12.694  < 2e-16 ***
+## mentalhealth17  1.329367   0.139051   9.560  < 2e-16 ***
+## mentalhealth18  1.658696   0.131467  12.617  < 2e-16 ***
+## mentalhealth19  1.403961   0.176570   7.951 1.85e-15 ***
+## mentalhealth20  1.904774   0.177203  10.749  < 2e-16 ***
+## mentalhealth21  1.693416   0.222309   7.617 2.59e-14 ***
+## mentalhealth22  1.964625   0.271444   7.238 4.56e-13 ***
+## mentalhealth23  1.768412   0.283157   6.245 4.23e-10 ***
+## mentalhealth24  1.700259   0.150807  11.274  < 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 25094  on 30370  degrees of freedom
+## Residual deviance: 21774  on 30315  degrees of freedom
+## AIC: 21886
+## 
+## Number of Fisher Scoring iterations: 6
+```
 
 ```r
-confusion_matrix_logistic <- confusionMatrix(test$predicted_class_logistic, test$SUD_MJ)
+# Make predictions on the testing set
+prob.logi <- predict(logistic_cv, newdata = test, type = "prob")[, "Yes"]
+pred.logi <- ifelse(prob.logi > 0.5, "Yes", "No")
+pred.logi <- factor(pred.logi, levels = c("No", "Yes"))
+
+confusion_matrix_logistic <- confusionMatrix(pred.logi, test$SUD_MJ, positive = "Yes")
 print(confusion_matrix_logistic)
 ```
 
@@ -1753,16 +1832,16 @@ print(confusion_matrix_logistic)
 ##                                           
 ##  Mcnemar's Test P-Value : <2e-16          
 ##                                           
-##             Sensitivity : 0.99186         
-##             Specificity : 0.03932         
-##          Pos Pred Value : 0.85775         
-##          Neg Pred Value : 0.45263         
-##              Prevalence : 0.85381         
-##          Detection Rate : 0.84686         
-##    Detection Prevalence : 0.98730         
-##       Balanced Accuracy : 0.51559         
+##             Sensitivity : 0.039323        
+##             Specificity : 0.991858        
+##          Pos Pred Value : 0.452632        
+##          Neg Pred Value : 0.857752        
+##              Prevalence : 0.146190        
+##          Detection Rate : 0.005749        
+##    Detection Prevalence : 0.012701        
+##       Balanced Accuracy : 0.515591        
 ##                                           
-##        'Positive' Class : No              
+##        'Positive' Class : Yes             
 ## 
 ```
 
@@ -1777,23 +1856,32 @@ print(paste("Accuracy:", round(accuracy_logi, 2)))
 ```
 
 ```r
-# Precision, Recall, F1-Score
+# Precision, Sensitivity, Specificity, and F1-Score
+sensitivity_logi <- confusion_matrix_logistic$byClass['Sensitivity']
+specificity_logi <- confusion_matrix_logistic$byClass['Specificity'] 
 precision_logi <- confusion_matrix_logistic$byClass['Pos Pred Value']
-recall_logi <- confusion_matrix_logistic$byClass['Sensitivity'] 
-F1_score_logi <- 2 * ((precision_logi * recall_logi) / (precision_logi + recall_logi))
+F1_score_logi <- 2 * ((precision_logi * sensitivity_logi) / (precision_logi + sensitivity_logi))
+print(paste("Sensitivity:", round(sensitivity_logi, 2)))
+```
+
+```
+## [1] "Sensitivity: 0.04"
+```
+
+```r
+print(paste("Specificity:", round(specificity_logi, 2)))
+```
+
+```
+## [1] "Specificity: 0.99"
+```
+
+```r
 print(paste("Precision:", round(precision_logi, 2)))
 ```
 
 ```
-## [1] "Precision: 0.86"
-```
-
-```r
-print(paste("Recall:", round(recall_logi, 2)))
-```
-
-```
-## [1] "Recall: 0.99"
+## [1] "Precision: 0.45"
 ```
 
 ```r
@@ -1801,12 +1889,12 @@ print(paste("F1-Score:", round(F1_score_logi, 2)))
 ```
 
 ```
-## [1] "F1-Score: 0.92"
+## [1] "F1-Score: 0.07"
 ```
 
 ```r
 # AUC
-pred <- prediction(test$predicted_prob, test$SUD_MJ)
+pred <- prediction(prob.logi, test$SUD_MJ)
 perf_auc <- performance(pred, measure = "auc")
 auc_value <- perf_auc@y.values[[1]]
 print(paste("AUC:", round(auc_value, 2)))
@@ -1823,11 +1911,410 @@ plot(perf_roc, main = "ROC Curve", col = "red", lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
 ```
 
-![](Final_Writeup_files/figure-html/logi perf-1.png)<!-- -->
+![](Final_Writeup_files/figure-html/train logistic reg-1.png)<!-- -->
 
-### 2. Random Forest
+### 2. Lasso logistic Regression
 
-I further employed the random forest model to tackle the binary classification problem of predicting marijuana use disorder (SUD_MJ). Unlike logistic regression, which is a linear model, the random forest is a non-linear model capable of capturing more complex relationships between features. Additionally, the random forest model provides feature importance metrics, which help identify the most relevant features for the classification task.
+Next, I initiated a Lasso logistic regression. The Lasso penalty term shrinks the coefficients of the less important variables to zero, effectively performing variable selection. I first trained the Lasso logistic regression model using 10-fold cross-validation to find the optimal lambda value that minimizes the mean cross-validation error. After determining the optimal lambda, I fit the final model using this value and made predictions on the test data. This approach helps to enhance the model's performance by focusing only on the most relevant predictors and reducing overfitting.
+
+#### Model Performance 
+
+- Accuracy: The model achieved an overall accuracy of 85.38%, indicating that 85.38% of the total predictions were correct. 
+
+- Sensitivity: The sensitivity (or recall) is extremely low at 0.000457, meaning that the model correctly identified only a very small fraction of the actual 'Yes' cases. In the confusion matrix, the model actually only identified 1 true positive instances. 
+
+- Specificity: The specificity, on the other hand, is very high at 0.99, meaning that the model correctly identifying most of the negative cases. 
+
+- Precision: The precision is about 50%, meaning that when the model predicts 'Yes' for SUD_MJ, it is correct only 50% of the time, which is no better than a random guess.
+
+Overall, the Lasso logistic regression model shows poor performance. Despite having high accuracy and a decent AUC, the extremely low sensitivity and extremely high specificity indicate a poor detection of positive cases. This outcome suggests that the model heavily favors predicting the majority class ('No') and struggles to identify true positive instances of marijuana use disorder. 
+
+
+```r
+set.seed(123)
+CVlasso <- cv.glmnet(train_matrix, 
+                     train$SUD_MJ, 
+                     type.measure = "class", 
+                     family = "binomial", 
+                     alpha = 1, 
+                     nfolds = 10)
+p1 <- plot(CVlasso)
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+
+```r
+p2 <- plot(CVlasso$glmnet.fit, 
+     "lambda", label=FALSE)
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-13-2.png)<!-- -->
+
+```r
+lambda_1se <- CVlasso$lambda.1se
+lambda_min <- CVlasso$lambda.min
+print(paste("Lambda.1se: ", lambda_1se))
+```
+
+```
+## [1] "Lambda.1se:  0.059909461901887"
+```
+
+```r
+print(paste("Lambda.min: ", lambda_min))
+```
+
+```
+## [1] "Lambda.min:  0.00585321408145822"
+```
+
+```r
+coef(CVlasso, s = lambda_min)
+```
+
+```
+## 56 x 1 sparse Matrix of class "dgCMatrix"
+##                           s1
+## (Intercept)    -1.4280168584
+## age3           -0.3921058049
+## age4           -1.3811407259
+## sex1            0.2851858110
+## race2           .           
+## race3           0.2465079744
+## race4           .           
+## race5          -0.6675467839
+## race6           0.2535924347
+## race7          -0.0016851565
+## health1         0.1777997041
+## marital1       -0.5746086120
+## marital2       -0.0335873068
+## degree2         .           
+## degree3        -0.2530339238
+## student1       -0.2186780819
+## employ2         .           
+## employ3         .           
+## employ4        -0.0197773060
+## family2         0.0609053889
+## family3         .           
+## family4         .           
+## family5         .           
+## family6         .           
+## kid1            .           
+## kid2            .           
+## kid3           -0.0466517618
+## elderly1        .           
+## elderly2        .           
+## health_insur1   .           
+## income2         .           
+## income3        -0.2003524036
+## mentalhealth1  -0.3338202828
+## mentalhealth2  -0.1234638884
+## mentalhealth3   .           
+## mentalhealth4   .           
+## mentalhealth5   .           
+## mentalhealth6   0.0004045281
+## mentalhealth7   0.1172335590
+## mentalhealth8   0.1996921364
+## mentalhealth9   0.3619702523
+## mentalhealth10  0.4037782688
+## mentalhealth11  0.3678448178
+## mentalhealth12  0.5578080990
+## mentalhealth13  0.4447222091
+## mentalhealth14  0.6269539819
+## mentalhealth15  0.5612456077
+## mentalhealth16  0.7466748740
+## mentalhealth17  0.4397020023
+## mentalhealth18  0.8069819397
+## mentalhealth19  0.4524240904
+## mentalhealth20  0.9664394260
+## mentalhealth21  0.5835385844
+## mentalhealth22  0.7622908856
+## mentalhealth23  0.5564432725
+## mentalhealth24  0.8441253672
+```
+
+```r
+# coef(CVlasso, s = lambda_1se) # Only intercept left if using lamba 1se
+
+# Final model with lambda.min
+lasso.model <- glmnet(train_matrix, train$SUD_MJ, alpha = 1, family = "binomial",
+                      lambda = lambda_min, nfolds = 10)
+dim(test_matrix)
+```
+
+```
+## [1] 14960    55
+```
+
+```r
+dim(train_matrix)
+```
+
+```
+## [1] 30371    55
+```
+
+```r
+# Make prediction on test data
+prob.lasso <- predict(lasso.model, newx = test_matrix, type = "response")
+pred.lasso <- ifelse(prob.lasso > 0.5, "Yes", "No")
+confusion_matrix_lasso <- confusionMatrix(as.factor(pred.lasso), test$SUD_MJ, positive = "Yes")
+print(confusion_matrix_lasso)
+```
+
+```
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    No   Yes
+##        No  12772  2186
+##        Yes     1     1
+##                                          
+##                Accuracy : 0.8538         
+##                  95% CI : (0.848, 0.8594)
+##     No Information Rate : 0.8538         
+##     P-Value [Acc > NIR] : 0.5057         
+##                                          
+##                   Kappa : 6e-04          
+##                                          
+##  Mcnemar's Test P-Value : <2e-16         
+##                                          
+##             Sensitivity : 4.572e-04      
+##             Specificity : 9.999e-01      
+##          Pos Pred Value : 5.000e-01      
+##          Neg Pred Value : 8.539e-01      
+##              Prevalence : 1.462e-01      
+##          Detection Rate : 6.684e-05      
+##    Detection Prevalence : 1.337e-04      
+##       Balanced Accuracy : 5.002e-01      
+##                                          
+##        'Positive' Class : Yes            
+## 
+```
+
+```r
+# Accuracy
+accuracy_lasso <- confusion_matrix_lasso$overall['Accuracy']
+print(paste("Accuracy:", round(accuracy_lasso, 2)))
+```
+
+```
+## [1] "Accuracy: 0.85"
+```
+
+```r
+# Sensitivity 
+sensitivity_lasso <- confusion_matrix_lasso$byClass['Sensitivity']
+print(paste("Sensitivity:", sensitivity_lasso))
+```
+
+```
+## [1] "Sensitivity: 0.000457247370827618"
+```
+
+```r
+# Specificity
+specificity_lasso <- confusion_matrix_lasso$byClass['Specificity']
+print(paste("Sensitivity:", specificity_lasso))
+```
+
+```
+## [1] "Sensitivity: 0.999921709856729"
+```
+
+```r
+# Precision
+precision_lasso <- confusion_matrix_lasso$byClass['Pos Pred Value']
+print(paste("Precision:", precision_lasso))
+```
+
+```
+## [1] "Precision: 0.499999999999921"
+```
+
+```r
+# F-1 Score
+F1_lasso <- 2 * ((precision_lasso * sensitivity_lasso) / (precision_lasso + sensitivity_lasso))
+print(paste("F-1 Score:", F1_lasso))
+```
+
+```
+## [1] "F-1 Score: 0.000913659205116491"
+```
+
+```r
+# AUC
+pred <- prediction(prob.lasso, test$SUD_MJ)
+perf <- performance(pred, measure = "tpr", x.measure = "fpr")
+auc_lasso <- performance(pred, measure = "auc")@y.values[[1]]
+print(paste("AUC: ", auc_lasso))
+```
+
+```
+## [1] "AUC:  0.747779515052881"
+```
+
+```r
+plot(perf, main = "ROC Curve for Lasso Regression", col = "blue", lwd = 2)
+abline(a = 0, b = 1, lty = 2, col = "gray")
+```
+
+![](Final_Writeup_files/figure-html/unnamed-chunk-13-3.png)<!-- -->
+
+The model has identified several key predictors of marijuana use disorder.The variable importance is ranked based on the absolute values of the coefficients. The top 5 predictors include age, mental health, race, marital, and sex.
+
+**age**: age4 (elderly 65+) has the highest importance. A coefficient of -1.38 for age4 means that for individuals in the "Elderly" age category, the log-odds of having marijuana use disorder decrease by 1.3809210453 units on average compared to the reference age category, holding all other variables constant.
+
+**mental health**: Several mental health related predictors are categorized as important predictors, such as mentalhealth20, mentalhealth24, mentalhealth18, mentalhealth22, mentalhealth16, mentalhealth14, mentalhealth21, mentalhealth15, mentalhealth12, and mentalhealth23. The positive coefficients of these predictors suggest that higher mental health issues are associated with an increased risk of marijuana use disorder.
+
+**race**: race5 (Non-Hispanic Native Hawaiian/Other Pacific Islander) has a negative coefficients of -0.67, meaning that individuals identified as Non-Hispanic Native Hawaiian/Other Pacific Islander have log-odds of having marijuana use disorder that decrease by 0.67 units on average compared to the reference race category, holding all other variables constant.
+
+**marital status**: Marital status (marital1) has a negative coefficient of -0.57, meaning that married individuals have log-odds of having marijuana use disorder that decrease by 0.57 units on average compared to non-married individuals, holding all other variables constant
+
+**sex**:sex1 has a positive coefficient of 0.285, meaning that males have log-odds of having marijuana use disorder that increase by 0.285 units on average compared to females, holding all other variables constant.
+
+```r
+# Variable importance
+coef_lasso <- coef(lasso.model, s = lambda_min)
+coef_lasso <- as.data.frame(as.matrix(coef_lasso))
+print(coef(lasso.model, s = lambda_min))
+```
+
+```
+## 56 x 1 sparse Matrix of class "dgCMatrix"
+##                           s1
+## (Intercept)    -1.4281128350
+## age3           -0.3918871497
+## age4           -1.3809210453
+## sex1            0.2852138660
+## race2           .           
+## race3           0.2465134876
+## race4           .           
+## race5          -0.6676768665
+## race6           0.2536082679
+## race7          -0.0016719958
+## health1         0.1778089080
+## marital1       -0.5748139341
+## marital2       -0.0337191183
+## degree2         .           
+## degree3        -0.2531133511
+## student1       -0.2186613334
+## employ2         .           
+## employ3         .           
+## employ4        -0.0198928790
+## family2         0.0608874862
+## family3         .           
+## family4         .           
+## family5         .           
+## family6         .           
+## kid1            .           
+## kid2            .           
+## kid3           -0.0466220196
+## elderly1        .           
+## elderly2        .           
+## health_insur1   .           
+## income2         .           
+## income3        -0.2003853527
+## mentalhealth1  -0.3336889978
+## mentalhealth2  -0.1232984220
+## mentalhealth3   .           
+## mentalhealth4   .           
+## mentalhealth5   .           
+## mentalhealth6   0.0006330735
+## mentalhealth7   0.1174703114
+## mentalhealth8   0.1999269521
+## mentalhealth9   0.3622082509
+## mentalhealth10  0.4040068043
+## mentalhealth11  0.3680595651
+## mentalhealth12  0.5580294493
+## mentalhealth13  0.4449321161
+## mentalhealth14  0.6271721007
+## mentalhealth15  0.5614552384
+## mentalhealth16  0.7468964862
+## mentalhealth17  0.4398904623
+## mentalhealth18  0.8071809885
+## mentalhealth19  0.4526132512
+## mentalhealth20  0.9666506072
+## mentalhealth21  0.5837306830
+## mentalhealth22  0.7624859329
+## mentalhealth23  0.5566338531
+## mentalhealth24  0.8443122902
+```
+
+```r
+coef_lasso$variable <- rownames(coef_lasso)
+colnames(coef_lasso)[1] <- "coefficient"
+
+coef_lasso <- coef_lasso %>%
+  filter(variable != "(Intercept)") %>%
+  mutate(importance = abs(coefficient)) %>%
+  arrange(desc(importance))
+print(coef_lasso)
+```
+
+```
+##                  coefficient       variable   importance
+## age4           -1.3809210453           age4 1.3809210453
+## mentalhealth20  0.9666506072 mentalhealth20 0.9666506072
+## mentalhealth24  0.8443122902 mentalhealth24 0.8443122902
+## mentalhealth18  0.8071809885 mentalhealth18 0.8071809885
+## mentalhealth22  0.7624859329 mentalhealth22 0.7624859329
+## mentalhealth16  0.7468964862 mentalhealth16 0.7468964862
+## race5          -0.6676768665          race5 0.6676768665
+## mentalhealth14  0.6271721007 mentalhealth14 0.6271721007
+## mentalhealth21  0.5837306830 mentalhealth21 0.5837306830
+## marital1       -0.5748139341       marital1 0.5748139341
+## mentalhealth15  0.5614552384 mentalhealth15 0.5614552384
+## mentalhealth12  0.5580294493 mentalhealth12 0.5580294493
+## mentalhealth23  0.5566338531 mentalhealth23 0.5566338531
+## mentalhealth19  0.4526132512 mentalhealth19 0.4526132512
+## mentalhealth13  0.4449321161 mentalhealth13 0.4449321161
+## mentalhealth17  0.4398904623 mentalhealth17 0.4398904623
+## mentalhealth10  0.4040068043 mentalhealth10 0.4040068043
+## age3           -0.3918871497           age3 0.3918871497
+## mentalhealth11  0.3680595651 mentalhealth11 0.3680595651
+## mentalhealth9   0.3622082509  mentalhealth9 0.3622082509
+## mentalhealth1  -0.3336889978  mentalhealth1 0.3336889978
+## sex1            0.2852138660           sex1 0.2852138660
+## race6           0.2536082679          race6 0.2536082679
+## degree3        -0.2531133511        degree3 0.2531133511
+## race3           0.2465134876          race3 0.2465134876
+## student1       -0.2186613334       student1 0.2186613334
+## income3        -0.2003853527        income3 0.2003853527
+## mentalhealth8   0.1999269521  mentalhealth8 0.1999269521
+## health1         0.1778089080        health1 0.1778089080
+## mentalhealth2  -0.1232984220  mentalhealth2 0.1232984220
+## mentalhealth7   0.1174703114  mentalhealth7 0.1174703114
+## family2         0.0608874862        family2 0.0608874862
+## kid3           -0.0466220196           kid3 0.0466220196
+## marital2       -0.0337191183       marital2 0.0337191183
+## employ4        -0.0198928790        employ4 0.0198928790
+## race7          -0.0016719958          race7 0.0016719958
+## mentalhealth6   0.0006330735  mentalhealth6 0.0006330735
+## race2           0.0000000000          race2 0.0000000000
+## race4           0.0000000000          race4 0.0000000000
+## degree2         0.0000000000        degree2 0.0000000000
+## employ2         0.0000000000        employ2 0.0000000000
+## employ3         0.0000000000        employ3 0.0000000000
+## family3         0.0000000000        family3 0.0000000000
+## family4         0.0000000000        family4 0.0000000000
+## family5         0.0000000000        family5 0.0000000000
+## family6         0.0000000000        family6 0.0000000000
+## kid1            0.0000000000           kid1 0.0000000000
+## kid2            0.0000000000           kid2 0.0000000000
+## elderly1        0.0000000000       elderly1 0.0000000000
+## elderly2        0.0000000000       elderly2 0.0000000000
+## health_insur1   0.0000000000  health_insur1 0.0000000000
+## income2         0.0000000000        income2 0.0000000000
+## mentalhealth3   0.0000000000  mentalhealth3 0.0000000000
+## mentalhealth4   0.0000000000  mentalhealth4 0.0000000000
+## mentalhealth5   0.0000000000  mentalhealth5 0.0000000000
+```
+
+
+### 3. Random Forest
+
+I further employed the random forest model to tackle the binary classification problem. Unlike logistic regression, which is a linear model, the random forest is a non-linear model capable of capturing more complex relationships between features. Additionally, the random forest model provides feature importance metrics, which help identify the most relevant features for the classification task.
 
 The model was initially trained on the training data with 500 trees, and the number of variables tried at each split (mtry) was set to the optimal value found during tuning. The optimal mtry value was determined by tuning the model to minimize the Out-Of-Bag (OOB) error estimate. The OOB error estimate serves as an internal validation metric for the model, providing an unbiased estimate of the prediction error. The random forest model achieved a minimum OOB error rate of 14.45%, indicating that approximately 14.45% of the predictions made by the model on the training data were incorrect. I selected the mtry value that corresponded to the lowest OOB error rate for the final model.
 
@@ -1934,20 +2421,24 @@ varImpPlot(rf_tuned)
 # Mean Decrease Accuracy - How much the model accuracy decreases if we drop that variable.
 # Mean Decrease Gini - Measure of variable importance based on the Gini impurity index used for the calculation of splits in trees.
 # Making predictions based on test data
-testing$pred_prob_rf_tuned <- predict(rf_tuned, newdata = testing, type = "prob")[, 2]
-testing$pred_class_rf_tuned <- ifelse(testing$pred_prob_rf_tuned > 0.5, "Yes", "No")
+pred_prob_rf_tuned <- predict(rf_tuned, newdata = testing, type = "prob")[, 2]
+pred_class_rf_tuned <- ifelse(pred_prob_rf_tuned > 0.5, "Yes", "No")
 # Print confusion matrix
-confusion_matrix_rf_tuned <- confusionMatrix(as.factor(testing$pred_class_rf_tuned), testing$SUD_MJ)
+confusion_matrix_rf_tuned <- confusionMatrix(as.factor(pred_class_rf_tuned), testing$SUD_MJ, positive = "Yes")
 ```
 
 #### Model Performance
 
 - Accuracy: Evaluating on the testing data, the Random Forest model achieved an overall prediction accuracy of 85.4%.
-- Precision: The precision is 85.41%, meaning that when the model predicted "No" for SUD_MJ, it was correct 85.41% of the time.
-- Recall (sensitivity): In this model, the recall rate is extremely high at 99.99%, indicating that the model correctly identified nearly all individuals without SUD_MJ, reflecting the nature of the imbalanced dataset.
-- Specificity: The specificity is very low at 0.23%, reflecting the model's difficulty in correctly identifying individuals with SUD_MJ. 
-- F1-Score: The F1-Score is 92%, providing a balance between precision and recall.
-- AUC: The AUC for the random forest model is 0.72, which is even lower than that of the logistic regression model. 
+- Precision: The precision is 61.54%, meaning that when the model predicts 'Yes' for SUD_MJ, it is correct 61.54% of the time. 
+- Sensitivity: The model correctly identified only 0.37% of the actual 'Yes' cases, indicating a poor ability to detect true positives.
+- Specificity:  The model correctly identified 99.96% of the actual 'No' cases, showing that the model is good at detecting true negatives.
+- F1-Score: The F1-Score is extremely low at 0.01, providing a balance between precision and recall. It further prove that the random forest has poor overall performance in handling the positive cases.
+- AUC: The AUC for the random forest model is 0.72, indicating that the model has some discriminatory power, but it is not particularly strong.
+
+Overall, the Random Forest model demonstrates high specificity and reasonable precision for the majority (SUD_MJ = 'No') class, but like the previous two models, it still struggles with detecting the minority class. The sensitivity is extremely low at 0.37%, indicating the model's poor ability to identify true positive cases of marijuana use disorder. The overall accuracy of 85.4% is driven by the correct classification of the majority 'No' class, which is expected given the high imbalance in the dataset.
+
+The very low F1-Score and balanced accuracy further highlight the model's inability in handling the minority class (SUD_MJ = 'Yes'). The moderate AUC of 0.72 indicates some ability to distinguish between the classes, but I think it is not sufficient enough for reliable predictions. These results suggest the need for further adjustments or alternative modeling approaches to better address the class imbalance and improve the detection of true positive cases.
 
 
 ```r
@@ -1972,16 +2463,16 @@ print(confusion_matrix_rf_tuned)
 ##                                           
 ##  Mcnemar's Test P-Value : <2e-16          
 ##                                           
-##             Sensitivity : 0.999843        
-##             Specificity : 0.002286        
-##          Pos Pred Value : 0.854076        
-##          Neg Pred Value : 0.714286        
-##              Prevalence : 0.853810        
-##          Detection Rate : 0.853676        
-##    Detection Prevalence : 0.999532        
-##       Balanced Accuracy : 0.501065        
+##             Sensitivity : 0.0022862       
+##             Specificity : 0.9998434       
+##          Pos Pred Value : 0.7142857       
+##          Neg Pred Value : 0.8540761       
+##              Prevalence : 0.1461898       
+##          Detection Rate : 0.0003342       
+##    Detection Prevalence : 0.0004679       
+##       Balanced Accuracy : 0.5010648       
 ##                                           
-##        'Positive' Class : No              
+##        'Positive' Class : Yes             
 ## 
 ```
 
@@ -1997,21 +2488,30 @@ print(paste("Accuracy:", round(accuracy_rf_tuned, 2)))
 ```r
 # Precision, Recall, F1-Score
 precision_rf_tuned <- confusion_matrix_rf_tuned$byClass['Pos Pred Value']
-recall_rf_tuned <- confusion_matrix_rf_tuned$byClass['Sensitivity']
-F1_rf_tuned <- 2 * ((precision_rf_tuned * recall_rf_tuned) / (precision_rf_tuned + recall_rf_tuned))
+sensitivity_rf_tuned <- confusion_matrix_rf_tuned$byClass['Sensitivity']
+specificity_rf_tuned <- confusion_matrix_rf_tuned$byClass['Specificity']
+F1_rf_tuned <- 2 * ((precision_rf_tuned * sensitivity_rf_tuned) / (precision_rf_tuned + sensitivity_rf_tuned))
 print(paste("Precision:", round(precision_rf_tuned, 2)))
 ```
 
 ```
-## [1] "Precision: 0.85"
+## [1] "Precision: 0.71"
 ```
 
 ```r
-print(paste("Recall:", round(recall_rf_tuned, 2)))
+print(paste("Sensitivity:", round(sensitivity_rf_tuned, 2)))
 ```
 
 ```
-## [1] "Recall: 1"
+## [1] "Sensitivity: 0"
+```
+
+```r
+print(paste("Specificity:", round(specificity_rf_tuned, 2)))
+```
+
+```
+## [1] "Specificity: 1"
 ```
 
 ```r
@@ -2019,12 +2519,12 @@ print(paste("F1-Score:", round(F1_rf_tuned, 2)))
 ```
 
 ```
-## [1] "F1-Score: 0.92"
+## [1] "F1-Score: 0"
 ```
 
 ```r
 # AUC
-pred_rf_tuned <- prediction(testing$pred_prob_rf_tuned, testing$SUD_MJ)
+pred_rf_tuned <- prediction(pred_prob_rf_tuned, testing$SUD_MJ)
 auc_rf_tuned <- performance(pred_rf_tuned, "auc")
 auc_value_rf_tuned <- auc_rf_tuned@y.values[[1]]
 print(paste("AUC:", round(auc_value_rf_tuned, 2)))
@@ -2043,9 +2543,9 @@ abline(a=0,b=1,lwd=2,lty=2,col="gray")
 
 ![](Final_Writeup_files/figure-html/rf perf-1.png)<!-- -->
 
-### 3. Generalized Boosted Regression Model (GBM)
+### 4. Generalized Boosted Regression Model (GBM)
 
-In this section, I used a Gradient Boosting Machine (GBM) for regression. Unlike Random Forest, where each decision tree is built independently from each sample, the trees in GBM are built sequentially. Each tree corrects the errors made by the previous one, enhancing the overall model performance.
+Lastly, I used a Generalized Boosted Regression Model (GBM). Unlike Random Forest, where each decision tree is built independently from each sample, the trees in GBM are built sequentially. Each tree corrects the errors made by the previous one, enhancing the overall model performance.
 
 To optimize the performance of the GBM, I first performed hyperparameter tuning using a grid search. The model was then trained on the training data using 10-fold cross-validation to prevent overfitting. The most optimal GBM model hyperparameters were found to be: n.trees = 150, interaction.depth = 1, shrinkage = 0.3, and n.minobsinnode = 10. These values were selected because they produced the highest ROC value during cross-validation, indicating the model's strong ability to distinguish between individuals with and without SUD_MJ.
 
@@ -2071,9 +2571,9 @@ print(best_params)
 
 ```
 ##    n.trees interaction.depth shrinkage n.minobsinnode
-## 39     150                 1       0.3             10
+## 42     150                 1       0.3             20
 ```
-After training the GBM model with the best hyperparameters, I examined the variable importance again to understand which features were most influential in predicting SUD_MJ. The relative influence of the variables showed that 'Young Adult' (age2) and 'Married' (marital1) were the most important predictors, followed by 'Elderly: 65+' (age4), 'Associate's degree/college graduate or higher' (degree3), and 'Male' (sex1). Various mental health-related variables (e.g., mentalhealth12, mentalhealth16, mentalhealth24) also showed significant importance. This analysis highlights the key factors that contribute to the prediction of marijuana use disorder, providing insights for further research and model improvement.
+After training the GBM model with the best hyperparameters, I examined the variable importance again to understand which features were most influential in predicting SUD_MJ. The relative influence of the variables showed that 'Young Adult' (age2) and 'Married' (marital1) were the most important predictors, followed by 'Elderly: 65+' (age4), 'Associate's degree/college graduate or higher' (degree3), and 'Male' (sex1). Mental health-related variables (e.g., mentalhealth12, mentalhealth16, mentalhealth24) also showed significant importance. This analysis highlights the key factors that contribute to the prediction of marijuana use disorder, providing insights for further research and model improvement.
 
 
 ```r
@@ -2097,27 +2597,29 @@ summary(gbm_best)
 
 ![](Final_Writeup_files/figure-html/gbm with best params-1.png)<!-- --><div data-pagedtable="false">
   <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["var"],"name":[1],"type":["chr"],"align":["left"]},{"label":["rel.inf"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"age2","2":"16.3186532","_rn_":"age2"},{"1":"marital1","2":"12.1920714","_rn_":"marital1"},{"1":"age4","2":"4.6200249","_rn_":"age4"},{"1":"degree3","2":"4.5242165","_rn_":"degree3"},{"1":"sex1","2":"3.2530688","_rn_":"sex1"},{"1":"mentalhealth12","2":"3.2152945","_rn_":"mentalhealth12"},{"1":"mentalhealth16","2":"3.2121709","_rn_":"mentalhealth16"},{"1":"mentalhealth24","2":"3.0395127","_rn_":"mentalhealth24"},{"1":"mentalhealth18","2":"2.9633906","_rn_":"mentalhealth18"},{"1":"mentalhealth14","2":"2.8545466","_rn_":"mentalhealth14"},{"1":"race5","2":"2.7746464","_rn_":"race5"},{"1":"mentalhealth20","2":"2.6907415","_rn_":"mentalhealth20"},{"1":"mentalhealth15","2":"2.5779868","_rn_":"mentalhealth15"},{"1":"health1","2":"2.5605541","_rn_":"health1"},{"1":"mentalhealth17","2":"2.5167799","_rn_":"mentalhealth17"},{"1":"student1","2":"2.4710658","_rn_":"student1"},{"1":"mentalhealth13","2":"2.2665946","_rn_":"mentalhealth13"},{"1":"mentalhealth9","2":"2.1260470","_rn_":"mentalhealth9"},{"1":"mentalhealth10","2":"2.1120305","_rn_":"mentalhealth10"},{"1":"income3","2":"2.0763541","_rn_":"income3"},{"1":"mentalhealth11","2":"1.9515746","_rn_":"mentalhealth11"},{"1":"mentalhealth22","2":"1.6168500","_rn_":"mentalhealth22"},{"1":"mentalhealth21","2":"1.6027575","_rn_":"mentalhealth21"},{"1":"mentalhealth19","2":"1.4875027","_rn_":"mentalhealth19"},{"1":"mentalhealth1","2":"1.4696651","_rn_":"mentalhealth1"},{"1":"race6","2":"1.3568273","_rn_":"race6"},{"1":"mentalhealth7","2":"1.2683412","_rn_":"mentalhealth7"},{"1":"mentalhealth8","2":"1.2458004","_rn_":"mentalhealth8"},{"1":"mentalhealth23","2":"1.2213087","_rn_":"mentalhealth23"},{"1":"race3","2":"1.1297726","_rn_":"race3"},{"1":"mentalhealth6","2":"0.8755914","_rn_":"mentalhealth6"},{"1":"family2","2":"0.8431360","_rn_":"family2"},{"1":"race2","2":"0.7549786","_rn_":"race2"},{"1":"kid3","2":"0.4569654","_rn_":"kid3"},{"1":"race7","2":"0.4331358","_rn_":"race7"},{"1":"employ4","2":"0.3091339","_rn_":"employ4"},{"1":"mentalhealth4","2":"0.2937680","_rn_":"mentalhealth4"},{"1":"mentalhealth2","2":"0.2901376","_rn_":"mentalhealth2"},{"1":"marital2","2":"0.2706359","_rn_":"marital2"},{"1":"family6","2":"0.2697946","_rn_":"family6"},{"1":"employ2","2":"0.2350592","_rn_":"employ2"},{"1":"mentalhealth5","2":"0.1296869","_rn_":"mentalhealth5"},{"1":"elderly1","2":"0.1218257","_rn_":"elderly1"},{"1":"age3","2":"0.0000000","_rn_":"age3"},{"1":"race4","2":"0.0000000","_rn_":"race4"},{"1":"degree2","2":"0.0000000","_rn_":"degree2"},{"1":"employ3","2":"0.0000000","_rn_":"employ3"},{"1":"family3","2":"0.0000000","_rn_":"family3"},{"1":"family4","2":"0.0000000","_rn_":"family4"},{"1":"family5","2":"0.0000000","_rn_":"family5"},{"1":"kid1","2":"0.0000000","_rn_":"kid1"},{"1":"kid2","2":"0.0000000","_rn_":"kid2"},{"1":"elderly2","2":"0.0000000","_rn_":"elderly2"},{"1":"health_insur1","2":"0.0000000","_rn_":"health_insur1"},{"1":"income2","2":"0.0000000","_rn_":"income2"},{"1":"mentalhealth3","2":"0.0000000","_rn_":"mentalhealth3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["var"],"name":[1],"type":["chr"],"align":["left"]},{"label":["rel.inf"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"marital1","2":"17.0915052","_rn_":"marital1"},{"1":"age4","2":"9.3189115","_rn_":"age4"},{"1":"age3","2":"5.2614079","_rn_":"age3"},{"1":"degree3","2":"4.4461749","_rn_":"degree3"},{"1":"mentalhealth24","2":"3.6753150","_rn_":"mentalhealth24"},{"1":"sex1","2":"3.4684150","_rn_":"sex1"},{"1":"mentalhealth12","2":"3.4395105","_rn_":"mentalhealth12"},{"1":"mentalhealth16","2":"3.2490776","_rn_":"mentalhealth16"},{"1":"mentalhealth18","2":"3.0387879","_rn_":"mentalhealth18"},{"1":"mentalhealth14","2":"2.9879178","_rn_":"mentalhealth14"},{"1":"mentalhealth15","2":"2.8870641","_rn_":"mentalhealth15"},{"1":"mentalhealth20","2":"2.7032994","_rn_":"mentalhealth20"},{"1":"race5","2":"2.6615466","_rn_":"race5"},{"1":"student1","2":"2.3633565","_rn_":"student1"},{"1":"mentalhealth17","2":"2.3164972","_rn_":"mentalhealth17"},{"1":"mentalhealth13","2":"2.2957968","_rn_":"mentalhealth13"},{"1":"income3","2":"2.2376301","_rn_":"income3"},{"1":"mentalhealth10","2":"2.2258945","_rn_":"mentalhealth10"},{"1":"mentalhealth9","2":"2.1910951","_rn_":"mentalhealth9"},{"1":"mentalhealth11","2":"2.0478646","_rn_":"mentalhealth11"},{"1":"mentalhealth1","2":"1.7949583","_rn_":"mentalhealth1"},{"1":"health1","2":"1.6694433","_rn_":"health1"},{"1":"mentalhealth22","2":"1.5847081","_rn_":"mentalhealth22"},{"1":"mentalhealth19","2":"1.5608344","_rn_":"mentalhealth19"},{"1":"race6","2":"1.5348640","_rn_":"race6"},{"1":"mentalhealth21","2":"1.4965522","_rn_":"mentalhealth21"},{"1":"mentalhealth7","2":"1.3255056","_rn_":"mentalhealth7"},{"1":"mentalhealth8","2":"1.3065335","_rn_":"mentalhealth8"},{"1":"mentalhealth23","2":"1.2176703","_rn_":"mentalhealth23"},{"1":"race3","2":"1.1154928","_rn_":"race3"},{"1":"mentalhealth6","2":"0.8784549","_rn_":"mentalhealth6"},{"1":"family2","2":"0.7828395","_rn_":"family2"},{"1":"marital2","2":"0.7610928","_rn_":"marital2"},{"1":"race2","2":"0.5586334","_rn_":"race2"},{"1":"kid3","2":"0.5302297","_rn_":"kid3"},{"1":"race7","2":"0.4455419","_rn_":"race7"},{"1":"employ4","2":"0.4299979","_rn_":"employ4"},{"1":"mentalhealth2","2":"0.3781238","_rn_":"mentalhealth2"},{"1":"employ2","2":"0.2190492","_rn_":"employ2"},{"1":"mentalhealth4","2":"0.1948981","_rn_":"mentalhealth4"},{"1":"elderly1","2":"0.1645571","_rn_":"elderly1"},{"1":"mentalhealth5","2":"0.1429508","_rn_":"mentalhealth5"},{"1":"race4","2":"0.0000000","_rn_":"race4"},{"1":"degree2","2":"0.0000000","_rn_":"degree2"},{"1":"employ3","2":"0.0000000","_rn_":"employ3"},{"1":"family3","2":"0.0000000","_rn_":"family3"},{"1":"family4","2":"0.0000000","_rn_":"family4"},{"1":"family5","2":"0.0000000","_rn_":"family5"},{"1":"family6","2":"0.0000000","_rn_":"family6"},{"1":"kid1","2":"0.0000000","_rn_":"kid1"},{"1":"kid2","2":"0.0000000","_rn_":"kid2"},{"1":"elderly2","2":"0.0000000","_rn_":"elderly2"},{"1":"health_insur1","2":"0.0000000","_rn_":"health_insur1"},{"1":"income2","2":"0.0000000","_rn_":"income2"},{"1":"mentalhealth3","2":"0.0000000","_rn_":"mentalhealth3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 
 #### Model Performance
 
 - Accuracy: The model correctly classified 85.43% of the instances overall.
-- Precision: The model has a fairly high precision of 85.68%.
-- Sensitivity (Recall): The recall rate is very high at 99%, likely due to the highly imbalanced dataset, with many 'No' instances and only a few 'Yes' instances.
-- F-1 Score: The high F1-score indicates a good balance between precision and recall for the majority class (SUD_MJ = No).
-- AUC: An AUC of 0.76 indicates that the model has a moderate ability to distinguish between 'Yes' and 'No'.
+- Precision: The model has a precision of 53.92%, meaning that when the model predicts 'Yes' for SUD_MJ, it is correct 53.92% of the time. 
+- Sensitivity (Recall): The recall rate is 2.51%, indicating that the model only correctly identified 2.51% of the actual 'Yes' cases.
+- Specificity: The model has a very high specificity at 99.63%, meaning that it has an excellent ability to detect true negatives.
+- F-1 Score: The very low F1-Score (0.05) indicates poor overall performance in handling the positive class.
+- AUC: An AUC of 0.76 indicates that the model has a moderate ability in distinguishing between 'Yes' and 'No'.
+The GBM model has a high specificity and a reasonable precision for predicting the majority class (SUD_MJ = "No"). However, from the very low sensitivity, we can tell that the model also struggles with detecting the minority class (SUD_MJ = "Yes"). The overall accuracy is high at 85.43%, which is driven by the correct classification of the majority 'No' class. The low F1-Score and balanced accuracy highlight the model's ineffectiveness in handling the minority class. The moderate AUC of 0.76 indicates some ability to distinguish between the classes.
 
 
 ```r
 # Make predictions on the testing set
-test$predicted_prob_gbm <- predict(gbm_best, newdata = test, n.trees = best_params$n.trees, type = "response")
-test$predicted_class_gbm <- ifelse(test$predicted_prob_gbm > 0.5, 1, 0)
+predicted_prob_gbm <- predict(gbm_best, newdata = test, n.trees = best_params$n.trees, type = "response")
+predicted_class_gbm <- ifelse(predicted_prob_gbm > 0.5, 1, 0)
 
 # Confusion matrix on the testing set
-confusion_matrix_test_gbm <- confusionMatrix(as.factor(test$predicted_class_gbm), as.factor(test$SUD_MJ))
-print(confusion_matrix_test_gbm)
+confusion_matrix_gbm <- confusionMatrix(as.factor(predicted_class_gbm), as.factor(test$SUD_MJ), positive = '1')
+print(confusion_matrix_gbm)
 ```
 
 ```
@@ -2125,35 +2627,35 @@ print(confusion_matrix_test_gbm)
 ## 
 ##           Reference
 ## Prediction     0     1
-##          0 12719  2125
-##          1    54    62
+##          0 12726  2132
+##          1    47    55
 ##                                         
 ##                Accuracy : 0.8543        
 ##                  95% CI : (0.8486, 0.86)
 ##     No Information Rate : 0.8538        
 ##     P-Value [Acc > NIR] : 0.4321        
 ##                                         
-##                   Kappa : 0.0397        
+##                   Kappa : 0.0355        
 ##                                         
 ##  Mcnemar's Test P-Value : <2e-16        
 ##                                         
-##             Sensitivity : 0.99577       
-##             Specificity : 0.02835       
-##          Pos Pred Value : 0.85684       
-##          Neg Pred Value : 0.53448       
-##              Prevalence : 0.85381       
-##          Detection Rate : 0.85020       
-##    Detection Prevalence : 0.99225       
-##       Balanced Accuracy : 0.51206       
+##             Sensitivity : 0.025149      
+##             Specificity : 0.996320      
+##          Pos Pred Value : 0.539216      
+##          Neg Pred Value : 0.856508      
+##              Prevalence : 0.146190      
+##          Detection Rate : 0.003676      
+##    Detection Prevalence : 0.006818      
+##       Balanced Accuracy : 0.510734      
 ##                                         
-##        'Positive' Class : 0             
+##        'Positive' Class : 1             
 ## 
 ```
 
 ```r
-# Calculate performance metrics on the testing set
-accuracy_test_gbm <- confusion_matrix_test_gbm$overall['Accuracy']
-print(paste("Accuracy:", round(accuracy_test_gbm, 2)))
+# Accuracy
+accuracy_gbm <- confusion_matrix_gbm$overall['Accuracy']
+print(paste("Accuracy:", round(accuracy_gbm, 2)))
 ```
 
 ```
@@ -2161,36 +2663,46 @@ print(paste("Accuracy:", round(accuracy_test_gbm, 2)))
 ```
 
 ```r
-precision_test_gbm <- confusion_matrix_test_gbm$byClass['Pos Pred Value']
-recall_test_gbm <- confusion_matrix_test_gbm$byClass['Sensitivity']
-f1_score_test_gbm <- 2 * ((precision_test_gbm * recall_test_gbm) / (precision_test_gbm + recall_test_gbm))
+# Precision, Sensitivity, Specificity, F-1
+precision_gbm <- confusion_matrix_gbm$byClass['Pos Pred Value']
+sensitivity_gbm <- confusion_matrix_gbm$byClass['Sensitivity']
+specificity_gbm <- confusion_matrix_gbm$byClass['Specificity']
+f1_score_gbm <- 2 * ((precision_gbm * sensitivity_gbm) / (precision_gbm + specificity_gbm))
 
-print(paste("Precision:", round(precision_test_gbm, 2)))
-```
-
-```
-## [1] "Precision: 0.86"
-```
-
-```r
-print(paste("Recall:", round(recall_test_gbm, 2)))
+print(paste("Precision:", round(precision_gbm, 3)))
 ```
 
 ```
-## [1] "Recall: 1"
+## [1] "Precision: 0.539"
 ```
 
 ```r
-print(paste("F1-Score:", round(f1_score_test_gbm, 2)))
+print(paste("Sensitivity:", round(sensitivity_gbm, 3)))
 ```
 
 ```
-## [1] "F1-Score: 0.92"
+## [1] "Sensitivity: 0.025"
+```
+
+```r
+print(paste("Specificity:", round(specificity_gbm, 3)))
+```
+
+```
+## [1] "Specificity: 0.996"
+```
+
+```r
+print(paste("F1-Score:", round(f1_score_gbm, 3)))
+```
+
+```
+## [1] "F1-Score: 0.018"
 ```
 
 ```r
 # Calculate AUC
-pred_gbm <- prediction(test$predicted_prob_gbm, test$SUD_MJ)
+pred_gbm <- prediction(predicted_prob_gbm, test$SUD_MJ)
 perf_auc_gbm <- performance(pred_gbm, measure = "auc")
 auc_value_gbm <- perf_auc_gbm@y.values[[1]]
 print(paste("AUC:", round(auc_value_gbm, 2)))
@@ -2209,31 +2721,32 @@ abline(a = 0, b = 1, lty = 2, col = "gray")
 
 ![](Final_Writeup_files/figure-html/gbm perf-1.png)<!-- -->
 
-
 ### Model Comparison
 
 
 ```r
 metrics <- data.frame(
-  Model = c("Logistic Regression", "Random Forest", "GBM"),
-  Accuracy = c(accuracy_logi, accuracy_rf_tuned, accuracy_test_gbm),
-  Precision = c(precision_logi, precision_rf_tuned, precision_test_gbm),
-  Recall = c(recall_logi, recall_rf_tuned, recall_test_gbm),
-  Specificity = c(confusion_matrix_logistic$byClass['Specificity'], confusion_matrix_rf_tuned$byClass['Specificity'], confusion_matrix_test_gbm$byClass['Specificity'] ),
-  F1_Score = c(F1_score_logi, F1_rf_tuned, f1_score_test_gbm),
-  AUC = c(auc_value, auc_value_rf_tuned, auc_value_gbm)
+  Model = c("Logistic Regression","Lasso Logistic Regression", "Random Forest", "GBM"),
+  Accuracy = c(accuracy_logi, accuracy_lasso, accuracy_rf_tuned, accuracy_gbm),
+  Precision = c(precision_logi, precision_lasso, precision_rf_tuned, precision_gbm),
+  Sensitivity = c(sensitivity_logi, sensitivity_lasso, sensitivity_rf_tuned, sensitivity_gbm),
+  Specificity = c(specificity_logi,specificity_lasso, specificity_rf_tuned, specificity_gbm),
+  F1_Score = c(F1_score_logi, F1_lasso, F1_rf_tuned, f1_score_gbm),
+  AUC = c(auc_value, auc_lasso, auc_value_rf_tuned, auc_value_gbm)
   )
 print(metrics)
 ```
 
 ```
-##                 Model  Accuracy Precision    Recall Specificity  F1_Score
-## 1 Logistic Regression 0.8526070 0.8577522 0.9918578 0.039323274 0.9199434
-## 2       Random Forest 0.8540107 0.8540761 0.9998434 0.002286237 0.9212292
-## 3                 GBM 0.8543449 0.8568445 0.9957723 0.028349337 0.9210993
-##         AUC
-## 1 0.7611017
-## 2 0.7167963
-## 3 0.7560643
+##                       Model  Accuracy Precision  Sensitivity Specificity
+## 1       Logistic Regression 0.8526070 0.4526316 0.0393232739   0.9918578
+## 2 Lasso Logistic Regression 0.8538102 0.5000000 0.0004572474   0.9999217
+## 3             Random Forest 0.8540107 0.7142857 0.0022862369   0.9998434
+## 4                       GBM 0.8543449 0.5392157 0.0251486054   0.9963204
+##       F1_Score       AUC
+## 1 0.0723601178 0.7611017
+## 2 0.0009136592 0.7477795
+## 3 0.0045578851 0.7167963
+## 4 0.0176622653 0.7568581
 ```
 

@@ -1,0 +1,75 @@
+@misc{ncsl,
+  title = {State Medical Cannabis Laws},
+  author = {{National Conference of State Legislatures}},
+  year = 2024,
+  url = {https://www.ncsl.org/health/state-medical-cannabis-laws},
+  note = {Accessed: 2024-06-26}
+}
+
+@article{compton2019,
+  author = {Wilson M. Compton and Beth Han and Christopher M. Jones and Carlos Blanco},
+  title = {Cannabis use disorders among adults in the United States during a time of increasing use of cannabis},
+  journal = {Drug and Alcohol Dependence},
+  volume = {204},
+  year = {2019},
+  pages = {107468},
+  issn = {0376-8716},
+  doi = {10.1016/j.drugalcdep.2019.05.008},
+  url = {https://www.sciencedirect.com/science/article/pii/S0376871619302273}
+}
+
+@misc{hhs2023,
+  author = {{U.S. Department of Health and Human Services}},
+  title = {{SAMHSA Announces National Survey on Drug Use and Health Results Detailing Mental Illness and Substance Use Levels in 2021}},
+  year = {2023},
+  url = {https://www.hhs.gov/about/news/2023/01/04/samhsa-announces-national-survey-drug-use-health-results-detailing-mental-illness-substance-use-levels-2021.html},
+  note = {Accessed: 2024-06-26}
+}
+
+@article{feingold2020,
+  author = {Feingold, Daniel and Livne, Ohad and Rehm, Jürgen and Lev-Ran, Shaul},
+  title = {Probability and correlates of transition from cannabis use to DSM-5 cannabis use disorder: Results from a large-scale nationally representative study},
+  journal = {Drug and Alcohol Review},
+  volume = {39},
+  pages = {142-151},
+  year = {2020},
+  doi = {10.1111/dar.13031},
+  url = {https://doi.org/10.1111/dar.13031}
+}
+
+@article{acion2017,
+  author = {Acion, Laura and Kelmansky, Diana and van der Laan, Mark and Sahker, Ethan and Jones, Diane and et al.},
+  title = {Use of a machine learning framework to predict substance use disorder treatment success},
+  journal = {PLOS ONE},
+  volume = {12},
+  number = {4},
+  pages = {e0175383},
+  year = {2017},
+  doi = {10.1371/journal.pone.0175383},
+  url = {https://doi.org/10.1371/journal.pone.0175383}
+}
+
+@article{rajapaksha2020,
+  author = {Rajapaksha Mudalige Dhanushka S. Rajapaksha and Ryan Hammonds and Francesca Filbey and Pankaj K. Choudhary and Swati Biswas},
+  title = {A preliminary risk prediction model for cannabis use disorder},
+  journal = {Preventive Medicine Reports},
+  volume = {20},
+  pages = {101228},
+  year = {2020},
+  issn = {2211-3355},
+  doi = {10.1016/j.pmedr.2020.101228},
+  url = {https://www.sciencedirect.com/science/article/pii/S2211335520301868}
+}
+
+@article{santaella2019,
+  author = {Santaella-Tenorio, Julian and Levy, Neil S. and Segura, Leandro E. and Mauro, Pia M. and Martins, Silvia S.},
+  title = {Cannabis use disorder among people using cannabis daily/almost daily in the United States, 2002-2016},
+  journal = {Drug and Alcohol Dependence},
+  volume = {205},
+  pages = {107621},
+  year = {2019},
+  issn = {0376-8716},
+  doi = {10.1016/j.drugalcdep.2019.107621},
+  url = {https://doi.org/10.1016/j.drugalcdep.2019.107621}
+}
+
