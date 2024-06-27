@@ -14,7 +14,7 @@ output:
     code_folding: hide
     css: styles.css
 font-family: Times New Roman
-bibliography: references.bib  
+bibliography: ref.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -31,6 +31,7 @@ library(httr)
 library(jsonlite)
 library(foreach)
 library(psych)
+library(pandoc)
 library(patchwork)
 library(gt) # for better table output
 library(gridExtra)
@@ -83,7 +84,7 @@ NSDUH_2022_full <- NSDUH_2022 %>%
 
 #### Predictors
 
-A previous study indicates that the prevalence of marijuana use disorder varies among different age groups, races, and between people with and without mental health problems (@santaella2019). In this project,  there are 14 selected predictors, including age, sex, race, health status, marital status, highest degree obtained, school attendance, employment status, number of people in the household, number of children under 18 in the household, number of elderly people over 65 in the household, health insurance status, family income level, and mental health status.
+A previous study indicates that the prevalence of marijuana use disorder varies among different age groups, races, and between people with and without mental health problems [@santaella2019]. In this project,  there are 14 selected predictors, including age, sex, race, health status, marital status, highest degree obtained, school attendance, employment status, number of people in the household, number of children under 18 in the household, number of elderly people over 65 in the household, health insurance status, family income level, and mental health status.
 
 All the socio-demographic variables in the survey are provided as categorical variables with various levels. I followed the methodology used in the original survey data but reorganized some variables into more general levels to make the data easier to analyze and interpret. For example, the predictor age (AGE3 in the survey data) originally had 10 levels. I consolidated these into four levels: 1 represents adolescents under age 18, 2 represents young adults aged 18 to 29, 3 indicates middle-aged individuals aged 30 to 64, and 4 represents elderly individuals aged 65 and older. The final cleaned dataset 
 
@@ -1009,3 +1010,8 @@ However, the reasons for marijuana use disorder are complex and multifaceted, va
 Comparing the AUC, sensitivity, specificity, precision, and F1 scores, the logistic regression model demonstrated better overall performance than the other three models. This indicates that more complex models do not always lead to better performance. Logistic regression's simplicity and interpretability make it a strong choice in this context.
 
 One of the biggest limitations of this study is that the NSDUH 2022 survey dataset is inherently imbalanced. This imbalance poses a significant challenge for predictive modeling, as it can lead to biased results where the model performs well on the majority class but poorly on the minority class. Implementing either oversampling or undersampling techniques to address this imbalance can lead to a loss of valuable information. Oversampling might result in overfitting, while undersampling could omit crucial data points. Consequently, the imbalanced dataset makes accurate prediction more difficult and limits the generalizability of the model's findings. Future research should explore advanced techniques, such as synthetic data generation or ensemble methods, to mitigate these issues and enhance the model's robustness and accuracy.
+
+```{r}
+print(getwd())
+```
+

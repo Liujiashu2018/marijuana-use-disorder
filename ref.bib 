@@ -1,7 +1,7 @@
 @misc{ncsl,
   title = {State Medical Cannabis Laws},
-  author = {{National Conference of State Legislatures}},
-  year = 2024,
+  author = {National Conference of State Legislatures},
+  year = {2024},
   url = {https://www.ncsl.org/health/state-medical-cannabis-laws},
   note = {Accessed: 2024-06-26}
 }
@@ -19,8 +19,8 @@
 }
 
 @misc{hhs2023,
-  author = {{U.S. Department of Health and Human Services}},
-  title = {{SAMHSA Announces National Survey on Drug Use and Health Results Detailing Mental Illness and Substance Use Levels in 2021}},
+  author = {U.S. Department of Health and Human Services},
+  title = {SAMHSA Announces National Survey on Drug Use and Health Results Detailing Mental Illness and Substance Use Levels in 2021},
   year = {2023},
   url = {https://www.hhs.gov/about/news/2023/01/04/samhsa-announces-national-survey-drug-use-health-results-detailing-mental-illness-substance-use-levels-2021.html},
   note = {Accessed: 2024-06-26}
