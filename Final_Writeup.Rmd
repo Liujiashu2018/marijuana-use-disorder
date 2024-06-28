@@ -13,8 +13,8 @@ output:
     code_download: true
     code_folding: hide
     css: styles.css
-font-family: Times New Roman
-bibliography: ref.bib
+bibliography: references.bib
+font-family: "Times New Roman"
 ---
 
 ```{r setup, include=FALSE}
@@ -863,12 +863,12 @@ tuneGrid <- expand.grid(interaction.depth = c(1, 3, 5),  # Depth of each tree
                         shrinkage = c(0.01, 0.1, 0.3),   # Learning rate
                         n.minobsinnode = c(10, 20))
 # Fit gbm with train data
-gbm_model <- caret::train(SUD_MJ ~ ., 
-                          data = train, 
-                          method = "gbm", 
-                          trControl = trControl, 
-                          tuneGrid = tuneGrid, 
-                          metric = "ROC", 
+gbm_model <- caret::train(SUD_MJ ~ .,
+                          data = train,
+                          method = "gbm",
+                          trControl = trControl,
+                          tuneGrid = tuneGrid,
+                          metric = "ROC",
                           verbose = FALSE)
 best_params <- gbm_model$bestTune
 print(best_params)
@@ -880,16 +880,16 @@ After training the GBM model with the best hyperparameters, I examined the varia
 train$SUD_MJ <- ifelse(train$SUD_MJ == "Yes", 1, 0)
 test$SUD_MJ <- ifelse(test$SUD_MJ == "Yes", 1, 0)
 
-# Train the gbm model again with best parameters 
-gbm_best <- gbm::gbm(SUD_MJ ~ ., 
-                      data = train, 
-                      distribution = "bernoulli", 
-                      n.trees = best_params$n.trees, 
-                      interaction.depth = best_params$interaction.depth, 
-                      shrinkage = best_params$shrinkage, 
-                      n.minobsinnode = best_params$n.minobsinnode, 
-                      cv.folds = 10, 
-                      keep.data = TRUE, 
+# Train the gbm model again with best parameters
+gbm_best <- gbm::gbm(SUD_MJ ~ .,
+                      data = train,
+                      distribution = "bernoulli",
+                      n.trees = best_params$n.trees,
+                      interaction.depth = best_params$interaction.depth,
+                      shrinkage = best_params$shrinkage,
+                      n.minobsinnode = best_params$n.minobsinnode,
+                      cv.folds = 10,
+                      keep.data = TRUE,
                       verbose = FALSE)
 summary(gbm_best)
 ```
@@ -927,7 +927,7 @@ print(paste("Sensitivity:", round(sensitivity_gbm, 3)))
 print(paste("Specificity:", round(specificity_gbm, 3)))
 print(paste("F1-Score:", round(f1_score_gbm, 3)))
 
-# Calculate AUC
+# AUC
 pred_gbm <- prediction(predicted_prob_gbm, test$SUD_MJ)
 perf_auc_gbm <- performance(pred_gbm, measure = "auc")
 auc_value_gbm <- perf_auc_gbm@y.values[[1]]
@@ -939,7 +939,7 @@ plot(perf_roc_gbm, main = "ROC Curve for GBM", col = "blue", lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
 ```
 
-### Model Comparison
+# Model Comparison
 
 To recap, four machine learning models were used to predict marijuana use disorder (SUD_MJ): Logistic Regression, Lasso Logistic Regression, Random Forest, and GBM.
 
@@ -957,51 +957,48 @@ metrics <- data.frame(
   F1_Score = c(F1_score_logi, F1_lasso, F1_rf_tuned, f1_score_gbm),
   AUC = c(auc_value, auc_lasso, auc_value_rf_tuned, auc_value_gbm)
   )
-metrics_table <- gt(metrics) %>%
-  tab_header(
-    title = md("**Model Performance Metrics**")
-  ) %>%
-  fmt_number(
-    columns = 2:7,
-    decimals = 4
-  ) %>%
-  cols_label(
-    Model = "Model",
-    Accuracy = "Accuracy",
-    Precision = "Precision",
-    Sensitivity = "Sensitivity",
-    Specificity = "Specificity",
-    F1_Score = "F1 Score",
-    AUC = "AUC"
-  ) %>%
-  tab_style(
-    style = list(
-      cell_fill(color = "lightblue"),
-      cell_text(weight = "bold")
-    ),
-    locations = cells_body(
-      columns = vars(Model)
-    )
-  ) %>%
-  tab_style(
-    style = cell_borders(
-      sides = "all",
-      color = "grey",
-      weight = px(1)
-    ),
-    locations = cells_body()
-  ) %>%
-  tab_options(
-    table.width = pct(100),
-    column_labels.font.weight = "bold"
-  )
-
-# Print the gt table
-print(metrics_table)
-
+# metrics_table <- gt(metrics) %>%
+#   tab_header(
+#     title = md("**Model Performance Metrics**")
+#   ) %>%
+#   fmt_number(
+#     columns = 2:7,
+#     decimals = 4
+#   ) %>%
+#   cols_label(
+#     Model = "Model",
+#     Accuracy = "Accuracy",
+#     Precision = "Precision",
+#     Sensitivity = "Sensitivity",
+#     Specificity = "Specificity",
+#     F1_Score = "F1 Score",
+#     AUC = "AUC"
+#   ) %>%
+#   tab_style(
+#     style = list(
+#       cell_fill(color = "lightblue"),
+#       cell_text(weight = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = vars(Model)
+#     )
+#   ) %>%
+#   tab_style(
+#     style = cell_borders(
+#       sides = "all",
+#       color = "grey",
+#       weight = px(1)
+#     ),
+#     locations = cells_body()
+#   ) %>%
+#   tab_options(
+#     table.width = pct(100),
+#     column_labels.font.weight = "bold"
+#   )
+print(metrics)
 ```
 
-### Conclusion and Discussion 
+# Conclusion and Discussion 
 
 In this project, I employed four models to estimate the probability that a user of marijuana products will develop marijuana use disorder and to identify the socio-demographic variables associated with this outcome. The results from all four models suggest that age, mental health, sex, marital status, education, and race are the most important variables out of the 14 initially selected. To avoid overfitting, I implemented 10-fold cross-validation for each model.
 
@@ -1011,7 +1008,4 @@ Comparing the AUC, sensitivity, specificity, precision, and F1 scores, the logis
 
 One of the biggest limitations of this study is that the NSDUH 2022 survey dataset is inherently imbalanced. This imbalance poses a significant challenge for predictive modeling, as it can lead to biased results where the model performs well on the majority class but poorly on the minority class. Implementing either oversampling or undersampling techniques to address this imbalance can lead to a loss of valuable information. Oversampling might result in overfitting, while undersampling could omit crucial data points. Consequently, the imbalanced dataset makes accurate prediction more difficult and limits the generalizability of the model's findings. Future research should explore advanced techniques, such as synthetic data generation or ensemble methods, to mitigate these issues and enhance the model's robustness and accuracy.
 
-```{r}
-print(getwd())
-```
-
+# References

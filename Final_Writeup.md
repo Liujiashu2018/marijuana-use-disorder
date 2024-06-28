@@ -13,7 +13,8 @@ output:
     code_download: true
     code_folding: hide
     css: styles.css
-font-family: Times New Roman
+bibliography: references.bib
+font-family: "Times New Roman"
 ---
 
 
@@ -29,14 +30,13 @@ library(httr)
 library(jsonlite)
 library(foreach)
 library(psych)
+library(pandoc)
 library(patchwork)
 library(gt) # for better table output
 library(gridExtra)
 library(ROCR)
 library(ranger)
 library(randomForest)
-#library(pak)
-#pak::pak("caret")
 library(caret)
 library(e1071)
 library(nnet)
@@ -47,11 +47,11 @@ library(glmnet)
 
 # Introduction 
 
-Marijuana has gained increasing prevalence in the US. As of April 2024, 38 states have legalized the medical use of marijuana products, and among these, 24 states have also legalized recreational marijuana (citation). The pros and cons of marijuana legalization remain an ongoing debate. Some studies suggest that the increasing popularity of marijuana products is associated with an increasing risk of developing marijuana use disorder (citation). In 2012-2013, among the 9.52% of US adults who used marijuana, 2.9% had a diagnosis of DSM-IV marijuana use disorder. In other words, nearly 3 out of every 10 marijuana users had a diagnosis of a marijuana use disorder (citation). A more recent study suggests that about 27% of lifetime cannabis users transition to marijuana use disorder based on the DSM-5 diagnosis criteria (citation). Given the prevalence of marijuana products and the high risk of developing marijuana use disorder, it is imperative to identify and predict the associated risk factors. 
+Marijuana has gained increasing prevalence in the US. As of April 2024, 38 states have legalized the medical use of marijuana products, and among these, 24 states have also legalized recreational marijuana [@ncsl]. The pros and cons of marijuana legalization remain an ongoing debate. Some studies suggest that the increasing popularity of marijuana products is associated with an increasing risk of developing marijuana use disorder[@compton2019]. In 2012-2013, among the 9.52% of US adults who used marijuana, 2.9% had a diagnosis of DSM-IV marijuana use disorder. In other words, nearly 3 out of every 10 marijuana users had a diagnosis of a marijuana use disorder [@hhs2023]. A more recent study suggests that about 27% of lifetime cannabis users transition to marijuana use disorder based on the DSM-5 diagnosis criteria [@feingold2020]. Given the prevalence of marijuana products and the high risk of developing marijuana use disorder, it is imperative to identify and predict the associated risk factors. 
 
-Previous literature has employed machine learning frameworks to research substance use disorder. For example, in a study by Acion et al. (2017), researchers used several machine learning models, including logistic regression, Random Forest (RF), Artificial Neural Network (ANN), and Super Learning (SL), as prediction tools for the success of substance use disorder treatment.
+Previous literature has employed machine learning frameworks to research substance use disorder. For example, in a study by Acion et al. (2017)[@acion2017], researchers used several machine learning models, including logistic regression, Random Forest (RF), Artificial Neural Network (ANN), and Super Learning (SL), as prediction tools for the success of substance use disorder treatment.
 
-The goal of this project is to investigate the socio-demographic factors potentially associated with the risk of a marijuana user developing substance use disorder using a machine learning approach. By leveraging advanced machine learning models, I aim to identify key predictors and improve our understanding of the factors contributing to marijuana use disorder. The methodology I used is based on Rajapaksha et al. (2020), in which the researchers employed LASSO, KNN, Random Forest, SVM, and Gradient Boosting to estimate the chance of developing SUD based on various demographic, behavioral, psychiatric, and cognitive risk factors. 
+The goal of this project is to investigate the socio-demographic factors potentially associated with the risk of a marijuana user developing substance use disorder using a machine learning approach. By leveraging advanced machine learning models, I aim to identify key predictors and improve our understanding of the factors contributing to marijuana use disorder. The methodology I used is based on Rajapaksha et al. (2020)[@rajapaksha2020], in which the researchers employed LASSO, KNN, Random Forest, SVM, and Gradient Boosting to estimate the chance of developing SUD based on various demographic, behavioral, psychiatric, and cognitive risk factors. 
 
 In this project, I will use logistic regression, Lasso logistic regression, Random Forest, and Gradient Boosting The overall performance of the machine learning models will be evaluated using the area under the receiver operating characteristic curve (AUC), overall accuracy (i.e., the proportion of overall correct classifications), sensitivity (i.e., the proportion of correct classifications among the SUD instances/true positives), and specificity (i.e., the proportion of correct classifications among the non-SUD instances/true negatives). By comparing these metrics, I aim to determine the most effective machine learning model for predicting the risk of developing marijuana use disorder. This project can inform prevention and intervention strategies, ultimately aiding in addressing the challenges posed by increased marijuana use.
 
@@ -85,7 +85,7 @@ NSDUH_2022_full <- NSDUH_2022 %>%
 
 #### Predictors
 
-A previous study indicates that the prevalence of marijuana use disorder varies among different age groups, races, and between people with and without mental health problems (citation). In this project,  there are 14 selected predictors, including age, sex, race, health status, marital status, highest degree obtained, school attendance, employment status, number of people in the household, number of children under 18 in the household, number of elderly people over 65 in the household, health insurance status, family income level, and mental health status.
+A previous study indicates that the prevalence of marijuana use disorder varies among different age groups, races, and between people with and without mental health problems [@santaella2019]. In this project,  there are 14 selected predictors, including age, sex, race, health status, marital status, highest degree obtained, school attendance, employment status, number of people in the household, number of children under 18 in the household, number of elderly people over 65 in the household, health insurance status, family income level, and mental health status.
 
 All the socio-demographic variables in the survey are provided as categorical variables with various levels. I followed the methodology used in the original survey data but reorganized some variables into more general levels to make the data easier to analyze and interpret. For example, the predictor age (AGE3 in the survey data) originally had 10 levels. I consolidated these into four levels: 1 represents adolescents under age 18, 2 represents young adults aged 18 to 29, 3 indicates middle-aged individuals aged 30 to 64, and 4 represents elderly individuals aged 65 and older. The final cleaned dataset 
 
@@ -115,23 +115,23 @@ codebook %>%
 ```
 
 ```{=html}
-<div id="viyjzpbygm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#viyjzpbygm table {
+<div id="gjoptqrzjw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gjoptqrzjw table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#viyjzpbygm thead, #viyjzpbygm tbody, #viyjzpbygm tfoot, #viyjzpbygm tr, #viyjzpbygm td, #viyjzpbygm th {
+#gjoptqrzjw thead, #gjoptqrzjw tbody, #gjoptqrzjw tfoot, #gjoptqrzjw tr, #gjoptqrzjw td, #gjoptqrzjw th {
   border-style: none;
 }
 
-#viyjzpbygm p {
+#gjoptqrzjw p {
   margin: 0;
   padding: 0;
 }
 
-#viyjzpbygm .gt_table {
+#gjoptqrzjw .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -157,12 +157,12 @@ codebook %>%
   border-left-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_caption {
+#gjoptqrzjw .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#viyjzpbygm .gt_title {
+#gjoptqrzjw .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -174,7 +174,7 @@ codebook %>%
   border-bottom-width: 0;
 }
 
-#viyjzpbygm .gt_subtitle {
+#gjoptqrzjw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -186,7 +186,7 @@ codebook %>%
   border-top-width: 0;
 }
 
-#viyjzpbygm .gt_heading {
+#gjoptqrzjw .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -198,13 +198,13 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_bottom_border {
+#gjoptqrzjw .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_col_headings {
+#gjoptqrzjw .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -219,7 +219,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_col_heading {
+#gjoptqrzjw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -239,7 +239,7 @@ codebook %>%
   overflow-x: hidden;
 }
 
-#viyjzpbygm .gt_column_spanner_outer {
+#gjoptqrzjw .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -251,15 +251,15 @@ codebook %>%
   padding-right: 4px;
 }
 
-#viyjzpbygm .gt_column_spanner_outer:first-child {
+#gjoptqrzjw .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#viyjzpbygm .gt_column_spanner_outer:last-child {
+#gjoptqrzjw .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#viyjzpbygm .gt_column_spanner {
+#gjoptqrzjw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -271,11 +271,11 @@ codebook %>%
   width: 100%;
 }
 
-#viyjzpbygm .gt_spanner_row {
+#gjoptqrzjw .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#viyjzpbygm .gt_group_heading {
+#gjoptqrzjw .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -301,7 +301,7 @@ codebook %>%
   text-align: left;
 }
 
-#viyjzpbygm .gt_empty_group_heading {
+#gjoptqrzjw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -316,15 +316,15 @@ codebook %>%
   vertical-align: middle;
 }
 
-#viyjzpbygm .gt_from_md > :first-child {
+#gjoptqrzjw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#viyjzpbygm .gt_from_md > :last-child {
+#gjoptqrzjw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#viyjzpbygm .gt_row {
+#gjoptqrzjw .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -343,7 +343,7 @@ codebook %>%
   overflow-x: hidden;
 }
 
-#viyjzpbygm .gt_stub {
+#gjoptqrzjw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -356,7 +356,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#viyjzpbygm .gt_stub_row_group {
+#gjoptqrzjw .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -370,15 +370,15 @@ codebook %>%
   vertical-align: top;
 }
 
-#viyjzpbygm .gt_row_group_first td {
+#gjoptqrzjw .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#viyjzpbygm .gt_row_group_first th {
+#gjoptqrzjw .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#viyjzpbygm .gt_summary_row {
+#gjoptqrzjw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -388,16 +388,16 @@ codebook %>%
   padding-right: 5px;
 }
 
-#viyjzpbygm .gt_first_summary_row {
+#gjoptqrzjw .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_first_summary_row.thick {
+#gjoptqrzjw .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#viyjzpbygm .gt_last_summary_row {
+#gjoptqrzjw .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -407,7 +407,7 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_grand_summary_row {
+#gjoptqrzjw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -417,7 +417,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#viyjzpbygm .gt_first_grand_summary_row {
+#gjoptqrzjw .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -427,7 +427,7 @@ codebook %>%
   border-top-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_last_grand_summary_row_top {
+#gjoptqrzjw .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -437,11 +437,11 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_striped {
+#gjoptqrzjw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#viyjzpbygm .gt_table_body {
+#gjoptqrzjw .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -450,7 +450,7 @@ codebook %>%
   border-bottom-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_footnotes {
+#gjoptqrzjw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -464,7 +464,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_footnote {
+#gjoptqrzjw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -473,7 +473,7 @@ codebook %>%
   padding-right: 5px;
 }
 
-#viyjzpbygm .gt_sourcenotes {
+#gjoptqrzjw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -487,7 +487,7 @@ codebook %>%
   border-right-color: #D3D3D3;
 }
 
-#viyjzpbygm .gt_sourcenote {
+#gjoptqrzjw .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -495,63 +495,63 @@ codebook %>%
   padding-right: 5px;
 }
 
-#viyjzpbygm .gt_left {
+#gjoptqrzjw .gt_left {
   text-align: left;
 }
 
-#viyjzpbygm .gt_center {
+#gjoptqrzjw .gt_center {
   text-align: center;
 }
 
-#viyjzpbygm .gt_right {
+#gjoptqrzjw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#viyjzpbygm .gt_font_normal {
+#gjoptqrzjw .gt_font_normal {
   font-weight: normal;
 }
 
-#viyjzpbygm .gt_font_bold {
+#gjoptqrzjw .gt_font_bold {
   font-weight: bold;
 }
 
-#viyjzpbygm .gt_font_italic {
+#gjoptqrzjw .gt_font_italic {
   font-style: italic;
 }
 
-#viyjzpbygm .gt_super {
+#gjoptqrzjw .gt_super {
   font-size: 65%;
 }
 
-#viyjzpbygm .gt_footnote_marks {
+#gjoptqrzjw .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#viyjzpbygm .gt_asterisk {
+#gjoptqrzjw .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#viyjzpbygm .gt_indent_1 {
+#gjoptqrzjw .gt_indent_1 {
   text-indent: 5px;
 }
 
-#viyjzpbygm .gt_indent_2 {
+#gjoptqrzjw .gt_indent_2 {
   text-indent: 10px;
 }
 
-#viyjzpbygm .gt_indent_3 {
+#gjoptqrzjw .gt_indent_3 {
   text-indent: 15px;
 }
 
-#viyjzpbygm .gt_indent_4 {
+#gjoptqrzjw .gt_indent_4 {
   text-indent: 20px;
 }
 
-#viyjzpbygm .gt_indent_5 {
+#gjoptqrzjw .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -843,23 +843,23 @@ highlighted_table
 ```
 
 ```{=html}
-<div id="kkvchtxddf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#kkvchtxddf table {
+<div id="kchvgskzpv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#kchvgskzpv table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#kkvchtxddf thead, #kkvchtxddf tbody, #kkvchtxddf tfoot, #kkvchtxddf tr, #kkvchtxddf td, #kkvchtxddf th {
+#kchvgskzpv thead, #kchvgskzpv tbody, #kchvgskzpv tfoot, #kchvgskzpv tr, #kchvgskzpv td, #kchvgskzpv th {
   border-style: none;
 }
 
-#kkvchtxddf p {
+#kchvgskzpv p {
   margin: 0;
   padding: 0;
 }
 
-#kkvchtxddf .gt_table {
+#kchvgskzpv .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -885,12 +885,12 @@ highlighted_table
   border-left-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_caption {
+#kchvgskzpv .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#kkvchtxddf .gt_title {
+#kchvgskzpv .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -902,7 +902,7 @@ highlighted_table
   border-bottom-width: 0;
 }
 
-#kkvchtxddf .gt_subtitle {
+#kchvgskzpv .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -914,7 +914,7 @@ highlighted_table
   border-top-width: 0;
 }
 
-#kkvchtxddf .gt_heading {
+#kchvgskzpv .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -926,13 +926,13 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_bottom_border {
+#kchvgskzpv .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_col_headings {
+#kchvgskzpv .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -947,7 +947,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_col_heading {
+#kchvgskzpv .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -967,7 +967,7 @@ highlighted_table
   overflow-x: hidden;
 }
 
-#kkvchtxddf .gt_column_spanner_outer {
+#kchvgskzpv .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -979,15 +979,15 @@ highlighted_table
   padding-right: 4px;
 }
 
-#kkvchtxddf .gt_column_spanner_outer:first-child {
+#kchvgskzpv .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#kkvchtxddf .gt_column_spanner_outer:last-child {
+#kchvgskzpv .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#kkvchtxddf .gt_column_spanner {
+#kchvgskzpv .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -999,11 +999,11 @@ highlighted_table
   width: 100%;
 }
 
-#kkvchtxddf .gt_spanner_row {
+#kchvgskzpv .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#kkvchtxddf .gt_group_heading {
+#kchvgskzpv .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1029,7 +1029,7 @@ highlighted_table
   text-align: left;
 }
 
-#kkvchtxddf .gt_empty_group_heading {
+#kchvgskzpv .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1044,15 +1044,15 @@ highlighted_table
   vertical-align: middle;
 }
 
-#kkvchtxddf .gt_from_md > :first-child {
+#kchvgskzpv .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#kkvchtxddf .gt_from_md > :last-child {
+#kchvgskzpv .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#kkvchtxddf .gt_row {
+#kchvgskzpv .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1071,7 +1071,7 @@ highlighted_table
   overflow-x: hidden;
 }
 
-#kkvchtxddf .gt_stub {
+#kchvgskzpv .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1084,7 +1084,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#kkvchtxddf .gt_stub_row_group {
+#kchvgskzpv .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1098,15 +1098,15 @@ highlighted_table
   vertical-align: top;
 }
 
-#kkvchtxddf .gt_row_group_first td {
+#kchvgskzpv .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#kkvchtxddf .gt_row_group_first th {
+#kchvgskzpv .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#kkvchtxddf .gt_summary_row {
+#kchvgskzpv .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1116,16 +1116,16 @@ highlighted_table
   padding-right: 5px;
 }
 
-#kkvchtxddf .gt_first_summary_row {
+#kchvgskzpv .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_first_summary_row.thick {
+#kchvgskzpv .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#kkvchtxddf .gt_last_summary_row {
+#kchvgskzpv .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1135,7 +1135,7 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_grand_summary_row {
+#kchvgskzpv .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1145,7 +1145,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#kkvchtxddf .gt_first_grand_summary_row {
+#kchvgskzpv .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1155,7 +1155,7 @@ highlighted_table
   border-top-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_last_grand_summary_row_top {
+#kchvgskzpv .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1165,11 +1165,11 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_striped {
+#kchvgskzpv .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#kkvchtxddf .gt_table_body {
+#kchvgskzpv .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1178,7 +1178,7 @@ highlighted_table
   border-bottom-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_footnotes {
+#kchvgskzpv .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1192,7 +1192,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_footnote {
+#kchvgskzpv .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1201,7 +1201,7 @@ highlighted_table
   padding-right: 5px;
 }
 
-#kkvchtxddf .gt_sourcenotes {
+#kchvgskzpv .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1215,7 +1215,7 @@ highlighted_table
   border-right-color: #D3D3D3;
 }
 
-#kkvchtxddf .gt_sourcenote {
+#kchvgskzpv .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1223,63 +1223,63 @@ highlighted_table
   padding-right: 5px;
 }
 
-#kkvchtxddf .gt_left {
+#kchvgskzpv .gt_left {
   text-align: left;
 }
 
-#kkvchtxddf .gt_center {
+#kchvgskzpv .gt_center {
   text-align: center;
 }
 
-#kkvchtxddf .gt_right {
+#kchvgskzpv .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#kkvchtxddf .gt_font_normal {
+#kchvgskzpv .gt_font_normal {
   font-weight: normal;
 }
 
-#kkvchtxddf .gt_font_bold {
+#kchvgskzpv .gt_font_bold {
   font-weight: bold;
 }
 
-#kkvchtxddf .gt_font_italic {
+#kchvgskzpv .gt_font_italic {
   font-style: italic;
 }
 
-#kkvchtxddf .gt_super {
+#kchvgskzpv .gt_super {
   font-size: 65%;
 }
 
-#kkvchtxddf .gt_footnote_marks {
+#kchvgskzpv .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#kkvchtxddf .gt_asterisk {
+#kchvgskzpv .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#kkvchtxddf .gt_indent_1 {
+#kchvgskzpv .gt_indent_1 {
   text-indent: 5px;
 }
 
-#kkvchtxddf .gt_indent_2 {
+#kchvgskzpv .gt_indent_2 {
   text-indent: 10px;
 }
 
-#kkvchtxddf .gt_indent_3 {
+#kchvgskzpv .gt_indent_3 {
   text-indent: 15px;
 }
 
-#kkvchtxddf .gt_indent_4 {
+#kchvgskzpv .gt_indent_4 {
   text-indent: 20px;
 }
 
-#kkvchtxddf .gt_indent_5 {
+#kchvgskzpv .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1696,7 +1696,7 @@ test$SUD_MJ <- testing$SUD_MJ
 ```
 ### 1. Logistic Regression
 
-I first started with modeling using logistic regression, as it is one of the most straightforward and interpretable models that is suitable for binary classification tasks. The logistic regression model allows us to estimate the probability whether an individual has marijuana use disorder. It could serve as a good baseline model against which more complex models can be compared.
+A logistic regression model is used to predict the probability of a binary outcome based on one or more predictor variables. It is widely utilized for classification tasks where the outcome variable is categorical with two possible outcomes. I began with logistic regression because it is straightforward and highly interpretable, making it an excellent baseline model for comparison against more complex models
 
 #### Model Performance 
 
@@ -2558,12 +2558,12 @@ tuneGrid <- expand.grid(interaction.depth = c(1, 3, 5),  # Depth of each tree
                         shrinkage = c(0.01, 0.1, 0.3),   # Learning rate
                         n.minobsinnode = c(10, 20))
 # Fit gbm with train data
-gbm_model <- caret::train(SUD_MJ ~ ., 
-                          data = train, 
-                          method = "gbm", 
-                          trControl = trControl, 
-                          tuneGrid = tuneGrid, 
-                          metric = "ROC", 
+gbm_model <- caret::train(SUD_MJ ~ .,
+                          data = train,
+                          method = "gbm",
+                          trControl = trControl,
+                          tuneGrid = tuneGrid,
+                          metric = "ROC",
                           verbose = FALSE)
 best_params <- gbm_model$bestTune
 print(best_params)
@@ -2581,16 +2581,16 @@ After training the GBM model with the best hyperparameters, I examined the varia
 train$SUD_MJ <- ifelse(train$SUD_MJ == "Yes", 1, 0)
 test$SUD_MJ <- ifelse(test$SUD_MJ == "Yes", 1, 0)
 
-# Train the gbm model again with best parameters 
-gbm_best <- gbm::gbm(SUD_MJ ~ ., 
-                      data = train, 
-                      distribution = "bernoulli", 
-                      n.trees = best_params$n.trees, 
-                      interaction.depth = best_params$interaction.depth, 
-                      shrinkage = best_params$shrinkage, 
-                      n.minobsinnode = best_params$n.minobsinnode, 
-                      cv.folds = 10, 
-                      keep.data = TRUE, 
+# Train the gbm model again with best parameters
+gbm_best <- gbm::gbm(SUD_MJ ~ .,
+                      data = train,
+                      distribution = "bernoulli",
+                      n.trees = best_params$n.trees,
+                      interaction.depth = best_params$interaction.depth,
+                      shrinkage = best_params$shrinkage,
+                      n.minobsinnode = best_params$n.minobsinnode,
+                      cv.folds = 10,
+                      keep.data = TRUE,
                       verbose = FALSE)
 summary(gbm_best)
 ```
@@ -2701,7 +2701,7 @@ print(paste("F1-Score:", round(f1_score_gbm, 3)))
 ```
 
 ```r
-# Calculate AUC
+# AUC
 pred_gbm <- prediction(predicted_prob_gbm, test$SUD_MJ)
 perf_auc_gbm <- performance(pred_gbm, measure = "auc")
 auc_value_gbm <- perf_auc_gbm@y.values[[1]]
@@ -2721,7 +2721,13 @@ abline(a = 0, b = 1, lty = 2, col = "gray")
 
 ![](Final_Writeup_files/figure-html/gbm perf-1.png)<!-- -->
 
-### Model Comparison
+# Model Comparison
+
+To recap, four machine learning models were used to predict marijuana use disorder (SUD_MJ): Logistic Regression, Lasso Logistic Regression, Random Forest, and GBM.
+
+Comparing all four models, logistic regression outperforms the other three, as it has the highest AUC of 0.76. Despite all models struggling to accurately identify positive cases (SUD_MJ = "Yes"), Logistic Regression performs slightly better than the others, with the highest sensitivity at 3.9%. Moreover, Logistic Regression has higher interpretability, making it easier to understand and explain the impact of each predictor on the outcome.
+
+Overall, while no model demonstrated exceptional performance in identifying positive cases, Logistic Regression's superior AUC, higher sensitivity, and interpretability make it the preferred model for predicting marijuana use disorder in this study.
 
 
 ```r
@@ -2734,6 +2740,44 @@ metrics <- data.frame(
   F1_Score = c(F1_score_logi, F1_lasso, F1_rf_tuned, f1_score_gbm),
   AUC = c(auc_value, auc_lasso, auc_value_rf_tuned, auc_value_gbm)
   )
+# metrics_table <- gt(metrics) %>%
+#   tab_header(
+#     title = md("**Model Performance Metrics**")
+#   ) %>%
+#   fmt_number(
+#     columns = 2:7,
+#     decimals = 4
+#   ) %>%
+#   cols_label(
+#     Model = "Model",
+#     Accuracy = "Accuracy",
+#     Precision = "Precision",
+#     Sensitivity = "Sensitivity",
+#     Specificity = "Specificity",
+#     F1_Score = "F1 Score",
+#     AUC = "AUC"
+#   ) %>%
+#   tab_style(
+#     style = list(
+#       cell_fill(color = "lightblue"),
+#       cell_text(weight = "bold")
+#     ),
+#     locations = cells_body(
+#       columns = vars(Model)
+#     )
+#   ) %>%
+#   tab_style(
+#     style = cell_borders(
+#       sides = "all",
+#       color = "grey",
+#       weight = px(1)
+#     ),
+#     locations = cells_body()
+#   ) %>%
+#   tab_options(
+#     table.width = pct(100),
+#     column_labels.font.weight = "bold"
+#   )
 print(metrics)
 ```
 
@@ -2750,3 +2794,14 @@ print(metrics)
 ## 4 0.0176622653 0.7568581
 ```
 
+# Conclusion and Discussion 
+
+In this project, I employed four models to estimate the probability that a user of marijuana products will develop marijuana use disorder and to identify the socio-demographic variables associated with this outcome. The results from all four models suggest that age, mental health, sex, marital status, education, and race are the most important variables out of the 14 initially selected. To avoid overfitting, I implemented 10-fold cross-validation for each model.
+
+However, the reasons for marijuana use disorder are complex and multifaceted, varying widely between individuals. Our findings suggest that the selected socio-demographic variables might be relevant to marijuana use disorder, but more research is needed to understand the actual causes fully.
+
+Comparing the AUC, sensitivity, specificity, precision, and F1 scores, the logistic regression model demonstrated better overall performance than the other three models. This indicates that more complex models do not always lead to better performance. Logistic regression's simplicity and interpretability make it a strong choice in this context.
+
+One of the biggest limitations of this study is that the NSDUH 2022 survey dataset is inherently imbalanced. This imbalance poses a significant challenge for predictive modeling, as it can lead to biased results where the model performs well on the majority class but poorly on the minority class. Implementing either oversampling or undersampling techniques to address this imbalance can lead to a loss of valuable information. Oversampling might result in overfitting, while undersampling could omit crucial data points. Consequently, the imbalanced dataset makes accurate prediction more difficult and limits the generalizability of the model's findings. Future research should explore advanced techniques, such as synthetic data generation or ensemble methods, to mitigate these issues and enhance the model's robustness and accuracy.
+
+# References
